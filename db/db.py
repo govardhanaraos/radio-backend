@@ -1,3 +1,5 @@
+import os
+
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
@@ -6,6 +8,15 @@ from typing import Optional
 MONGO_URL = "mongodb+srv://govardhanaraofmuser:mK18NY3DJ260hsrp@cluster0.mihjnbk.mongodb.net/GRRadio?retryWrites=true&w=majority&authSource=admin"
 #MONGO_URL = "mongodb://govardhanaraofmuser:mK18NY3DJ260hsrp@atlas-sql-690d90acc3db4977165ba1c3-evtrqj.a.query.mongodb.net/GRRadio?ssl=true&authSource=admin"
 DB_NAME = "GRRadio"
+print("MONGO_URL static {MONGO_URL}")
+print(f"MONGO_URL static MONGO_URL: {MONGO_URL}")
+print(f"MONGO_URL static DB_NAME: {DB_NAME}")
+
+MONGO_URL=os.environ.get('MONGO_URL')
+DB_NAME = os.environ.get('DB_NAME')
+
+print(f"MONGO_URL env MONGO_URL: {MONGO_URL}")
+print(f"MONGO_URL  env DB_NAME: {DB_NAME}")
 
 # Global variable to hold the database client instance
 client = None
