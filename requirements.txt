@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]  # Uvicorn is the high-performance ASGI server
+pydantic
+motor

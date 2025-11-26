@@ -4,21 +4,24 @@ from typing import Optional
 
 # Use environment variables for your connection string in a real app!
 MONGO_URL = "mongodb+srv://govardhanaraofmuser:mK18NY3DJ260hsrp@cluster0.mihjnbk.mongodb.net/GRRadio?retryWrites=true&w=majority&authSource=admin"
+#MONGO_URL = "mongodb://govardhanaraofmuser:mK18NY3DJ260hsrp@atlas-sql-690d90acc3db4977165ba1c3-evtrqj.a.query.mongodb.net/GRRadio?ssl=true&authSource=admin"
 DB_NAME = "GRRadio"
 
 # Global variable to hold the database client instance
-client: Optional[AsyncIOMotorClient] = None
-db: Optional[AsyncIOMotorDatabase] = None
+client = None
+db = None
 
 async def connect_to_mongo():
     """Initializes the MongoDB connection."""
     global client, db
+    if client and db:
+        return
     print("Connecting to MongoDB...")
     try:
         # 1. Create the async client
         client = AsyncIOMotorClient(
             MONGO_URL,
-            serverSelectionTimeoutMS=5000  # 5 second timeout
+            serverSelectionTimeoutMS=120000  # 120 second timeout
         )
         # 2. Assign the database instance
         db = client[DB_NAME]
