@@ -49,3 +49,8 @@ async def close_mongo_connection():
     if client:
         print("Closing MongoDB connection.")
         client.close()
+
+def get_db() -> Optional[AsyncIOMotorDatabase]:
+    """Returns the initialized database instance."""
+    # This is the safest way to access the global variable set in startup
+    return db
