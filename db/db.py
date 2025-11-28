@@ -7,11 +7,6 @@ from typing import Optional
 MONGO_URL=os.environ.get('MONGO_URL')
 DB_NAME = os.environ.get('DB_NAME')
 
-# Use environment variables for your connection string in a real app!
-#MONGO_URL = "mongodb+srv://govardhanaraofmuser:mK18NY3DJ260hsrp@cluster0.mihjnbk.mongodb.net/GRRadio?retryWrites=true&w=majority&authSource=admin"
-if MONGO_URL is None or MONGO_URL == "":
-    MONGO_URL = "mongodb://govardhanaraofmuser:Retail546321987@ac-1iddvrw-shard-00-00.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-01.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-02.mihjnbk.mongodb.net:27017/?ssl=true&authSource=admin&replicaSet=atlas-w63i5e-shard-0"
-
 if DB_NAME is None or DB_NAME == "":
     DB_NAME = "GRRadio"
 
