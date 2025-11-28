@@ -7,7 +7,7 @@ from typing import Optional
 MONGO_URL=os.environ.get('MONGO_URL')
 DB_NAME = os.environ.get('DB_NAME')
 
-print(f"MONGO_URL static DB_NAME: {DB_NAME}")
+print(f"MONGO_URL static DB_NAME: {MONGO_URL}")
 
 
 if DB_NAME is None or DB_NAME == "":
