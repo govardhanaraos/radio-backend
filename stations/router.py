@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from stations.models import Station, StationFilter
-from data.stations_db import get_all_stations, get_station_by_id,COLLECTION_NAME
-from db.db import get_db, DB_NAME
+from db.db import get_db, DB_NAME,COLLECTION_NAME
 
 # Use APIRouter to group all station-related endpoints
 router = APIRouter(
@@ -19,6 +18,8 @@ async def fetch_stations(
 
     if database is None:
         raise HTTPException(status_code=503, detail="Database connection failed during startup.")
+
+    print(f"COLLECTION_NAME router.py: {COLLECTION_NAME}")
 
     collection = database[COLLECTION_NAME]
     query = {} # Initialize an empty MongoDB query dictionary
@@ -44,12 +45,3 @@ async def fetch_stations(
         print(f"Error during database query: {e}")
         raise HTTPException(status_code=500, detail="Error fetching stations from database.")
 
-# Endpoint 2: Get a single station by ID
-@router.get("/{station_id}", response_model=Station)
-async def read_station(station_id: int):
-    """Get details for a specific station."""
-    station = get_station_by_id(station_id)
-    if station is None:
-        # FastAPI handles the HTTP 404 response automatically
-        raise HTTPException(status_code=404, detail="Station not found")
-    return station
