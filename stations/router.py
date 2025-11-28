@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from stations.models import Station, StationFilter
-from data.stations_db import get_all_stations, get_station_by_id
+from data.stations_db import get_all_stations, get_station_by_id,COLLECTION_NAME
 from db.db import get_db, DB_NAME
 
 # Use APIRouter to group all station-related endpoints
@@ -20,7 +20,7 @@ async def fetch_stations(
     if database is None:
         raise HTTPException(status_code=503, detail="Database connection failed during startup.")
 
-    collection = database['radio_stations']
+    collection = database[COLLECTION_NAME]
     query = {} # Initialize an empty MongoDB query dictionary
 
     # Build the MongoDB query based on the filters provided by the client

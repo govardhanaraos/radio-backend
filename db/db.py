@@ -5,14 +5,14 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
 
 # Use environment variables for your connection string in a real app!
-MONGO_URL = "mongodb+srv://govardhanaraofmuser:mK18NY3DJ260hsrp@cluster0.mihjnbk.mongodb.net/GRRadio?retryWrites=true&w=majority&authSource=admin"
-#MONGO_URL = "mongodb://govardhanaraofmuser:mK18NY3DJ260hsrp@atlas-sql-690d90acc3db4977165ba1c3-evtrqj.a.query.mongodb.net/GRRadio?ssl=true&authSource=admin"
+#MONGO_URL = "mongodb+srv://govardhanaraofmuser:mK18NY3DJ260hsrp@cluster0.mihjnbk.mongodb.net/GRRadio?retryWrites=true&w=majority&authSource=admin"
+MONGO_URL = "mongodb://govardhanaraofmuser:Retail546321987@ac-1iddvrw-shard-00-00.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-01.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-02.mihjnbk.mongodb.net:27017/?ssl=true&authSource=admin&replicaSet=atlas-w63i5e-shard-0"
 DB_NAME = "GRRadio"
 
 print(f"MONGO_URL static DB_NAME: {DB_NAME}")
 
-MONGO_URL=os.environ.get('MONGO_URL')
-DB_NAME = os.environ.get('DB_NAME')
+#MONGO_URL=os.environ.get('MONGO_URL')
+#DB_NAME = os.environ.get('DB_NAME')
 
 print(f"MONGO_URL  env DB_NAME: {DB_NAME}")
 
