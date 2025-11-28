@@ -6,6 +6,7 @@ from db.db import db
 from bson.objectid import ObjectId # Required to query by MongoDB's native _id
 
 COLLECTION_NAME = os.environ.get('COLLECTION_NAME')
+print(f"MONGO  env COLLECTION_NAME: {COLLECTION_NAME}")
 
 # --- ASYNCHRONOUS DATABASE FUNCTIONS ---
 

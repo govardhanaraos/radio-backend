@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b896446e-de2a-44bd-b122-848a67c9fdcf" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/backend.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/stations_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/stations_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonutil/truncate_collection.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythonutil/truncate_collection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonutil/update_radio_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythonutil/update_radio_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
