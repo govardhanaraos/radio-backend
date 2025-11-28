@@ -1,0 +1,3230 @@
+[
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80001"
+    },
+    "id": "0001",
+    "name": "Akashvani Kanpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_345394.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio194/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-kanpur-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80002"
+    },
+    "id": "0002",
+    "name": "FM Rainbow Kanpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_947670.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio058/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-fm-rainbow-kanpur-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80003"
+    },
+    "id": "0003",
+    "name": "Akashvani Lucknow",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airlucknow.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio046/playlist.m3u8",
+    "language": "Hindi, Urdu",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-lucknow-uttar-pradesh-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80004"
+    },
+    "id": "0004",
+    "name": "FM Rainbow Lucknow",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_188882.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio047/playlist.m3u8",
+    "language": "Hindi, Urdu",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-fm-rainbow-lucknow-uttar-pradesh-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80005"
+    },
+    "id": "0005",
+    "name": "Akashvani Mathura",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airmathura.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio067/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-mathura-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80006"
+    },
+    "id": "0006",
+    "name": "Akashvani Najibabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_517789.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio162/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-najibabad-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80007"
+    },
+    "id": "0007",
+    "name": "Akashvani Obra",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_265912.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio235/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-obra-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80008"
+    },
+    "id": "0008",
+    "name": "Akashvani Rampur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_850592.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio179/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-rampur-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80009"
+    },
+    "id": "0009",
+    "name": "Akashvani Varanasi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airvaranasi.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio094/playlist.m3u8",
+    "language": "Hindi, Bhojpuri",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-varanasi-uttar-pradesh-hindi-bhojpuri"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80010"
+    },
+    "id": "0010",
+    "name": "Akashvani Almora",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_199564.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio122/playlist.m3u8",
+    "language": "Garhwali, Hindi",
+    "genre": "UTTARAKHAND",
+    "page": "channel-akashvani-almora-uttarakhand-garhwali-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80011"
+    },
+    "id": "0011",
+    "name": "Akashvani Dehradun",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airdehradun.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio191/playlist.m3u8",
+    "language": "Garhwali, Hindi",
+    "genre": "UTTARAKHAND",
+    "page": "channel-akashvani-dehradun-uttarakhand-garhwali-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80012"
+    },
+    "id": "0012",
+    "name": "Akashvani Pauri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_125539.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio107/playlist.m3u8",
+    "language": "Garhwali, Hindi",
+    "genre": "UTTARAKHAND",
+    "page": "channel-akashvani-pauri-uttarakhand-garhwali-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80013"
+    },
+    "id": "0013",
+    "name": "Akashvani Bangla",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-bangla.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio137/hlspbaudio137_Auto.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-bangla-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80014"
+    },
+    "id": "0014",
+    "name": "Akashvani Kolkata Geetanjali",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_817824.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio055/hlspbaudio055_Auto.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-kolkata-geetanjali-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80015"
+    },
+    "id": "0015",
+    "name": "Akashvani Kolkata Sanchayita",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_480353.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio056/hlspbaudio056_Auto.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-kolkata-sanchayita-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80016"
+    },
+    "id": "0016",
+    "name": "FM Gold Kolkata",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkolkatafmgold.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio057/hlspbaudio057_Auto.m3u8",
+    "language": "Bengali, Hindi, English",
+    "genre": "WEST BENGAL",
+    "page": "channel-fm-gold-kolkata-west-bengal-bengali-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80017"
+    },
+    "id": "0017",
+    "name": "FM Rainbow Kolkata",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkolkatafmrainbow.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio058/hlspbaudio058_Auto.m3u8",
+    "language": "Bengali, Hindi, English",
+    "genre": "WEST BENGAL",
+    "page": "channel-fm-rainbow-kolkata-west-bengal-bengali-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80018"
+    },
+    "id": "0018",
+    "name": "vbs Kolkata",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_258910.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio275/hlspbaudio275_Auto.m3u8",
+    "language": "Bengali, Hindi, English",
+    "genre": "WEST BENGAL",
+    "page": "channel-vbs-kolkata-west-bengal-bengali-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80019"
+    },
+    "id": "0019",
+    "name": "Akashvani Kurseong",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_319202.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio183/playlist.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-kurseong-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80020"
+    },
+    "id": "0020",
+    "name": "Akashvani Murshidabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_565906.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio169/playlist.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-murshidabad-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80021"
+    },
+    "id": "0021",
+    "name": "Akashvani Shantiniketan",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_121090.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio247/playlist.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-shantiniketan-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80022"
+    },
+    "id": "0022",
+    "name": "Akashvani Maitree",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_895638.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio245/hlspbaudio245_Auto.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-maitree-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80023"
+    },
+    "id": "0023",
+    "name": "Akashvani Siliguri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_229808.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio164/playlist.m3u8",
+    "language": "Bengali",
+    "genre": "WEST BENGAL",
+    "page": "channel-akashvani-siliguri-west-bengal-bengali"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80024"
+    },
+    "id": "0024",
+    "name": "Akashvani Gujarati",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-gujarati.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio135/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-gujarati-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80025"
+    },
+    "id": "0025",
+    "name": "Akashvani Kokrajhar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/KOKRAJHAR.jpeg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio055/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-kokrajhar-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80026"
+    },
+    "id": "0026",
+    "name": "Akashvani Aaradhana",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/Aaradhana.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio003/hlspbaudio003_Auto.m3u8",
+    "language": "Hindi",
+    "genre": "DELHI",
+    "page": "channel-akashvani-aaradhana-delhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80027"
+    },
+    "id": "0027",
+    "name": "FM Rainbow Chennai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_327320.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio022/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-fm-rainbow-chennai-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80028"
+    },
+    "id": "0028",
+    "name": "Live News 24x7",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-live.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio002/hlspbaudio002_Auto.m3u8",
+    "language": "Hindi, English",
+    "genre": "NATIONAL",
+    "page": "channel-live-news-24x7-national-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80029"
+    },
+    "id": "0029",
+    "name": "Akasvani Marathi Mumbai Ashmita",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airmumbaiasmita.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio010/hlspbaudio010_Auto.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akasvani-marathi-mumbai-ashmita-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80030"
+    },
+    "id": "0030",
+    "name": "Akashvani Punjabi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-punjabi.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio138/playlist.m3u8",
+    "language": "Punjabi, Hindi",
+    "genre": "PUNJAB",
+    "page": "channel-akashvani-punjabi-punjab-punjabi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80031"
+    },
+    "id": "0031",
+    "name": "Raagam",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/raagam.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudioragam/hlspbaudioragam_Auto.m3u8",
+    "language": "Hindi, Tamil, Telugu, Malayalam",
+    "genre": "NATIONAL",
+    "page": "channel-raagam-national-hindi-tamil-telugu-malayalam"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80032"
+    },
+    "id": "0032",
+    "name": "FM Gold Delhi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/fm-gold.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",
+    "language": "Hindi",
+    "genre": "DELHI",
+    "page": "channel-fm-gold-delhi-delhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80033"
+    },
+    "id": "0033",
+    "name": "FM Rainbow Delhi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/fm-rainbow.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio004_Auto.m3u8",
+    "language": "Hindi",
+    "genre": "DELHI",
+    "page": "channel-fm-rainbow-delhi-delhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80034"
+    },
+    "id": "0034",
+    "name": "Akashvani Kerla",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/malayalam.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio230/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-kerla-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80035"
+    },
+    "id": "0035",
+    "name": "Akashvani Tamil Nadu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-tamil.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio025/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-tamil-nadu-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80036"
+    },
+    "id": "0036",
+    "name": "Vividh Bharati",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/vividh-bharati.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "NATIONAL",
+    "page": "channel-vividh-bharati-national-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80037"
+    },
+    "id": "0037",
+    "name": "Akashvani Aadilabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/adilabad.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio218/playlist.m3u8",
+    "language": "Telugu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-akashvani-aadilabad-telangana-telugu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80038"
+    },
+    "id": "0038",
+    "name": "Akashvani Delhi Indraprastha",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_435004.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio006/hlspbaudio006_Auto.m3u8",
+    "language": "Hindi",
+    "genre": "DELHI",
+    "page": "channel-akashvani-delhi-indraprastha-delhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80039"
+    },
+    "id": "0039",
+    "name": "VBS Delhi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_624699.jpeg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio238/hlspbaudio238_Auto.m3u8",
+    "language": "Hindi",
+    "genre": "DELHI",
+    "page": "channel-vbs-delhi-delhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80040"
+    },
+    "id": "0040",
+    "name": "Akashvani Port Blair",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/srivijayapuram.jpeg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio038/playlist.m3u8",
+    "language": "Hindi, English, Nicobarese",
+    "genre": "ANDAMAN NICOBAR",
+    "page": "channel-akashvani-port-blair-andaman-nicobar-hindi-english-nicobarese"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80041"
+    },
+    "id": "0041",
+    "name": "Akashvani Anantapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airanantapur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio054/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-anantapur-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80042"
+    },
+    "id": "0042",
+    "name": "Akashvani Kadapa",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/aircuddapah.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio018/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-kadapa-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80043"
+    },
+    "id": "0043",
+    "name": "Akashvani Kurnool",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkurnool.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio052/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-kurnool-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80044"
+    },
+    "id": "0044",
+    "name": "Akashvani Markapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_789049.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio039/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-markapur-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80045"
+    },
+    "id": "0045",
+    "name": "FM Simhapuri Nellore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_436373.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio168/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-fm-simhapuri-nellore-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80046"
+    },
+    "id": "0046",
+    "name": "Akashvani Tirupati",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airtirupati.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio144/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-tirupati-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80047"
+    },
+    "id": "0047",
+    "name": "Akasvani Andhra Pradesh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airvijayawada.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio175/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akasvani-andhra-pradesh-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80048"
+    },
+    "id": "0048",
+    "name": "FM Rainbow Vijayawada",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/fmrainvijayawada.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio174/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-fm-rainbow-vijayawada-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80049"
+    },
+    "id": "0049",
+    "name": "VB Telugu Vijayawada",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_792040.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio176/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-vb-telugu-vijayawada-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80050"
+    },
+    "id": "0050",
+    "name": "Akashvani Visakhapatnam",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airvisakhapc.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio080/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-akashvani-visakhapatnam-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80051"
+    },
+    "id": "0051",
+    "name": "FM Rainbow Visakhapatnam",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airvisakhafm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio081/playlist.m3u8",
+    "language": "Telugu",
+    "genre": "ANDHRA PRADESH",
+    "page": "channel-fm-rainbow-visakhapatnam-andhra-pradesh-telugu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80052"
+    },
+    "id": "0052",
+    "name": "Akashvani Itanagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_458761.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio277/playlist.m3u8",
+    "language": "Hindi, English​",
+    "genre": "ARUNACHAL PRADESH",
+    "page": "channel-akashvani-itanagar-arunachal-pradesh-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80053"
+    },
+    "id": "0053",
+    "name": "FM Arun Itanagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_131123.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio234/playlist.m3u8",
+    "language": "Hindi, English",
+    "genre": "ARUNACHAL PRADESH",
+    "page": "channel-fm-arun-itanagar-arunachal-pradesh-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80054"
+    },
+    "id": "0054",
+    "name": "Akashvani Pasighat",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_941772.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio268/playlist.m3u8",
+    "language": "Hindi, English",
+    "genre": "ARUNACHAL PRADESH",
+    "page": "channel-akashvani-pasighat-arunachal-pradesh-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80055"
+    },
+    "id": "0055",
+    "name": "Akashvani Tawang",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_265072.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio272/playlist.m3u8",
+    "language": "Monpa, Hindi",
+    "genre": "ARUNACHAL PRADESH",
+    "page": "channel-akashvani-tawang-arunachal-pradesh-monpa-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80056"
+    },
+    "id": "0056",
+    "name": "Akashvani Tezu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_237299.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio267/playlist.m3u8",
+    "language": "Hindi, English",
+    "genre": "ARUNACHAL PRADESH",
+    "page": "channel-akashvani-tezu-arunachal-pradesh-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80057"
+    },
+    "id": "0057",
+    "name": "Akashvani Dibrugarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_499538.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio255/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-dibrugarh-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80058"
+    },
+    "id": "0058",
+    "name": "Akashvani Diphu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_399279.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio271/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-diphu-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80059"
+    },
+    "id": "0059",
+    "name": "Akashvani Guwahati Mahabahu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-assamese.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio133/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-guwahati-mahabahu-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80060"
+    },
+    "id": "0060",
+    "name": "Akashvani Guwahati Pragjyotishpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_646762.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio237/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-guwahati-pragjyotishpur-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80061"
+    },
+    "id": "0061",
+    "name": "Akashvani Haflong",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_226622.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio258/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-haflong-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80062"
+    },
+    "id": "0062",
+    "name": "Akashvani Jorhat",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_983621.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio261/playlist.m3u8",
+    "language": "Assamese, Hindi",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-jorhat-assam-assamese-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80063"
+    },
+    "id": "0063",
+    "name": "Akashvani Nagaon",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_706896.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio260/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-nagaon-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80064"
+    },
+    "id": "0064",
+    "name": "Akashvani Silchar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsilchar.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio090/playlist.m3u8",
+    "language": "Bengali, Hindi",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-silchar-assam-bengali-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80065"
+    },
+    "id": "0065",
+    "name": "Akashvani Tezpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_797923.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio270/playlist.m3u8",
+    "language": "Assamese, Hindi, English",
+    "genre": "ASSAM",
+    "page": "channel-akashvani-tezpur-assam-assamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80066"
+    },
+    "id": "0066",
+    "name": "Akashvani Bhagalpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_687132.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio292/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-akashvani-bhagalpur-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80067"
+    },
+    "id": "0067",
+    "name": "Akashvani Darbhanga",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_645992.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio160/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-akashvani-darbhanga-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80068"
+    },
+    "id": "0068",
+    "name": "Akashvani Patna",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airpatna.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio087/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-akashvani-patna-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80069"
+    },
+    "id": "0069",
+    "name": "FM Rainbow Patna",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_384572.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio252/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-fm-rainbow-patna-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80070"
+    },
+    "id": "0070",
+    "name": "VBS Patna",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_681982.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio251/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-vbs-patna-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80071"
+    },
+    "id": "0071",
+    "name": "Akashvani Purnia Bihar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_763725.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio147/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-akashvani-purnia-bihar-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80072"
+    },
+    "id": "0072",
+    "name": "Akashvani Sasaram",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_330465.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio075/playlist.m3u8",
+    "language": "Maithili, Hindi",
+    "genre": "BIHAR",
+    "page": "channel-akashvani-sasaram-bihar-maithili-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80073"
+    },
+    "id": "0073",
+    "name": "Akashvani Chandigarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airchandigarh.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio111/playlist.m3u8",
+    "language": "Punjabi, Hindi, English",
+    "genre": "CHANDIGARH",
+    "page": "channel-akashvani-chandigarh-chandigarh-punjabi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80074"
+    },
+    "id": "0074",
+    "name": "Akashvani Ambikapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_920396.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio086/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-ambikapur-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80075"
+    },
+    "id": "0075",
+    "name": "Akashvani Bilaspur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_160779.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio110/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-bilaspur-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80076"
+    },
+    "id": "0076",
+    "name": "Akashvani Jagdalpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_320072.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio201/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-jagdalpur-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80077"
+    },
+    "id": "0077",
+    "name": "Akashvani Raigarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_477509.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio196/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-raigarh-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80078"
+    },
+    "id": "0078",
+    "name": "Akashvani Chhattisgarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airraipur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio118/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-chhattisgarh-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80079"
+    },
+    "id": "0079",
+    "name": "VBS Raipur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_130541.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio279/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-vbs-raipur-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80080"
+    },
+    "id": "0080",
+    "name": "Akashvani Saraipali",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_482516.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio254/playlist.m3u8",
+    "language": "Chhattisgarhi, Hindi",
+    "genre": "CHHATISGARH",
+    "page": "channel-akashvani-saraipali-chhatisgarh-chhattisgarhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80081"
+    },
+    "id": "0081",
+    "name": "Akashvani Daman",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_294651.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio208/playlist.m3u8",
+    "language": "Gujarati, Hindi, English",
+    "genre": "DAMAN AND DIU",
+    "page": "channel-akashvani-daman-daman-and-diu-gujarati-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80082"
+    },
+    "id": "0082",
+    "name": "Akashvani Mahadei Panaji",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airmhadei.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio049/playlist.m3u8",
+    "language": "Konkani, Marathi, Hindi",
+    "genre": "GOA",
+    "page": "channel-akashvani-mahadei-panaji-goa-konkani-marathi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80083"
+    },
+    "id": "0083",
+    "name": "VBS Panaji",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_892562.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio280/playlist.m3u8",
+    "language": "Konkani, Marathi, Hindi",
+    "genre": "GOA",
+    "page": "channel-vbs-panaji-goa-konkani-marathi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80084"
+    },
+    "id": "0084",
+    "name": "VBS Ahmedabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_519561.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio037/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-vbs-ahmedabad-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80085"
+    },
+    "id": "0085",
+    "name": "Akashvani Ahwa",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_483257.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio236/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-ahwa-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80086"
+    },
+    "id": "0086",
+    "name": "Akashvani Bhuj",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/bhuj.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio195/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-bhuj-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80087"
+    },
+    "id": "0087",
+    "name": "Akashvani Godhra",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_568172.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio114/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-godhra-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80088"
+    },
+    "id": "0088",
+    "name": "Akashvani Himmatnagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_512587.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio217/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-himmatnagar-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80089"
+    },
+    "id": "0089",
+    "name": "Akashvani Rajkot",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airrajkot.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio155/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-rajkot-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80090"
+    },
+    "id": "0090",
+    "name": "VBS Rajkot",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_355425.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio156/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-vbs-rajkot-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80091"
+    },
+    "id": "0091",
+    "name": "Akashvani Surat",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsurat.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio186/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-surat-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80092"
+    },
+    "id": "0092",
+    "name": "Akashvani Vadodara",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airvadodara.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio095/playlist.m3u8",
+    "language": "Gujarati, Hindi",
+    "genre": "GUJARAT",
+    "page": "channel-akashvani-vadodara-gujarat-gujarati-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80093"
+    },
+    "id": "0093",
+    "name": "Akashvani Hisar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_618853.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio165/playlist.m3u8",
+    "language": "Haryanvi, Hindi",
+    "genre": "HARYANA",
+    "page": "channel-akashvani-hisar-haryana-haryanvi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80094"
+    },
+    "id": "0094",
+    "name": "Akashvani Kurukshetra",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_689198.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio213/playlist.m3u8",
+    "language": "Haryanvi, Hindi",
+    "genre": "HARYANA",
+    "page": "channel-akashvani-kurukshetra-haryana-haryanvi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80095"
+    },
+    "id": "0095",
+    "name": "Akashvani Rohtak",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/rohtak.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio188/playlist.m3u8",
+    "language": "Haryanvi, Hindi",
+    "genre": "HARYANA",
+    "page": "channel-akashvani-rohtak-haryana-haryanvi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80096"
+    },
+    "id": "0096",
+    "name": "Akashvani Dharamshala",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_181135.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio165/playlist.m3u8",
+    "language": "Pahari, Hindi",
+    "genre": "HIMACHAL PRADESH",
+    "page": "channel-akashvani-dharamshala-himachal-pradesh-pahari-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80097"
+    },
+    "id": "0097",
+    "name": "Akashvani Hamirpur FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_247066.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio243/playlist.m3u8",
+    "language": "Pahari, Hindi",
+    "genre": "HIMACHAL PRADESH",
+    "page": "channel-akashvani-hamirpur-fm-himachal-pradesh-pahari-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80098"
+    },
+    "id": "0098",
+    "name": "Akashvani Shimla",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_336736.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio043/playlist.m3u8",
+    "language": "Pahari, Hindi",
+    "genre": "HIMACHAL PRADESH",
+    "page": "channel-akashvani-shimla-himachal-pradesh-pahari-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80099"
+    },
+    "id": "0099",
+    "name": "Akashvani Shimla FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/shimla.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio042/playlist.m3u8",
+    "language": "Pahari, Hindi",
+    "genre": "HIMACHAL PRADESH",
+    "page": "channel-akashvani-shimla-fm-himachal-pradesh-pahari-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80100"
+    },
+    "id": "0100",
+    "name": "Akashvani Bhaderwah",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_937767.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio246/playlist.m3u8",
+    "language": "Dogri, Hindi, Urdu",
+    "genre": "JAMMU & KASHMIR",
+    "page": "channel-akashvani-bhaderwah-jammu-kashmir-dogri-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80101"
+    },
+    "id": "0101",
+    "name": "Akashvani Jammu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airjammu.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio128/playlist.m3u8",
+    "language": "Dogri, Hindi, Urdu",
+    "genre": "JAMMU & KASHMIR",
+    "page": "channel-akashvani-jammu-jammu-kashmir-dogri-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80102"
+    },
+    "id": "0102",
+    "name": "Akashvani Kathua",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_433421.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio190/playlist.m3u8",
+    "language": "Dogri, Hindi, Urdu",
+    "genre": "JAMMU & KASHMIR",
+    "page": "channel-akashvani-kathua-jammu-kashmir-dogri-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80103"
+    },
+    "id": "0103",
+    "name": "Akashvani Srinagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/radio-kashmir.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio136/playlist.m3u8",
+    "language": "Dogri, Hindi, Urdu",
+    "genre": "JAMMU & KASHMIR",
+    "page": "channel-akashvani-srinagar-jammu-kashmir-dogri-hindi-urdu"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80104"
+    },
+    "id": "0104",
+    "name": "Akashvani Chaibasa",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_910297.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio224/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-akashvani-chaibasa-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80105"
+    },
+    "id": "0105",
+    "name": "Akashvani Daltonganj",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_871753.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio202/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-akashvani-daltonganj-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80106"
+    },
+    "id": "0106",
+    "name": "Akashvani Hazaribagh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_972766.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio197/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-akashvani-hazaribagh-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80107"
+    },
+    "id": "0107",
+    "name": "Akashvani Jamshedpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_881940.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio216/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-akashvani-jamshedpur-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80108"
+    },
+    "id": "0108",
+    "name": "VBS Jamshedpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_842830.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio266/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-vbs-jamshedpur-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80109"
+    },
+    "id": "0109",
+    "name": "Akashvani Ranchi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_135580.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio199/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-akashvani-ranchi-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80110"
+    },
+    "id": "0110",
+    "name": "FM Rainbow Ranchi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_415881.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio253/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-fm-rainbow-ranchi-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80111"
+    },
+    "id": "0111",
+    "name": "VBS Ranchi",
+    "logoUrl": "https://https://airdco.pc.cdn.bitgravity.com/images/RADIO_285837.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio250/playlist.m3u8",
+    "language": "Nagpuri, Hindi",
+    "genre": "JHARKHAND",
+    "page": "channel-vbs-ranchi-jharkhand-nagpuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80112"
+    },
+    "id": "0112",
+    "name": "Akashvani Bellari",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_120851.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio114/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-bellari-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80113"
+    },
+    "id": "0113",
+    "name": "Akashvani Karnataka",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airbangaluru.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio030/hlspbaudio030_Auto.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-karnataka-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80114"
+    },
+    "id": "0114",
+    "name": "Amrutvarshini",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/amrutvarshini.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio028/hlspbaudio028_Auto.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-amrutvarshini-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80115"
+    },
+    "id": "0115",
+    "name": "Rainbow Kannada Kaamanbilu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/rainbowkan.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio027/hlspbaudio027_Auto.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-rainbow-kannada-kaamanbilu-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80116"
+    },
+    "id": "0116",
+    "name": "VB KANNADA",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/vbbang.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio026/hlspbaudio026_Auto.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-vb-kannada-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80117"
+    },
+    "id": "0117",
+    "name": "Akashvani Bhadravati",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airbhadravati.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio211/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-bhadravati-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80118"
+    },
+    "id": "0118",
+    "name": "Akashvani Bijapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_581147.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio145/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-bijapur-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80119"
+    },
+    "id": "0119",
+    "name": "Akashvani Chitradurga",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airchitradurga.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio105/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-chitradurga-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80120"
+    },
+    "id": "0120",
+    "name": "Akashvani Dharwad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_390506.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio150/playlist.m3u8",
+    "language": "Kannada, Hindi",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-dharwad-karnataka-kannada-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80121"
+    },
+    "id": "0121",
+    "name": "Akashvani Kalaburgi (Gulbarga)",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_797239.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio015/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-kalaburgi-gulbarga-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80122"
+    },
+    "id": "0122",
+    "name": "Akashvani Hassan",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airhassan.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio172/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-hassan-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80123"
+    },
+    "id": "0123",
+    "name": "Akashvani Hospet",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_998276.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio184/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-hospet-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80124"
+    },
+    "id": "0124",
+    "name": "Akashvani Karwar",
+    "logoUrl": "https://https://airdco.pc.cdn.bitgravity.com/images/RADIO_857926.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio123/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-karwar-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80125"
+    },
+    "id": "0125",
+    "name": "Akashvani Mysuru",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/mysuru.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio177/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-mysuru-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80126"
+    },
+    "id": "0126",
+    "name": "Akashvani Mangalore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airmangalore.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio073/playlist.m3u8",
+    "language": "Tulu, Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-mangalore-karnataka-tulu-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80127"
+    },
+    "id": "0127",
+    "name": "Akashvani Madikeri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_329609.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio068/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-madikeri-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80128"
+    },
+    "id": "0128",
+    "name": "Akashvani Raichur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_919759.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio198/playlist.m3u8",
+    "language": "Kannada, Hindi, English",
+    "genre": "KARNATAKA",
+    "page": "channel-akashvani-raichur-karnataka-kannada-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80129"
+    },
+    "id": "0129",
+    "name": "Akashvani Devikulam",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_996461.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio214/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-devikulam-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80130"
+    },
+    "id": "0130",
+    "name": "Akashvani Kannur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkannur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio173/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-kannur-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80131"
+    },
+    "id": "0131",
+    "name": "FM Rainbow Kochi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/kochirainbow.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio044/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-fm-rainbow-kochi-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80132"
+    },
+    "id": "0132",
+    "name": "Akashvani Kochi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkochi.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio045/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-kochi-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80133"
+    },
+    "id": "0133",
+    "name": "Akashvani Calicut",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/aircalicut.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio082/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-calicut-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80134"
+    },
+    "id": "0134",
+    "name": "Akashvani Kozhikode Real FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkozhikoderealfm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio083/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-kozhikode-real-fm-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80135"
+    },
+    "id": "0135",
+    "name": "Akashvani Manjeri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airmanjeri.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio101/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-manjeri-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80136"
+    },
+    "id": "0136",
+    "name": "Akashvani Trissur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airthrissur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio036/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-akashvani-trissur-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80137"
+    },
+    "id": "0137",
+    "name": "VB MALAYALAM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/fmananthapuri.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio229/playlist.m3u8",
+    "language": "Malayalam, English",
+    "genre": "KERALA",
+    "page": "channel-vb-malayalam-kerala-malayalam-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80138"
+    },
+    "id": "0138",
+    "name": "Akashvani Kargil",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_389223.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio066/playlist.m3u8",
+    "language": "Ladakhi, Hindi​",
+    "genre": "LADAKH",
+    "page": "channel-akashvani-kargil-ladakh-ladakhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80139"
+    },
+    "id": "0139",
+    "name": "Akashvani Leh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_410707.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio223/playlist.m3u8",
+    "language": "Ladakhi, Hindi​",
+    "genre": "LADAKH",
+    "page": "channel-akashvani-leh-ladakh-ladakhi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80140"
+    },
+    "id": "0140",
+    "name": "Akashvani Kavaratti",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_387716.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio189/playlist.m3u8",
+    "language": "Malayalam, Hindi​, English",
+    "genre": "LAKSHADWEEP",
+    "page": "channel-akashvani-kavaratti-lakshadweep-malayalam-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80141"
+    },
+    "id": "0141",
+    "name": "Akashvani Balaghat",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_104096.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio091/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-balaghat-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80142"
+    },
+    "id": "0142",
+    "name": "Akashvani Betul",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_434247.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio108/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-betul-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80143"
+    },
+    "id": "0143",
+    "name": "Akashvani Bhopal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/bhopal.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio146/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-bhopal-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80144"
+    },
+    "id": "0144",
+    "name": "VBS Bhopal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_124534.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio248/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-vbs-bhopal-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80145"
+    },
+    "id": "0145",
+    "name": "Akashvani Chhatarpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airchhatarpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio104/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-chhatarpur-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80146"
+    },
+    "id": "0146",
+    "name": "Akashvani Chhindwara",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airchhindwara.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio113/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-chhindwara-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80147"
+    },
+    "id": "0147",
+    "name": "Akashvani Guna",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_741208.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio115/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-guna-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80148"
+    },
+    "id": "0148",
+    "name": "Akashvani Gwalior",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airgwalior.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio205/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-gwalior-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80149"
+    },
+    "id": "0149",
+    "name": "Akashvani Indore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/indore.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio212/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-indore-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80150"
+    },
+    "id": "0150",
+    "name": "VBS Indore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_624993.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio241/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-vbs-indore-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80151"
+    },
+    "id": "0151",
+    "name": "Akashvani Jabalpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/jabalpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio167/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-jabalpur-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80152"
+    },
+    "id": "0152",
+    "name": "Akashvani Jabalpur FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_339623.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio240/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-jabalpur-fm-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80153"
+    },
+    "id": "0153",
+    "name": "Akashvani Khandwa",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_818549.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio143/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-khandwa-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80154"
+    },
+    "id": "0154",
+    "name": "Akashvani Rewa",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_671538.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio225/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-rewa-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80155"
+    },
+    "id": "0155",
+    "name": "Akashvani Sagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_918593.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio204/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-sagar-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80156"
+    },
+    "id": "0156",
+    "name": "Akashvani Shahdol",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_567879.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio228/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-shahdol-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80157"
+    },
+    "id": "0157",
+    "name": "Akashvani Shivpuri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_147769.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio171/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "MADHYA PRADESH",
+    "page": "channel-akashvani-shivpuri-madhya-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80158"
+    },
+    "id": "0158",
+    "name": "Akashvani Ahilyanagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airahmednagar.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio019/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-ahilyanagar-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80159"
+    },
+    "id": "0159",
+    "name": "Akashvani Akola",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airakola.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio178/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-akola-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80160"
+    },
+    "id": "0160",
+    "name": "Akashvani Amravati",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_917014.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio151/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-amravati-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80161"
+    },
+    "id": "0161",
+    "name": "Akashvani Chhatrapati Sambhaji Nagar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airaurangabad.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio065/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-chhatrapati-sambhaji-nagar-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80162"
+    },
+    "id": "0162",
+    "name": "Akashvani Beed",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_341177.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio077/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-beed-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80163"
+    },
+    "id": "0163",
+    "name": "Akashvani Chandrapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_119620.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio074/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-chandrapur-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80164"
+    },
+    "id": "0164",
+    "name": "Akashvani Dhule",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_868166.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio079/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-dhule-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80165"
+    },
+    "id": "0165",
+    "name": "Akashvani Jalgaon",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airjalgaon.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio096/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-jalgaon-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80166"
+    },
+    "id": "0166",
+    "name": "Akashvani Kolhapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkolhapur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio063/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-kolhapur-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80167"
+    },
+    "id": "0167",
+    "name": "FM Gold Mumbai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/goldmumbai.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio007/hlspbaudio007_Auto.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-fm-gold-mumbai-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80168"
+    },
+    "id": "0168",
+    "name": "FM Rainbow Mumbai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/rainmumbai.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio008/hlspbaudio008_Auto.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-fm-rainbow-mumbai-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80169"
+    },
+    "id": "0169",
+    "name": "Sanvadita Mumbai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/sammumbai.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio009/hlspbaudio009_Auto.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-sanvadita-mumbai-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80170"
+    },
+    "id": "0170",
+    "name": "VBS Mumbai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_597242.jpg",
+    "streamUrl": "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio011/hlspbaudio011_Auto.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-vbs-mumbai-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80171"
+    },
+    "id": "0171",
+    "name": "VBS Nagpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_811388.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-vbs-nagpur-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80172"
+    },
+    "id": "0172",
+    "name": "Akashvani Nagpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airnagpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio069/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-nagpur-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80173"
+    },
+    "id": "0173",
+    "name": "Akashvani Nanded",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airnanded.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio072/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-nanded-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80174"
+    },
+    "id": "0174",
+    "name": "Akashvani Nasik",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_414066.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio035/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-nasik-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80175"
+    },
+    "id": "0175",
+    "name": "Akashvani Dharashiv",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airosmanabad.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio132/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-dharashiv-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80176"
+    },
+    "id": "0176",
+    "name": "Akashvani Parbhani",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airparbhani.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio085/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-parbhani-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80177"
+    },
+    "id": "0177",
+    "name": "Akashvani Pune",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airpune.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio012/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-pune-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80178"
+    },
+    "id": "0178",
+    "name": "Akashvani Pune FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airpunefm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio013/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-pune-fm-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80179"
+    },
+    "id": "0179",
+    "name": "Akashvani Ratnagiri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airratnagiri.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio071/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-ratnagiri-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80180"
+    },
+    "id": "0180",
+    "name": "Akashvani Sindhudurg",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_934689.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio219/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-sindhudurg-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80181"
+    },
+    "id": "0181",
+    "name": "Akashvani Sangli",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsangli.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio106/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-sangli-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80182"
+    },
+    "id": "0182",
+    "name": "Akashvani Satara",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsatara.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio076/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-satara-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80183"
+    },
+    "id": "0183",
+    "name": "Akashvani Solapur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsolapur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio093/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-solapur-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80184"
+    },
+    "id": "0184",
+    "name": "Akashvani Yavatmal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_795221.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio109/playlist.m3u8",
+    "language": "Marathi, Hindi, English",
+    "genre": "MAHARASHTRA",
+    "page": "channel-akashvani-yavatmal-maharashtra-marathi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80185"
+    },
+    "id": "0185",
+    "name": "Akashvani Churachandpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_469489.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio273/playlist.m3u8",
+    "language": "Manipuri, Hindi",
+    "genre": "MANIPUR",
+    "page": "channel-akashvani-churachandpur-manipur-manipuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80186"
+    },
+    "id": "0186",
+    "name": "Akashvani Imphal Kangla",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_999074.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio209/playlist.m3u8",
+    "language": "Manipuri, Hindi",
+    "genre": "MANIPUR",
+    "page": "channel-akashvani-imphal-kangla-manipur-manipuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80187"
+    },
+    "id": "0187",
+    "name": "Akashvani Imphal Sangai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_999075.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio210/playlist.m3u8",
+    "language": "Manipuri, Hindi",
+    "genre": "MANIPUR",
+    "page": "channel-akashvani-imphal-sangai-manipur-manipuri-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80188"
+    },
+    "id": "0188",
+    "name": "Akashvani Jowai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_595144.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio265/playlist.m3u8",
+    "language": "Khasi, Hindi, English",
+    "genre": "MEGHALAYA",
+    "page": "channel-akashvani-jowai-meghalaya-khasi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80189"
+    },
+    "id": "0189",
+    "name": "Akashvani Shillong",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_505076.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio161/playlist.m3u8",
+    "language": "Khasi, Hindi, English",
+    "genre": "MEGHALAYA",
+    "page": "channel-akashvani-shillong-meghalaya-khasi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80190"
+    },
+    "id": "0190",
+    "name": "FM Jongphi Shillong",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_268715.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio264/playlist.m3u8",
+    "language": "Khasi, Hindi, English",
+    "genre": "MEGHALAYA",
+    "page": "channel-fm-jongphi-shillong-meghalaya-khasi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80191"
+    },
+    "id": "0191",
+    "name": "Akashvani North East Livestream",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_289258.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio249/playlist.m3u8",
+    "language": "Khasi, Hindi, English",
+    "genre": "MEGHALAYA",
+    "page": "channel-akashvani-north-east-livestream-meghalaya-khasi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80192"
+    },
+    "id": "0192",
+    "name": "Akashvani Tura",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_500280.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio259/playlist.m3u8",
+    "language": "Khasi, Hindi, English",
+    "genre": "MEGHALAYA",
+    "page": "channel-akashvani-tura-meghalaya-khasi-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80193"
+    },
+    "id": "0193",
+    "name": "Akashvani Aizawl",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_599542.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio221/playlist.m3u8",
+    "language": "Mizo, Hindi, English",
+    "genre": "MIZORAM",
+    "page": "channel-akashvani-aizawl-mizoram-mizo-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80194"
+    },
+    "id": "0194",
+    "name": "FM Zowai Aizawl",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_461023.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio242/playlist.m3u8",
+    "language": "Mizo, Hindi, English",
+    "genre": "MIZORAM",
+    "page": "channel-fm-zowai-aizawl-mizoram-mizo-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80195"
+    },
+    "id": "0195",
+    "name": "Akashvani Lunglei",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_236171.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio269/playlist.m3u8",
+    "language": "Mizo, Hindi, English",
+    "genre": "MIZORAM",
+    "page": "channel-akashvani-lunglei-mizoram-mizo-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80196"
+    },
+    "id": "0196",
+    "name": "Akashvani Mokokchung",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_927073.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio263/playlist.m3u8",
+    "language": "Nagamese, Hindi, English",
+    "genre": "NAGALAND",
+    "page": "channel-akashvani-mokokchung-nagaland-nagamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80197"
+    },
+    "id": "0197",
+    "name": "Akashvani Kohima",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_125467.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio274/playlist.m3u8",
+    "language": "Nagamese, Hindi, English",
+    "genre": "NAGALAND",
+    "page": "channel-akashvani-kohima-nagaland-nagamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80198"
+    },
+    "id": "0198",
+    "name": "FM Tragopan Kohima",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkohima.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio220/playlist.m3u8",
+    "language": "Nagamese, Hindi, English",
+    "genre": "NAGALAND",
+    "page": "channel-fm-tragopan-kohima-nagaland-nagamese-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80199"
+    },
+    "id": "0199",
+    "name": "Akashvani Baripada",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_705237.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio158/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-baripada-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80200"
+    },
+    "id": "0200",
+    "name": "Akashvani Berhampur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_339598.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio180/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-berhampur-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80201"
+    },
+    "id": "0201",
+    "name": "Akashvani Bhawanipatna",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_111466.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio120/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-bhawanipatna-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80202"
+    },
+    "id": "0202",
+    "name": "Akashvani Balangir",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_116831.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio187/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-balangir-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80203"
+    },
+    "id": "0203",
+    "name": "Akashvani Odia",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/air-odia.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio137/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-odia-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80204"
+    },
+    "id": "0204",
+    "name": "FM Rainbow Cuttack",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_356417.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio102/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-fm-rainbow-cuttack-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80205"
+    },
+    "id": "0205",
+    "name": "VBS Cuttack",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_289011.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio103/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-vbs-cuttack-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80206"
+    },
+    "id": "0206",
+    "name": "Akashvani Jeypore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_413790.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio112/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-jeypore-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80207"
+    },
+    "id": "0207",
+    "name": "Akashvani Joranda",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_980324.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio256/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-joranda-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80208"
+    },
+    "id": "0208",
+    "name": "Akashvani Keonjhar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_471603.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio166/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-keonjhar-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80209"
+    },
+    "id": "0209",
+    "name": "Akashvani Puri FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airpurifm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio100/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-puri-fm-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80210"
+    },
+    "id": "0210",
+    "name": "Akashvani Rourkela",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_120416.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio215/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-rourkela-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80211"
+    },
+    "id": "0211",
+    "name": "Akashvani Mahanadi Sambalpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_945118.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio182/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-mahanadi-sambalpur-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80212"
+    },
+    "id": "0212",
+    "name": "Akashvani Sambalpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_110301.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio181/playlist.m3u8",
+    "language": "Odia, Hindi",
+    "genre": "ODISHA",
+    "page": "channel-akashvani-sambalpur-odisha-odia-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80213"
+    },
+    "id": "0213",
+    "name": "Akashvani Karaikal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_850420.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio050/playlist.m3u8",
+    "language": "Tamil, Hindi, English",
+    "genre": "PUDUCHERRY",
+    "page": "channel-akashvani-karaikal-puducherry-tamil-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80214"
+    },
+    "id": "0214",
+    "name": "Akashvani Puducherry",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_330207.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio097/playlist.m3u8",
+    "language": "Tamil, Hindi, English",
+    "genre": "PUDUCHERRY",
+    "page": "channel-akashvani-puducherry-puducherry-tamil-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80215"
+    },
+    "id": "0215",
+    "name": "FM Rainbow Puducherry",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_224333.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio098/playlist.m3u8",
+    "language": "Tamil, Hindi, English",
+    "genre": "PUDUCHERRY",
+    "page": "channel-fm-rainbow-puducherry-puducherry-tamil-hindi-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80216"
+    },
+    "id": "0216",
+    "name": "Akashvani Bhatinda",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_283995.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio117/playlist.m3u8",
+    "language": "Punjabi, Hindi",
+    "genre": "PUNJAB",
+    "page": "channel-akashvani-bhatinda-punjab-punjabi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80217"
+    },
+    "id": "0217",
+    "name": "FM Rainboww Jalandhar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_667521.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio134/playlist.m3u8",
+    "language": "Punjabi, Hindi",
+    "genre": "PUNJAB",
+    "page": "channel-fm-rainboww-jalandhar-punjab-punjabi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80218"
+    },
+    "id": "0218",
+    "name": "Akashvani Patiala",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airpatiala.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio163/playlist.m3u8",
+    "language": "Punjabi, Hindi",
+    "genre": "PUNJAB",
+    "page": "channel-akashvani-patiala-punjab-punjabi-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80219"
+    },
+    "id": "0219",
+    "name": "Akashvani Alwar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_199064.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio153/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-alwar-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80220"
+    },
+    "id": "0220",
+    "name": "Akashvani Banswara",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airbanswara.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio014/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-banswara-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80221"
+    },
+    "id": "0221",
+    "name": "Akashvani Barmer",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_742300.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio200/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-barmer-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80222"
+    },
+    "id": "0222",
+    "name": "Akashvani Bikaner",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airbikaner.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio053/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-bikaner-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80223"
+    },
+    "id": "0223",
+    "name": "Akashvani Chittorgarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airchittorgarh.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio060/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-chittorgarh-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80224"
+    },
+    "id": "0224",
+    "name": "Akashvani Churu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_898927.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio226/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-churu-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80225"
+    },
+    "id": "0225",
+    "name": "Akashvani Jaipur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airjaipur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio192/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-jaipur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80226"
+    },
+    "id": "0226",
+    "name": "VBS Jaipur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_772066.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio193/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-vbs-jaipur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80227"
+    },
+    "id": "0227",
+    "name": "Akashvani Jaisalmer",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_391414.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio206/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-jaisalmer-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80228"
+    },
+    "id": "0228",
+    "name": "Akashvani Jhalawar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_622484.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio157/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-jhalawar-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80229"
+    },
+    "id": "0229",
+    "name": "Akashvani Jodhpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airjodhpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio088/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-jodhpur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80230"
+    },
+    "id": "0230",
+    "name": "Akashvani Jodhpur Sun City FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/fmjodhpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio089/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-jodhpur-sun-city-fm-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80231"
+    },
+    "id": "0231",
+    "name": "Akashvani Kota",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkota.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio084/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-kota-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80232"
+    },
+    "id": "0232",
+    "name": "Akashvani Mount Abu",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_156819.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio159/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-mount-abu-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80233"
+    },
+    "id": "0233",
+    "name": "Akashvani Nagaur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_178497.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio170/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-nagaur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80234"
+    },
+    "id": "0234",
+    "name": "Akashvani Sawai Madhopur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsawaimadhopur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio119/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-sawai-madhopur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80235"
+    },
+    "id": "0235",
+    "name": "Akashvani Suratgarh",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airsuratgarh.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio064/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-suratgarh-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80236"
+    },
+    "id": "0236",
+    "name": "Akashvani Udaipur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airudaipur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio148/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-udaipur-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80237"
+    },
+    "id": "0237",
+    "name": "Akashvani Udaipur FM Lake CIty",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airudaipurfmlakecity.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio149/playlist.m3u8",
+    "language": "Rajasthani, Hindi",
+    "genre": "RAJASTHAN",
+    "page": "channel-akashvani-udaipur-fm-lake-city-rajasthan-rajasthani-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80238"
+    },
+    "id": "0238",
+    "name": "Akashvani Gangtok",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_770774.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio227/playlist.m3u8",
+    "language": "Nepali, Hindi",
+    "genre": "SIKKIM",
+    "page": "channel-akashvani-gangtok-sikkim-nepali-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80239"
+    },
+    "id": "0239",
+    "name": "FM Gold Chennai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_121071.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio021/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-fm-gold-chennai-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80240"
+    },
+    "id": "0240",
+    "name": "VB Tamil Chennai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_361667.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio024/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-vb-tamil-chennai-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80241"
+    },
+    "id": "0241",
+    "name": "Akashvani Coimbatore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/aircoimbatore.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio016/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-coimbatore-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80242"
+    },
+    "id": "0242",
+    "name": "FM Rainbow Coimbatore",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/aircoimbatorefmrainbow.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio017/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-fm-rainbow-coimbatore-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80243"
+    },
+    "id": "0243",
+    "name": "Akashvani Dharmapuri",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_431421.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio078/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-dharmapuri-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80244"
+    },
+    "id": "0244",
+    "name": "Akashvani Kodaikanal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airkodaikanal.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio051/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-kodaikanal-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80245"
+    },
+    "id": "0245",
+    "name": "Akashvani Madurai",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_503678.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio127/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-madurai-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80246"
+    },
+    "id": "0246",
+    "name": "FM Nagercoil Kumari ",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/nagercoilkumarifm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio129/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-fm-nagercoil-kumari-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80247"
+    },
+    "id": "0247",
+    "name": "Akashvani Ooty",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airooty.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio207/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-ooty-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80248"
+    },
+    "id": "0248",
+    "name": "Akashvani Tiruchirapalli ",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airtiruchirappallifm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio041/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-tiruchirapalli-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80249"
+    },
+    "id": "0249",
+    "name": "Akashvani Tiruchirappalli FM",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airtiruchirappallifm.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio040/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-tiruchirappalli-fm-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80250"
+    },
+    "id": "0250",
+    "name": "Akashvani Tirunelveli",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airtirunelveli.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio061/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-tirunelveli-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80251"
+    },
+    "id": "0251",
+    "name": "FM RainbowTirunelveli ",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_405676.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio062/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-fm-rainbowtirunelveli-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80252"
+    },
+    "id": "0252",
+    "name": "Akashvani Tuticorin",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_750850.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio121/playlist.m3u8",
+    "language": "Tamil, English",
+    "genre": "TAMIL NADU",
+    "page": "channel-akashvani-tuticorin-tamil-nadu-tamil-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80253"
+    },
+    "id": "0253",
+    "name": "Akashvani Telangana",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_705851.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio032/playlist.m3u8",
+    "language": "Telugu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-akashvani-telangana-telangana-telugu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80254"
+    },
+    "id": "0254",
+    "name": "FM Rainbow Hyderabad ",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_212042.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio031/playlist.m3u8",
+    "language": "Telugu, Urdu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-fm-rainbow-hyderabad-telangana-telugu-urdu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80255"
+    },
+    "id": "0255",
+    "name": "VB:Telugu Hyderabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_444750.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio034/playlist.m3u8",
+    "language": "Telugu, Urdu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-vbtelugu-hyderabad-telangana-telugu-urdu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80256"
+    },
+    "id": "0256",
+    "name": "Akashvani Kothagudem",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_509111.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio116/playlist.m3u8",
+    "language": "Telugu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-akashvani-kothagudem-telangana-telugu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80257"
+    },
+    "id": "0257",
+    "name": "Akashvani Nizamabad",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_187368.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio222/playlist.m3u8",
+    "language": "Telugu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-akashvani-nizamabad-telangana-telugu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80258"
+    },
+    "id": "0258",
+    "name": "Akashvani Warangal",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airwarangal.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio154/playlist.m3u8",
+    "language": "Telugu, Hindi",
+    "genre": "TELANGANA",
+    "page": "channel-akashvani-warangal-telangana-telugu-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80259"
+    },
+    "id": "0259",
+    "name": "Akashvani Agartala",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_690649.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio131/playlist.m3u8",
+    "language": "Bengali, Kokborok, Hindi, and English",
+    "genre": "TRIPURA",
+    "page": "channel-akashvani-agartala-tripura-bengali-kokborok-hindi-and-english"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80260"
+    },
+    "id": "0260",
+    "name": "FM Ujjayanta Agartala",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_332705.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio130/playlist.m3u8",
+    "language": "Bengali, Kokborok, Hindi",
+    "genre": "TRIPURA",
+    "page": "channel-fm-ujjayanta-agartala-tripura-bengali-kokborok-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80261"
+    },
+    "id": "0261",
+    "name": "Akashvani Belonia",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_736495.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio257/playlist.m3u8",
+    "language": "Bengali, Kokborok, Hindi",
+    "genre": "TRIPURA",
+    "page": "channel-akashvani-belonia-tripura-bengali-kokborok-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80262"
+    },
+    "id": "0262",
+    "name": "Akashvani Kailashahar",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_237652.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio276/playlist.m3u8",
+    "language": "Bengali, Kokborok, Hindi",
+    "genre": "TRIPURA",
+    "page": "channel-akashvani-kailashahar-tripura-bengali-kokborok-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80263"
+    },
+    "id": "0263",
+    "name": "Akashvani Agra",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airagra.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio059/playlist.m3u8",
+    "language": "Hindi, Braj Bhasha",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-agra-uttar-pradesh-hindi-braj-bhasha"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80264"
+    },
+    "id": "0264",
+    "name": "Akashvani Prayagraj",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airallahabad.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio125/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-prayagraj-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80265"
+    },
+    "id": "0265",
+    "name": "Akashvani Bareilly",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_195570.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio124/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-bareilly-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80266"
+    },
+    "id": "0266",
+    "name": "Akashvani Ayodhya",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/RADIO_921956.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio152/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-ayodhya-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80267"
+    },
+    "id": "0267",
+    "name": "Akashvani Gorakhpur",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airgorakhpur.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio203/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-gorakhpur-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80268"
+    },
+    "id": "0268",
+    "name": "Akashvani Jhansi",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/airjhansi.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio099/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-akashvani-jhansi-uttar-pradesh-hindi"
+  },
+  {
+    "_id": {
+      "$oid": "690e3eed5d4d928885f80269"
+    },
+    "id": "0269",
+    "name": "KumbhVani",
+    "logoUrl": "https://airdco.pc.cdn.bitgravity.com/images/Kumbhvani.jpg",
+    "streamUrl": "https://air.pc.cdn.bitgravity.com/air/live/pbaudio300/playlist.m3u8",
+    "language": "Hindi",
+    "genre": "UTTAR PRADESH",
+    "page": "channel-kumbhvani-uttar-pradesh-hindi"
+  }
+]

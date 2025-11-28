@@ -1,10 +1,11 @@
 # data/stations_db.py (Revised)
+import os
 from typing import List, Optional
 from stations.models import Station
 from db.db import db
 from bson.objectid import ObjectId # Required to query by MongoDB's native _id
 
-COLLECTION_NAME = "radio_stations"
+COLLECTION_NAME = os.environ.get('COLLECTION_NAME')
 
 # --- ASYNCHRONOUS DATABASE FUNCTIONS ---
 
