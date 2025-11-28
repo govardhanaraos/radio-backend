@@ -7,8 +7,6 @@ from typing import Optional
 MONGO_URL=os.environ.get('MONGO_URL')
 DB_NAME = os.environ.get('DB_NAME')
 
-if MONGO_URL is None or MONGO_URL == "":
-    MONGO_URL = "mongodb://govardhanaraofmuser:Retail546321987@ac-1iddvrw-shard-00-00.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-01.mihjnbk.mongodb.net:27017,ac-1iddvrw-shard-00-02.mihjnbk.mongodb.net:27017/?ssl=true&authSource=admin&replicaSet=atlas-w63i5e-shard-0"
 
 print(f"MONGO_URL static DB_NAME: {MONGO_URL}")
 
