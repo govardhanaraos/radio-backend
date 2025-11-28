@@ -7,7 +7,8 @@ from bson.objectid import ObjectId # Required to query by MongoDB's native _id
 
 COLLECTION_NAME = os.environ.get('COLLECTION_NAME')
 print(f"MONGO  env COLLECTION_NAME: {COLLECTION_NAME}")
-COLLECTION_NAME = "radio_garden_channels"
+if COLLECTION_NAME is None or COLLECTION_NAME == "":
+    COLLECTION_NAME = "radio_garden_channels"
 print(f"MONGO  env COLLECTION_NAME: {COLLECTION_NAME}")
 # --- ASYNCHRONOUS DATABASE FUNCTIONS ---
 
