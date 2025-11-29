@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
+# Assuming Station and StationFilter are defined in stations.models
 from stations.models import Station, StationFilter
-from db.db import get_db, DB_NAME,COLLECTION_NAME
+# Assuming get_db, DB_NAME, and COLLECTION_NAME are defined in db.db
+from db.db import get_db, DB_NAME, COLLECTION_NAME
 
 # Use APIRouter to group all station-related endpoints
 router = APIRouter(
@@ -9,9 +11,13 @@ router = APIRouter(
     tags=["Stations"],
 )
 
+# Define the names of your two collections
+RADIO_STATIONS_COLLECTION = "radio_stations"
+RADIO_GARDEN_CHANNELS_COLLECTION = "radio_garden_channels"
+
+
 @router.get("/", response_model=List[Station])
 async def fetch_stations(
-        # FastAPI automatically handles optional query parameters (?language=English)
         filters: StationFilter = Depends()
 ):
     database = get_db()
@@ -19,29 +25,90 @@ async def fetch_stations(
     if database is None:
         raise HTTPException(status_code=503, detail="Database connection failed during startup.")
 
-    print(f"COLLECTION_NAME router.py: {COLLECTION_NAME}")
+    # --- Pagination Constants ---
+    PAGE_SIZE = 100
 
-    collection = database[COLLECTION_NAME]
-    query = {} # Initialize an empty MongoDB query dictionary
+    if filters.page < 1:
+        raise HTTPException(status_code=400, detail="Page number must be 1 or greater.")
 
-    # Build the MongoDB query based on the filters provided by the client
+    skip_count = (filters.page - 1) * PAGE_SIZE
+    # ----------------------------
+
+    # The collection to start the aggregation pipeline from (radio_stations)
+    radio_stations_collection = database[RADIO_STATIONS_COLLECTION]
+
+    # 1. Base Query for Filtering
+    match_query = {}
     if filters.language:
-        # Use the MongoDB field name ('Language') for the query
-        query['Language'] = filters.language
-
+        # Note: The field name must match the name AFTER projection/standardization (i.e., 'language')
+        match_query['language'] = filters.language
     if filters.genre:
-        query['genre'] = filters.genre
+        match_query['genre'] = filters.genre
 
-    # Add logic for other filters (e.g., page) here
+    # 2. Aggregation Pipeline Definition
+    pipeline = [
+        # Stage 1: Standardize fields from the starting collection (radio_stations)
+        {
+            "$project": {
+                "_id": 0,  # Exclude MongoDB's internal _id
+                "id": "$id",
+                "name": "$name",
+                "logoUrl": "$logoUrl",
+                "streamUrl": "$streamUrl",
+                "language": "$language",  # Already matches the target structure
+                "genre": "$genre",  # Already matches the target structure
+                "page": "$page"
+            }
+        },
+
+        # Stage 2: Combine with the second collection (radio_garden_channels)
+        {
+            "$unionWith": {
+                "coll": RADIO_GARDEN_CHANNELS_COLLECTION,
+                "pipeline": [
+                    # Sub-Stage for the second collection: Standardize its fields
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "id": "$id",
+                            "name": "$name",
+                            "logoUrl": "$logoUrl",
+                            "streamUrl": "$streamUrl",
+                            "language": "$language",
+                            "genre": "$genre",
+                            "page": "$page"
+                            # radio_garden_channels fields 'radio_garden_id', 'country', 'state' are dropped
+                        }
+                    }
+                ]
+            }
+        },
+
+        # Stage 3: Apply Filters (Matching on the combined and standardized set)
+        {
+            "$match": match_query
+        },
+
+        # Stage 4: Pagination - Skip (offset)
+        {
+            "$skip": skip_count
+        },
+
+        # Stage 5: Pagination - Limit (page size)
+        {
+            "$limit": PAGE_SIZE
+        }
+    ]
 
     try:
-        # Pass the constructed query to find()
-        stations_cursor = collection.find({})
-        stations_list = await stations_cursor.to_list(length=100)
+        # Run the aggregation pipeline
+        stations_cursor = radio_stations_collection.aggregate(pipeline)
+
+        # Convert the motor cursor result into a list
+        stations_list = await stations_cursor.to_list(length=PAGE_SIZE)
 
         return stations_list
 
     except Exception as e:
         print(f"Error during database query: {e}")
         raise HTTPException(status_code=500, detail="Error fetching stations from database.")
-

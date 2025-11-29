@@ -53,7 +53,7 @@ class StationFilter(BaseModel):
     genre: Optional[str] = None
 
     # Add any other optional fields you want to filter by (e.g., page)
-    page: Optional[str] = None
+    page: int = 1
 
     class Config:
         # Allows Pydantic to match 'Language' field name from URL query or JSON body
