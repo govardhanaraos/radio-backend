@@ -54,7 +54,7 @@ class StationFilter(BaseModel):
 
     # Add any other optional fields you want to filter by (e.g., page)
     page: int = 1
-
+    limit: int = 50
     class Config:
         # Allows Pydantic to match 'Language' field name from URL query or JSON body
         populate_by_name = True

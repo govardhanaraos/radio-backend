@@ -22,12 +22,14 @@ async def fetch_stations(
         raise HTTPException(status_code=503, detail="Database connection failed during startup.")
 
     # --- Pagination Constants ---
-    PAGE_SIZE = 100
+
 
     if filters.page < 1:
         raise HTTPException(status_code=400, detail="Page number must be 1 or greater.")
+    print(f"filters.page: {filters.page}")
+    print(f"filters.limit: {filters.limit}")
 
-    skip_count = (filters.page - 1) * PAGE_SIZE
+    skip_count = (filters.page - 1) * filters.limit
     # ----------------------------
 
     # The collection to start the aggregation pipeline from (radio_stations)
@@ -38,8 +40,11 @@ async def fetch_stations(
     if filters.language:
         # Note: The field name must match the name AFTER projection/standardization (i.e., 'language')
         match_query['language'] = filters.language
+        match_query['page'] = filters.language
     if filters.genre:
         match_query['genre'] = filters.genre
+        match_query['page'] = filters.genre
+
 
     # 2. Aggregation Pipeline Definition
     pipeline = [
@@ -92,7 +97,7 @@ async def fetch_stations(
 
         # Stage 5: Pagination - Limit (page size)
         {
-            "$limit": PAGE_SIZE
+            "$limit": filters.limit
         }
     ]
 
@@ -101,7 +106,7 @@ async def fetch_stations(
         stations_cursor = radio_stations_collection.aggregate(pipeline)
 
         # Convert the motor cursor result into a list
-        stations_list = await stations_cursor.to_list(length=PAGE_SIZE)
+        stations_list = await stations_cursor.to_list(length=filters.limit)
 
         return stations_list
 
