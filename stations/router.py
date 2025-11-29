@@ -3,17 +3,13 @@ from typing import List
 # Assuming Station and StationFilter are defined in stations.models
 from stations.models import Station, StationFilter
 # Assuming get_db, DB_NAME, and COLLECTION_NAME are defined in db.db
-from db.db import get_db, DB_NAME, COLLECTION_NAME
+from db.db import get_db, DB_NAME, COLLECTION_NAME,RADIO_GARDEN_CHANNELS_COLLECTION
 
 # Use APIRouter to group all station-related endpoints
 router = APIRouter(
     prefix="/stations",
     tags=["Stations"],
 )
-
-# Define the names of your two collections
-RADIO_STATIONS_COLLECTION = "radio_stations"
-RADIO_GARDEN_CHANNELS_COLLECTION = "radio_garden_channels"
 
 
 @router.get("/", response_model=List[Station])
@@ -35,7 +31,7 @@ async def fetch_stations(
     # ----------------------------
 
     # The collection to start the aggregation pipeline from (radio_stations)
-    radio_stations_collection = database[RADIO_STATIONS_COLLECTION]
+    radio_stations_collection = database[COLLECTION_NAME]
 
     # 1. Base Query for Filtering
     match_query = {}
