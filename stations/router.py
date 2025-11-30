@@ -135,7 +135,7 @@ async def fetch_stations(
 
             # Serialize the Python list of Station objects into a JSON string
             # orjson.dumps works efficiently with Pydantic models/lists
-            serialized_data = orjson.dumps([s.model_dump() for s in stations_list])
+            serialized_data = orjson.dumps(stations_list)
 
             # Set the key with an expiration time (EX)
             await r_async.set(CACHE_KEY_FIRST_PAGE, serialized_data, ex=CACHE_TTL)
