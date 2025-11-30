@@ -4,6 +4,8 @@ from typing import List
 from stations.models import Station, StationFilter
 # Assuming get_db, DB_NAME, and COLLECTION_NAME are defined in db.db
 from db.db import get_db, DB_NAME, COLLECTION_NAME,RADIO_GARDEN_CHANNELS_COLLECTION
+import orjson
+from db.redis_config import (r_async, CACHE_TTL, CACHE_KEY_FIRST_PAGE)
 
 # Use APIRouter to group all station-related endpoints
 router = APIRouter(
@@ -16,6 +18,25 @@ router = APIRouter(
 async def fetch_stations(
         filters: StationFilter = Depends()
 ):
+    # --- Caching Logic: Check Redis for the first page (page=1, limit=50) ---
+    is_cacheable_request = (filters.page == 1 and filters.limit == 50)
+
+    if is_cacheable_request and r_async is not None:
+        try:
+            # 1. Check Redis Cache
+            cached_data = await r_async.get(CACHE_KEY_FIRST_PAGE)
+
+            if cached_data:
+                print("🚀 Cache Hit: Returning stations from Redis.")
+                # Deserialize the JSON string back into a Python list
+                # Use orjson.loads for fast deserialization
+                return orjson.loads(cached_data)
+
+        except Exception as e:
+            # Log the error but don't stop the request; fall back to the database
+            print(f"⚠️ Redis read error, falling back to database: {e}")
+            pass  # Continue to database logic if Redis fails
+
     database = get_db()
 
     if database is None:
@@ -108,6 +129,19 @@ async def fetch_stations(
         # Convert the motor cursor result into a list
         stations_list = await stations_cursor.to_list(length=filters.limit)
 
+        # --- Caching Logic: Store in Redis on Cache Miss ---
+        if is_cacheable_request and r_async is not None and not filters.language and not filters.genre:
+            print(f"💾 Cache Miss: Storing result in Redis for {CACHE_TTL} seconds.")
+
+            # Serialize the Python list of Station objects into a JSON string
+            # orjson.dumps works efficiently with Pydantic models/lists
+            serialized_data = orjson.dumps([s.model_dump() for s in stations_list])
+
+            # Set the key with an expiration time (EX)
+            await r_async.set(CACHE_KEY_FIRST_PAGE, serialized_data, ex=CACHE_TTL)
+
+        # NOTE: We only cache the unfiltered first page to ensure all users get the fast path.
+        # If the request has language or genre filters, it bypasses the write-to-cache step.
         return stations_list
 
     except Exception as e:
