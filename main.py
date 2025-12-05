@@ -3,6 +3,9 @@ from fastapi import FastAPI
 # Import the functions directly from the db.db module
 from db.db import connect_to_mongo, close_mongo_connection
 from stations.router import router as stations_router
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,6 +22,14 @@ app = FastAPI(
     title="Radio Station Backend",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or restrict to ["https://your-frontend.onrender.com"]
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],  # Authorization, Content-Type, etc.
 )
 
 

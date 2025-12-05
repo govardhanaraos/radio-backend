@@ -5,3 +5,4 @@ motor
 gunicorn
 redis[async]
 orjson
+flask-cors
