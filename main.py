@@ -5,6 +5,7 @@ from db.db import connect_to_mongo, close_mongo_connection
 from stations.router import router as stations_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from stations.analytics_router import router as analytics_router
 
 
 @asynccontextmanager
@@ -34,5 +35,5 @@ app.add_middleware(
 
 
 app.include_router(stations_router)
-
+app.include_router(analytics_router)
 # ... include routers ...
