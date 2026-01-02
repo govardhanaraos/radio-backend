@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b896446e-de2a-44bd-b122-848a67c9fdcf" name="Changes" comment="" />
+    <list default="true" id="b896446e-de2a-44bd-b122-848a67c9fdcf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stations/analytics_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/stations/analytics_router.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,7 +39,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "com.google.cloudcode.ide_session_index": "20251226_0001",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "D:/PythonProjects/GRRadio/backend/pushnotifications",
     "node.js.detected.package.eslint": "true",
