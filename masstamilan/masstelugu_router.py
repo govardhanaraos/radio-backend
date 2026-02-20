@@ -23,9 +23,16 @@ class Album(BaseModel):
     link: str
 
 
+class Pagination(BaseModel):
+    current_page: Optional[int]
+    next_page: Optional[str]
+    prev_page: Optional[str]
+    pages: List[dict]
+
 class AlbumResponse(BaseModel):
     albums: List[Album]
-    next_page: Optional[str]
+    pagination: Pagination
+
 
 
 def parse_albums(html: str) -> AlbumResponse:
@@ -89,16 +96,64 @@ def parse_albums(html: str) -> AlbumResponse:
             )
         )
 
-    # next page link (like /telugu-songs?page=2)
-    next_page_tag = soup.select_one('p.right a')
-    if next_page_tag:
-        next_href = next_page_tag.get("href", "").strip()
-        next_page = urljoin(BASE_URL, next_href)
-    else:
-        next_page = None
+    pagination = parse_pagination(soup)
 
-    return AlbumResponse(albums=albums, next_page=next_page)
+    return AlbumResponse(
+        albums=albums,
+        next_page=pagination["next_page"],
+        prev_page=pagination["prev_page"],
+        pages=pagination["pages"],
+        current_page=pagination["current_page"]
+    )
 
+def parse_pagination(soup):
+    nav = soup.select_one("nav.pagy")
+    if not nav:
+        return {
+            "current_page": None,
+            "pages": [],
+            "next_page": None,
+            "prev_page": None
+        }
+
+    pages = []
+    current_page = None
+    next_page = None
+    prev_page = None
+
+    for a in nav.find_all("a"):
+        text = a.get_text(strip=True)
+
+        # Current page
+        if "current" in a.get("class", []):
+            current_page = int(text)
+            pages.append({"page": current_page, "url": None})
+            continue
+
+        # Normal page links
+        href = a.get("href")
+        if href:
+            page_num = None
+            if "page=" in href:
+                page_num = int(href.split("page=")[1])
+
+            pages.append({
+                "page": page_num,
+                "url": urljoin(BASE_URL, href)
+            })
+
+            # Detect prev/next
+            if a.get("aria-label") == "Next":
+                next_page = urljoin(BASE_URL, href)
+            if a.get("aria-label") == "Previous":
+                prev_page = urljoin(BASE_URL, href)
+
+    return {
+        "current_page": current_page,
+        "pages": pages,
+        "next_page": next_page,
+        "prev_page": prev_page
+    }
 
 @router.get("/albums", response_model=AlbumResponse)
 def get_albums(page: int = Query(1, ge=1)):

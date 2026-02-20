@@ -10,4 +10,3 @@ pydantic[email]
 pycryptodome
 firebase-admin
 requests
-beautifulsoup4
