@@ -144,7 +144,10 @@ def parse_pagination(soup):
         if href:
             page_num = None
             if "page=" in href:
-                page_num = int(href.split("page=")[1])
+                try:
+                    page_num = int(href.split("page=")[1])
+                except:
+                    page_num = None
 
             pages.append({
                 "page": page_num,
@@ -156,6 +159,16 @@ def parse_pagination(soup):
                 next_page = urljoin(BASE_URL, href)
             if a.get("aria-label") == "Previous":
                 prev_page = urljoin(BASE_URL, href)
+
+    # ---------------------------------------------
+    # SPECIAL CASE: Page 1 has no "Next" in <nav>
+    # ---------------------------------------------
+    if current_page == 1 and next_page is None:
+        right_p = soup.select_one("p.right")
+        if right_p:
+            a_tag = right_p.find("a")
+            if a_tag and a_tag.get("href"):
+                next_page = urljoin(BASE_URL, a_tag.get("href"))
 
     return {
         "current_page": current_page,
