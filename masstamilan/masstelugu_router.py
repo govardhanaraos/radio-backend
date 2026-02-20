@@ -37,6 +37,24 @@ class AlbumResponse(BaseModel):
     pagination: Pagination
 
 
+class Track(BaseModel):
+    position: int
+    name: str
+    singers: str
+    duration: str
+    download_128: Optional[str]
+    download_320: Optional[str]
+
+class AlbumDetails(BaseModel):
+    album_name: str
+    album_art: str
+    starring: Optional[str]
+    music: Optional[str]
+    director: Optional[str]
+    year: Optional[str]
+    language: Optional[str]
+    tracks: List[Track]
+
 
 def parse_albums(html: str) -> AlbumResponse:
     soup = BeautifulSoup(html, "html.parser")
@@ -198,3 +216,88 @@ def get_albums(page: int = Query(1, ge=1)):
     resp.raise_for_status()
 
     return parse_albums(resp.text)
+
+def parse_album_details(html: str) -> AlbumDetails:
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Album name
+    h1 = soup.find("h1")
+    album_name = h1.get_text(strip=True) if h1 else ""
+
+    # Album art
+    img = soup.select_one("figure img")
+    album_art = urljoin(BASE_URL, img.get("src")) if img else ""
+
+    # Movie info
+    info = soup.find("fieldset")
+    starring = music = director = year = language = None
+
+    if info:
+        for b in info.find_all("b"):
+            label = b.get_text(strip=True).rstrip(":").lower()
+            value = b.next_sibling.strip() if b.next_sibling else ""
+
+            if label == "starring":
+                starring = value
+            elif label == "music":
+                music = value
+            elif label == "director":
+                director = value
+            elif label == "year":
+                year = value
+            elif label == "language":
+                language = value
+
+    # Tracks
+    tracks = []
+    table = soup.select_one("table#tl")
+    if table:
+        rows = table.find_all("tr")[1:]  # skip header
+        for row in rows:
+            pos = int(row.find("span", itemprop="position").text)
+            name = row.find("a").text.strip()
+
+            singers = row.find("span", itemprop="byArtist").text.strip()
+            duration = row.find("span", itemprop="duration").text.strip()
+
+            links = row.find_all("a", class_="dlink")
+            dl128 = dl320 = None
+            for link in links:
+                href = urljoin(BASE_URL, link.get("href"))
+                if "128" in link.text:
+                    dl128 = href
+                if "320" in link.text:
+                    dl320 = href
+
+            tracks.append(
+                Track(
+                    position=pos,
+                    name=name,
+                    singers=singers,
+                    duration=duration,
+                    download_128=dl128,
+                    download_320=dl320,
+                )
+            )
+
+    return AlbumDetails(
+        album_name=album_name,
+        album_art=album_art,
+        starring=starring,
+        music=music,
+        director=director,
+        year=year,
+        language=language,
+        tracks=tracks,
+    )
+
+@router.get("/album", response_model=AlbumDetails)
+def get_album_details(url: str):
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+    }
+
+    resp = requests.get(url, headers=headers, timeout=10)
+    resp.raise_for_status()
+
+    return parse_album_details(resp.text)
