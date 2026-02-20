@@ -72,7 +72,7 @@ def parse_albums(html: str) -> AlbumResponse:
 
         # album page link
         link_rel = a_tag.get("href", "").strip()
-        link = urljoin(BASE_URL, link_rel)
+        link = link_rel
 
         # album art
         img = a_tag.find("img")
@@ -169,14 +169,14 @@ def parse_pagination(soup):
 
             pages.append({
                 "page": page_num,
-                "url": urljoin(BASE_URL, href)
+                "url": href
             })
 
             # Detect prev/next
             if a.get("aria-label") == "Next":
-                next_page = urljoin(BASE_URL, href)
+                next_page = href
             if a.get("aria-label") == "Previous":
-                prev_page = urljoin(BASE_URL, href)
+                prev_page = href
 
     # ---------------------------------------------
     # SPECIAL CASE: Page 1 has no "Next" in <nav>
@@ -186,7 +186,7 @@ def parse_pagination(soup):
         if right_p:
             a_tag = right_p.find("a")
             if a_tag and a_tag.get("href"):
-                next_page = urljoin(BASE_URL, a_tag.get("href"))
+                next_page =  a_tag.get("href")
 
     return {
         "current_page": current_page,
@@ -220,33 +220,18 @@ def get_albums(page: int = Query(1, ge=1)):
 def parse_album_details(html: str) -> AlbumDetails:
     soup = BeautifulSoup(html, "html.parser")
 
-    # Album name
-    h1 = soup.find("h1")
-    album_name = h1.get_text(strip=True) if h1 else ""
+    # -----------------------------------------
+    # Album Name (BEST SOURCE)
+    # -----------------------------------------
+    album_name_tag = soup.select_one("meta[itemprop='name']")
+    album_name = album_name_tag.get("content", "").strip() if album_name_tag else ""
 
     # Album art
     img = soup.select_one("figure img")
     album_art = urljoin(BASE_URL, img.get("src")) if img else ""
 
-    # Movie info
     info = soup.find("fieldset")
-    starring = music = director = year = language = None
-
-    if info:
-        for b in info.find_all("b"):
-            label = b.get_text(strip=True).rstrip(":").lower()
-            value = b.next_sibling.strip() if b.next_sibling else ""
-
-            if label == "starring":
-                starring = value
-            elif label == "music":
-                music = value
-            elif label == "director":
-                director = value
-            elif label == "year":
-                year = value
-            elif label == "language":
-                language = value
+    starring, music, director, lyricists, year, language = parse_movie_info(info)
 
     # Tracks
     tracks = []
@@ -291,13 +276,55 @@ def parse_album_details(html: str) -> AlbumDetails:
         tracks=tracks,
     )
 
-@router.get("/album", response_model=AlbumDetails)
+def parse_movie_info(info: BeautifulSoup):
+    starring = music = director = lyricists = year = language = None
+
+    if not info:
+        return starring, music, director, lyricists, year, language
+
+    # Loop through all <b> tags inside fieldset
+    for b in info.find_all("b"):
+        label = b.get_text(strip=True).rstrip(":").lower()
+
+        # Collect everything until <br/>
+        values = []
+        node = b.next_sibling
+
+        while node and node.name != "br":
+            if isinstance(node, str):
+                text = node.strip().strip(",")
+                if text:
+                    values.append(text)
+
+            elif node.name == "a":
+                values.append(node.get_text(strip=True))
+
+            node = node.next_sibling
+
+        value = ", ".join(values).strip()
+
+        if label == "starring":
+            starring = value
+        elif label == "music":
+            music = value
+        elif label == "director":
+            director = value
+        elif label == "lyricists":
+            lyricists = value
+        elif label == "year":
+            year = value
+        elif label == "language":
+            language = value
+
+    return starring, music, director, lyricists, year, language
+
+@router.get("/albumdetails", response_model=AlbumDetails)
 def get_album_details(url: str):
     headers = {
         "User-Agent": "Mozilla/5.0",
     }
 
-    resp = requests.get(url, headers=headers, timeout=10)
+    resp = requests.get(urljoin(BASE_URL, url), headers=headers, timeout=10)
     resp.raise_for_status()
 
     return parse_album_details(resp.text)
