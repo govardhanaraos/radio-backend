@@ -42,6 +42,7 @@ class Station(BaseModel):
             # You may need to add ObjectId encoder here if returning _id
         }
 
+
 class StationFilter(BaseModel):
     """
     Defines optional query parameters for filtering the station list.
