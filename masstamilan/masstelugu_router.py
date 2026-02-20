@@ -10,7 +10,7 @@ BASE_URL = "https://masstelugu.com"
 
 router = APIRouter(
     prefix="/masstelugu",
-    tags=["Stations"],
+    tags=["MassTelugu"],
 )
 
 
@@ -22,12 +22,15 @@ class Album(BaseModel):
     director: Optional[str]
     link: str
 
+class PageLink(BaseModel):
+    page: Optional[int]
+    url: Optional[str]
 
 class Pagination(BaseModel):
     current_page: Optional[int]
     next_page: Optional[str]
     prev_page: Optional[str]
-    pages: List[dict]
+    pages: List[PageLink]
 
 class AlbumResponse(BaseModel):
     albums: List[Album]
@@ -100,11 +103,17 @@ def parse_albums(html: str) -> AlbumResponse:
 
     return AlbumResponse(
         albums=albums,
-        next_page=pagination["next_page"],
-        prev_page=pagination["prev_page"],
-        pages=pagination["pages"],
-        current_page=pagination["current_page"]
+        pagination=Pagination(
+            current_page=pagination["current_page"],
+            next_page=pagination["next_page"],
+            prev_page=pagination["prev_page"],
+            pages=[
+                PageLink(page=p["page"], url=p["url"])
+                for p in pagination["pages"]
+            ]
+        )
     )
+
 
 def parse_pagination(soup):
     nav = soup.select_one("nav.pagy")
