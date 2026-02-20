@@ -9,6 +9,7 @@ from stations.analytics_router import router as analytics_router
 from complaints.router import router as complaints_router
 from config.router import router as config_router
 from premium.router import router as premium_router
+from masstamilan.masstelugu_router import router as masstelugu_router
 
 
 
@@ -42,5 +43,6 @@ app.include_router(stations_router)
 app.include_router(analytics_router)
 app.include_router(complaints_router)
 app.include_router(config_router)
+app.include_router(masstelugu_router)
 app.include_router(premium_router, prefix="/premium", tags=["Premium"])
 # ... include routers ...
