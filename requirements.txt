@@ -11,4 +11,4 @@ pycryptodome
 firebase-admin
 requests
 beautifulsoup4
-playwright==1.41.2
+httpx

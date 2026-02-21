@@ -6,7 +6,8 @@ from typing import List, Optional
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from playwright.sync_api import sync_playwright
+import httpx
+import asyncio
 
 
 BASE_URL = os.environ.get('BASE_URL_MASSTAMILAN')
@@ -62,26 +63,21 @@ class AlbumDetails(BaseModel):
     tracks: List[Track]
 
 
-def fetch_html_with_browser(url: str) -> str:
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+async def fetch_html(url: str) -> str:
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/123.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
 
-        # Optional: set a real user agent
-        page.set_extra_http_headers({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/123.0.0.0 Safari/537.36"
-            )
-        })
-
-        page.goto(url, wait_until="networkidle")
-
-        html = page.content()
-        browser.close()
-        return html
-
+    async with httpx.AsyncClient(http2=True, headers=headers, timeout=20) as client:
+        resp = await client.get(url)
+        resp.raise_for_status()
+        return resp.text
 def parse_albums(html: str) -> AlbumResponse:
     soup = BeautifulSoup(html, "html.parser")
 
@@ -215,7 +211,7 @@ def parse_pagination(soup):
     }
 
 @router.get("/albums", response_model=AlbumResponse)
-def get_albums(relative_url: Optional[str] = None):
+async def get_albums(relative_url: Optional[str] = None):
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -235,7 +231,7 @@ def get_albums(relative_url: Optional[str] = None):
     else:
         url = BASE_URL + "/"
 
-    html = fetch_html_with_browser(url)
+    html = await fetch_html(url)
     return parse_albums(html)
 
 def parse_album_details(html: str) -> AlbumDetails:
@@ -340,12 +336,7 @@ def parse_movie_info(info: BeautifulSoup):
     return starring, music, director, lyricists, year, language
 
 @router.get("/albumdetails", response_model=AlbumDetails)
-def get_album_details(url: str):
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-    }
-
-    resp = requests.get(urljoin(BASE_URL, url), headers=headers, timeout=10)
-    resp.raise_for_status()
-
-    return parse_album_details(resp.text)
+async def get_album_details(url: str):
+    full_url = urljoin(BASE_URL, url)
+    html = await fetch_html(full_url)
+    return parse_album_details(html)
