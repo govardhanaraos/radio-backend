@@ -135,58 +135,51 @@ def parse_albums(html: str) -> AlbumResponse:
 
 def parse_pagination(soup):
     nav = soup.select_one("nav.pagy")
-    if not nav:
-        return {
-            "current_page": None,
-            "pages": [],
-            "next_page": None,
-            "prev_page": None
-        }
 
     pages = []
     current_page = None
     next_page = None
     prev_page = None
 
-    for a in nav.find_all("a"):
-        text = a.get_text(strip=True)
+    if nav:
+        for a in nav.find_all("a"):
+            text = a.get_text(strip=True)
 
-        # Current page
-        if "current" in a.get("class", []):
-            current_page = int(text)
-            pages.append({"page": current_page, "url": None})
-            continue
+            # Current page
+            if "current" in a.get("class", []):
+                current_page = int(text)
+                pages.append({"page": current_page, "url": None})
+                continue
 
-        # Normal page links
-        href = a.get("href")
-        if href:
-            page_num = None
-            if "page=" in href:
-                try:
-                    page_num = int(href.split("page=")[1])
-                except:
-                    page_num = None
+            # Normal page links
+            href = a.get("href")
+            if href:
+                page_num = None
+                if "page=" in href:
+                    try:
+                        page_num = int(href.split("page=")[1])
+                    except:
+                        page_num = None
 
-            pages.append({
-                "page": page_num,
-                "url": href
-            })
+                pages.append({"page": page_num, "url": href})
 
-            # Detect prev/next
-            if a.get("aria-label") == "Next":
-                next_page = href
-            if a.get("aria-label") == "Previous":
-                prev_page = href
+                # Detect prev/next
+                if a.get("aria-label") == "Next":
+                    next_page = href
+                if a.get("aria-label") == "Previous":
+                    prev_page = href
 
     # ---------------------------------------------
-    # SPECIAL CASE: Page 1 has no "Next" in <nav>
+    # SPECIAL CASE: Page 1 (no nav.pagy)
     # ---------------------------------------------
-    if current_page == 1 and next_page is None:
+    if current_page is None and next_page is None:
         right_p = soup.select_one("p.right")
         if right_p:
             a_tag = right_p.find("a")
             if a_tag and a_tag.get("href"):
-                next_page =  a_tag.get("href")
+                next_page = a_tag.get("href")
+                current_page = 1
+                pages.append({"page": 1, "url": None})
 
     return {
         "current_page": current_page,
