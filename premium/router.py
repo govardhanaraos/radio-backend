@@ -28,7 +28,7 @@ def decrypt_payload(encrypted_text: str):
         print(f"ciphertext: {encrypted_text},cipher: {cipher}")
         decrypted = unpad(cipher.decrypt(base64.b64decode(encrypted_text)), AES.block_size)
         print(f"decrypted: {decrypted}")
-        print(f"jsondecrypted: {json.loads(decrypted.decode("utf-8"))}")
+        print(f"jsondecrypted: {json.loads(decrypted.decode('utf-8'))}")
         return json.loads(decrypted.decode("utf-8"))
     except Exception:
         raise HTTPException(status_code=400, detail="Data decryption failed.")
