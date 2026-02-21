@@ -6,6 +6,7 @@ from typing import List, Optional
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from playwright.sync_api import sync_playwright
 
 
 BASE_URL = os.environ.get('BASE_URL_MASSTAMILAN')
@@ -60,6 +61,26 @@ class AlbumDetails(BaseModel):
     language: Optional[str]
     tracks: List[Track]
 
+
+def fetch_html_with_browser(url: str) -> str:
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+
+        # Optional: set a real user agent
+        page.set_extra_http_headers({
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/123.0.0.0 Safari/537.36"
+            )
+        })
+
+        page.goto(url, wait_until="networkidle")
+
+        html = page.content()
+        browser.close()
+        return html
 
 def parse_albums(html: str) -> AlbumResponse:
     soup = BeautifulSoup(html, "html.parser")
@@ -214,10 +235,8 @@ def get_albums(relative_url: Optional[str] = None):
     else:
         url = BASE_URL + "/"
 
-    resp = requests.get(url, headers=headers, timeout=10)
-    resp.raise_for_status()
-
-    return parse_albums(resp.text)
+    html = fetch_html_with_browser(url)
+    return parse_albums(html)
 
 def parse_album_details(html: str) -> AlbumDetails:
     soup = BeautifulSoup(html, "html.parser")
