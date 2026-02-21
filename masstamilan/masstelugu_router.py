@@ -179,7 +179,7 @@ def parse_pagination(soup):
             if a_tag and a_tag.get("href"):
                 next_page = a_tag.get("href")
                 current_page = 1
-                pages.append({"page": 1, "url": None})
+                pages.append({"page": 2, "url": next_page})
 
     return {
         "current_page": current_page,
@@ -189,7 +189,7 @@ def parse_pagination(soup):
     }
 
 @router.get("/albums", response_model=AlbumResponse)
-def get_albums(page: int = Query(1, ge=1)):
+def get_albums(relative_url: Optional[str] = None):
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -200,10 +200,14 @@ def get_albums(page: int = Query(1, ge=1)):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     }
 
-    if page == 1:
-        url = BASE_URL + "/"
+
+    # If relative URL is provided, use it directly
+    if relative_url:
+        url = urljoin(BASE_URL, relative_url)
+
+    # Otherwise load homepage (page 1)
     else:
-        url = f"{BASE_URL}/telugu-songs?page={page}"
+        url = BASE_URL + "/"
 
     resp = requests.get(url, headers=headers, timeout=10)
     resp.raise_for_status()
