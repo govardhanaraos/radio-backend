@@ -8,14 +8,14 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 
-BASE_URL = os.environ.get('BASE_URL_MASSTELUGU')
+BASE_URL = os.environ.get('BASE_URL_MASSTAMILAN')
 
 if BASE_URL is None or BASE_URL == "":
-    BASE_URL = "https://masstelugu.com"
+    BASE_URL = "https://masstamilan.dev"
 
 router = APIRouter(
-    prefix="/masstelugu",
-    tags=["MassTelugu"],
+    prefix="/masstamilan",
+    tags=["MassTamilan"],
 )
 
 
