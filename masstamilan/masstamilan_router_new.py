@@ -66,28 +66,40 @@ class AlbumDetails(BaseModel):
 
 # Change this part of your masstamilan_router.py
 def fetch_html_sync(url: str) -> str:
+    """Synchronous function for Playwright to avoid event loop conflicts."""
     with sync_playwright() as p:
-        # MANDATORY for Render: add args for no-sandbox
+        # Added mandatory flags for Render/Docker environment
         browser = p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage"
+            ]
         )
         page = browser.new_page()
 
         page.set_extra_http_headers({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/123.0.0.0 Safari/537.36"
+            )
         })
 
-        page.goto(url, wait_until="networkidle")
-        html = page.content()
-        browser.close()
-        return html # Ensure this returns a STRING
+        try:
+            page.goto(url, wait_until="networkidle", timeout=60000)
+            html = page.content()
+        finally:
+            browser.close()
+
+        return str(html)  # Force return as string to prevent coroutine errors
 
 async def fetch_html_with_browser(url: str) -> str:
+    """Wraps the sync browser in an executor to keep FastAPI responsive."""
     loop = asyncio.get_event_loop()
-    # This runs the synchronous playwright function in a separate thread
-    # so it doesn't block the FastAPI event loop.
     return await loop.run_in_executor(None, fetch_html_sync, url)
+
 
 # -----------------------------
 # Album List Parsing
@@ -219,18 +231,6 @@ def parse_pagination(soup):
     }
 
 
-# -----------------------------
-# Albums Endpoint
-# -----------------------------
-
-@router.get("/albums", response_model=AlbumResponse)
-async def get_albums(relative_url: Optional[str] = None):
-
-    url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
-
-    html = await fetch_html_with_browser(url)
-    return parse_albums(html)
-
 
 # -----------------------------
 # Album Details Parsing
@@ -332,12 +332,25 @@ def parse_movie_info(info: BeautifulSoup):
     return starring, music, director, lyricists, year, language
 
 
+
+# -----------------------------
+# Albums Endpoint
+# -----------------------------
+
+@router.get("/albums", response_model=AlbumResponse)
+async def get_albums(relative_url: Optional[str] = None):
+    url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
+    html = await fetch_html_with_browser(url)
+    return parse_albums(html)
+
+
 # -----------------------------
 # Album Details Endpoint
 # -----------------------------
 
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
+    # FIXED: Use full_url instead of the relative url
     full_url = urljoin(BASE_URL, url)
-    html = await fetch_html_with_browser(full_url) # FIXED
+    html = await fetch_html_with_browser(full_url)
     return parse_album_details(html)

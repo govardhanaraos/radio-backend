@@ -18,4 +18,5 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # Start command (update 'main:app' to match your entry point)
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000"]
+# Add --access-logfile - and --error-logfile - to see all traffic in Render logs
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-"]
