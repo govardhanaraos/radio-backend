@@ -5,6 +5,8 @@ from typing import List, Optional
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from playwright.async_api import async_playwright
+import asyncio
+from playwright.sync_api import sync_playwright
 
 
 # Always use the correct domain (Cloudflare blocks non-www)
@@ -61,31 +63,31 @@ class AlbumDetails(BaseModel):
 
 
 
-import asyncio
-from playwright.sync_api import sync_playwright
 
+# Change this part of your masstamilan_router.py
 def fetch_html_sync(url: str) -> str:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        # MANDATORY for Render: add args for no-sandbox
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+        )
         page = browser.new_page()
 
         page.set_extra_http_headers({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/123.0.0.0 Safari/537.36"
-            )
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         })
 
         page.goto(url, wait_until="networkidle")
         html = page.content()
         browser.close()
-        return html
+        return html # Ensure this returns a STRING
 
 async def fetch_html_with_browser(url: str) -> str:
     loop = asyncio.get_event_loop()
+    # This runs the synchronous playwright function in a separate thread
+    # so it doesn't block the FastAPI event loop.
     return await loop.run_in_executor(None, fetch_html_sync, url)
-
 
 # -----------------------------
 # Album List Parsing
@@ -337,5 +339,5 @@ def parse_movie_info(info: BeautifulSoup):
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
     full_url = urljoin(BASE_URL, url)
-    html = await fetch_html_with_browser(url)
+    html = await fetch_html_with_browser(full_url) # FIXED
     return parse_album_details(html)

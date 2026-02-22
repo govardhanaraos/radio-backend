@@ -10,7 +10,7 @@ from complaints.router import router as complaints_router
 from config.router import router as config_router
 from premium.router import router as premium_router
 from masstamilan.masstelugu_router import router as masstelugu_router
-from masstamilan.masstamilan_router import router as masstamilan_router
+from masstamilan.masstamilan_router_new import router as masstamilan_router
 from masstamilan.hindimp3bhai_router import router as hindimp3bhai_router
 from masstamilan.massmalayalam_router import router as massmalayalam_router
 

@@ -12,3 +12,4 @@ firebase-admin
 requests
 beautifulsoup4
 httpx
+playwright==1.49.0  # Or your preferred version
