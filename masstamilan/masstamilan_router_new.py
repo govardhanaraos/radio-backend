@@ -1,16 +1,15 @@
 import os
+import asyncio
+import httpx
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Optional
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from playwright.async_api import async_playwright
-import asyncio
-from playwright.sync_api import sync_playwright
-
 
 # Always use the correct domain (Cloudflare blocks non-www)
 BASE_URL = os.environ.get("BASE_URL_MASSTAMILAN") or "https://www.masstamilan.dev"
+SCRAPER_API_KEY = os.environ.get("SCRAPER_API_KEY")
 
 router = APIRouter(
     prefix="/masstamilan",
@@ -62,49 +61,23 @@ class AlbumDetails(BaseModel):
     tracks: List[Track]
 
 
+# -----------------------------
+# ScraperAPI Fetcher
+# -----------------------------
 
+async def fetch_html_scraperapi(url: str) -> str:
+    """Fetch HTML using ScraperAPI to bypass Cloudflare."""
+    if not SCRAPER_API_KEY:
+        raise Exception("SCRAPER_API_KEY is missing. Add it in Render environment variables.")
 
-# Change this part of your masstamilan_router.py
-def fetch_html_sync(url: str) -> str:
-    """Synchronous function for Playwright to avoid event loop conflicts."""
-    with sync_playwright() as p:
-        # Added mandatory flags for Render/Docker environment
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--disable-software-rasterizer"
-            ]
-        )
+    api_url = f"https://api.scraperapi.com?api_key={SCRAPER_API_KEY}&url={url}"
 
-        page = browser.new_page(ignore_https_errors=True)
-
-        page.set_extra_http_headers({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/123.0.0.0 Safari/537.36"
-            )
-        })
-
-        try:
-            page.goto(url, wait_until="networkidle", timeout=60000)
-            html = page.content()
-            print("Final URL:", page.url)
-            print(html)
-            print(html[:500])
-        finally:
-            browser.close()
-
-        return str(html)  # Force return as string to prevent coroutine errors
-
-async def fetch_html_with_browser(url: str) -> str:
-    """Wraps the sync browser in an executor to keep FastAPI responsive."""
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, fetch_html_sync, url)
+    async with httpx.AsyncClient(timeout=60) as client:
+        response = await client.get(api_url)
+        response.raise_for_status()
+        html = response.text
+        print("HTML snippet:", html[:300])
+        return html
 
 
 # -----------------------------
@@ -237,7 +210,6 @@ def parse_pagination(soup):
     }
 
 
-
 # -----------------------------
 # Album Details Parsing
 # -----------------------------
@@ -338,7 +310,6 @@ def parse_movie_info(info: BeautifulSoup):
     return starring, music, director, lyricists, year, language
 
 
-
 # -----------------------------
 # Albums Endpoint
 # -----------------------------
@@ -347,8 +318,7 @@ def parse_movie_info(info: BeautifulSoup):
 async def get_albums(relative_url: Optional[str] = None):
     url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
     print("Fetching URL:", url)
-    html = await fetch_html_with_browser(url)
-    print("HTML snippet:", html[:300])
+    html = await fetch_html_scraperapi(url)
     return parse_albums(html)
 
 
@@ -358,7 +328,6 @@ async def get_albums(relative_url: Optional[str] = None):
 
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
-    # FIXED: Use full_url instead of the relative url
     full_url = urljoin(BASE_URL, url)
-    html = await fetch_html_with_browser(full_url)
+    html = await fetch_html_scraperapi(full_url)
     return parse_album_details(html)
