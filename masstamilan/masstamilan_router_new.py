@@ -74,10 +74,13 @@ def fetch_html_sync(url: str) -> str:
             args=[
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage"
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-software-rasterizer"
             ]
         )
-        page = browser.new_page()
+
+        page = browser.new_page(ignore_https_errors=True)
 
         page.set_extra_http_headers({
             "User-Agent": (
@@ -90,6 +93,7 @@ def fetch_html_sync(url: str) -> str:
         try:
             page.goto(url, wait_until="networkidle", timeout=60000)
             html = page.content()
+            print(html[:500])
         finally:
             browser.close()
 
@@ -340,7 +344,9 @@ def parse_movie_info(info: BeautifulSoup):
 @router.get("/albums", response_model=AlbumResponse)
 async def get_albums(relative_url: Optional[str] = None):
     url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
+    print("Fetching URL:", url)
     html = await fetch_html_with_browser(url)
+    print("HTML snippet:", html[:300])
     return parse_albums(html)
 
 
