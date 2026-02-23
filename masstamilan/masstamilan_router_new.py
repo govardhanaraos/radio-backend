@@ -73,7 +73,7 @@ async def cached_fetch_json(url: str, render: bool, cache_key: str, parser_fn):
 
     # 2. Fetch HTML
     html = await fetch_html_scraperapi(url, render)
-    print(html)
+
     # 3. Parse HTML → Pydantic model
     parsed_model = parser_fn(html)
 
@@ -407,8 +407,10 @@ async def get_album_details(url: str):
     return parsed
 
 @router.get("/cache/keys")
-async def list_cache_keys():
-    keys = await r_async.keys("masstamilan:*")
+async def list_cache_keys(key: str):
+    if not key:
+        key="*"
+    keys = await r_async.keys(f"{key}:*")
     return {"keys": keys}
 
 @router.get("/cache/get")
@@ -422,8 +424,10 @@ async def delete_cache_key(key: str):
     return {"deleted": key}
 
 @router.delete("/cache/clear-all")
-async def clear_all_cache():
-    keys = await r_async.keys("masstamilan:*")
+async def clear_all_cache(key: str):
+    if not key:
+        key="*"
+    keys = await r_async.keys(f"{key}:*")
     for k in keys:
         await r_async.delete(k)
     return {"cleared_keys": keys}

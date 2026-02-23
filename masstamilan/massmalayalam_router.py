@@ -6,6 +6,8 @@ from typing import List, Optional
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import json
+from db.redis_config import r_async
 
 
 BASE_URL = os.environ.get('BASE_URL_MASSMALAYALAM')
@@ -60,6 +62,34 @@ class AlbumDetails(BaseModel):
     language: Optional[str]
     tracks: List[Track]
 
+
+async def cached_fetch_json(url: str, cache_key: str, parser_fn):
+    # 1. Check cache
+    cached = await r_async.get(cache_key)
+    if cached:
+        print("CACHE HIT:", cache_key)
+        return json.loads(cached)
+
+    # 2. Fetch HTML directly
+    resp = requests.get(url, headers={
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "en-US,en;q=0.9"
+    }, timeout=10)
+    resp.raise_for_status()
+
+    html = resp.text
+
+    # 3. Parse HTML → Pydantic model
+    parsed_model = parser_fn(html)
+
+    # 4. Convert to dict
+    parsed_dict = parsed_model.dict()
+
+    # 5. Store JSON in Redis
+    await r_async.set(cache_key, json.dumps(parsed_dict))
+
+    print("CACHE STORE:", cache_key)
+    return parsed_dict
 
 def parse_albums(html: str) -> AlbumResponse:
     soup = BeautifulSoup(html, "html.parser")
@@ -193,32 +223,6 @@ def parse_pagination(soup):
         "prev_page": prev_page
     }
 
-@router.get("/albums", response_model=AlbumResponse)
-def get_albums(relative_url: Optional[str] = None):
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
-        ),
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    }
-
-
-    # If relative URL is provided, use it directly
-    if relative_url:
-        url = urljoin(BASE_URL, relative_url)
-
-    # Otherwise load homepage (page 1)
-    else:
-        url = BASE_URL + "/"
-
-    resp = requests.get(url, headers=headers, timeout=10)
-    resp.raise_for_status()
-
-    return parse_albums(resp.text)
-
 def parse_album_details(html: str) -> AlbumDetails:
     soup = BeautifulSoup(html, "html.parser")
 
@@ -320,13 +324,28 @@ def parse_movie_info(info: BeautifulSoup):
 
     return starring, music, director, lyricists, year, language
 
+@router.get("/albums", response_model=AlbumResponse)
+async def get_albums(relative_url: Optional[str] = None):
+    url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
+    cache_key = f"massmp3chetta:albums:{relative_url or 'root'}"
+
+    parsed = await cached_fetch_json(
+        url=url,
+        cache_key=cache_key,
+        parser_fn=parse_albums
+    )
+
+    return parsed
+
 @router.get("/albumdetails", response_model=AlbumDetails)
-def get_album_details(url: str):
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-    }
+async def get_album_details(url: str):
+    full_url = urljoin(BASE_URL, url)
+    cache_key = f"massmp3chetta:albumdetails:{url}"
 
-    resp = requests.get(urljoin(BASE_URL, url), headers=headers, timeout=10)
-    resp.raise_for_status()
+    parsed = await cached_fetch_json(
+        url=full_url,
+        cache_key=cache_key,
+        parser_fn=parse_album_details
+    )
 
-    return parse_album_details(resp.text)
+    return parsed
