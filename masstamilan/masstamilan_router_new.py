@@ -93,6 +93,8 @@ def fetch_html_sync(url: str) -> str:
         try:
             page.goto(url, wait_until="networkidle", timeout=60000)
             html = page.content()
+            print("Final URL:", page.url)
+            print(html)
             print(html[:500])
         finally:
             browser.close()
