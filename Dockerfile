@@ -12,17 +12,18 @@ RUN playwright install --with-deps chromium
 # Copy your application code
 COPY . .
 
-# Set environment variables
+# Environment variables
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=debug
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 # Expose the port your app runs on
 EXPOSE 8000
 
-# Start command (update 'main:app' to match your entry point)
-# Add --access-logfile - and --error-logfile - to see all traffic in Render logs
+# Start command
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app",
      "--bind", "0.0.0.0:8000",
      "--access-logfile", "-",
      "--error-logfile", "-",
+     "--capture-output",
      "--log-level", "debug"]
