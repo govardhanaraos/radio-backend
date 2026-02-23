@@ -377,7 +377,7 @@ async def get_albums(relative_url: Optional[str] = None):
 
     parsed = await cached_fetch_json(
         url=url,
-        render=False,
+        render=True,
         cache_key=cache_key,
         parser_fn=parse_albums
     )
