@@ -62,6 +62,26 @@ class AlbumDetails(BaseModel):
     language: Optional[str]
     tracks: List[Track]
 
+import json
+
+async def cached_fetch_json(url: str, render: bool, cache_key: str, parser_fn):
+    # 1. Check cache
+    cached = await r_async.get(cache_key)
+    if cached:
+        print("CACHE HIT:", cache_key)
+        return json.loads(cached)
+
+    # 2. Fetch HTML
+    html = await fetch_html_scraperapi(url, render)
+
+    # 3. Parse HTML → JSON
+    parsed_json = parser_fn(html)
+
+    # 4. Store JSON in Redis
+    await r_async.set(cache_key, json.dumps(parsed_json))
+
+    print("CACHE STORE:", cache_key)
+    return parsed_json
 
 async def cached_fetch(url: str, render: bool = False, cache_key: str = None):
     if not cache_key:
@@ -353,9 +373,16 @@ def parse_movie_info(info: BeautifulSoup):
 @router.get("/albums", response_model=AlbumResponse)
 async def get_albums(relative_url: Optional[str] = None):
     url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
-    cache_key = f"albumdetails:{url}"
-    html = await cached_fetch(url, render=True, cache_key=cache_key)
-    return parse_albums(html)
+    cache_key = f"albums:{relative_url or 'root'}"
+
+    parsed = await cached_fetch_json(
+        url=url,
+        render=False,
+        cache_key=cache_key,
+        parser_fn=parse_albums
+    )
+
+    return parsed
 
 
 # -----------------------------
@@ -365,8 +392,16 @@ async def get_albums(relative_url: Optional[str] = None):
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
     full_url = urljoin(BASE_URL, url)
-    html = await fetch_html_scraperapi(full_url,render=True)
-    return parse_album_details(html)
+    cache_key = f"albumdetails:{url}"
+
+    parsed = await cached_fetch_json(
+        url=full_url,
+        render=True,
+        cache_key=cache_key,
+        parser_fn=parse_album_details
+    )
+
+    return parsed
 
 @router.get("/cache/keys")
 async def list_cache_keys():
@@ -376,7 +411,7 @@ async def list_cache_keys():
 @router.get("/cache/get")
 async def get_cache_value(key: str):
     value = await r_async.get(key)
-    return {"key": key, "value": value}
+    return {"key": key, "value": json.loads(value) if value else None}
 
 @router.delete("/cache/delete")
 async def delete_cache_key(key: str):
