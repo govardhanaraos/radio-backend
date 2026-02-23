@@ -21,9 +21,4 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 EXPOSE 8000
 
 # Start command
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app",
-     "--bind", "0.0.0.0:8000",
-     "--access-logfile", "-",
-     "--error-logfile", "-",
-     "--capture-output",
-     "--log-level", "debug"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-", "--capture-output", "--log-level", "debug"]
