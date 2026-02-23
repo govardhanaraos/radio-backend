@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from db.redis_config import (r_async, CACHE_TTL, CACHE_KEY_FIRST_PAGE)
+
 
 # Always use the correct domain (Cloudflare blocks non-www)
 BASE_URL = os.environ.get("BASE_URL_MASSTAMILAN") or "https://www.masstamilan.dev"
@@ -61,22 +63,56 @@ class AlbumDetails(BaseModel):
     tracks: List[Track]
 
 
+async def cached_fetch(url: str, render: bool = False, cache_key: str = None):
+    if not cache_key:
+        cache_key = f"masstamilan:{url}"
+
+    # 1. Check cache
+    cached = await r_async.get(cache_key)
+    if cached:
+        print("CACHE HIT:", cache_key)
+        return cached
+
+    # 2. Fetch fresh HTML
+    html = await fetch_html_scraperapi(url, render)
+
+    # 3. Store in Redis (no expiry)
+    await r_async.set(cache_key, html)
+
+    print("CACHE STORE:", cache_key)
+    return html
+
+def build_scraperapi_url(url: str, render: bool = False):
+    params = [
+        f"api_key={SCRAPER_API_KEY}",
+        f"url={url}",
+        "keep_headers=true",
+        "country_code=in",
+        "auto_parse=true"
+    ]
+
+    if render:
+        params.append("render=true")
+    else:
+        params.append("render=false")
+
+    return "https://api.scraperapi.com/?" + "&".join(params)
+
 # -----------------------------
 # ScraperAPI Fetcher
 # -----------------------------
 
-async def fetch_html_scraperapi(url: str) -> str:
+async def fetch_html_scraperapi(url: str, render: bool = False):
     """Fetch HTML using ScraperAPI to bypass Cloudflare."""
     if not SCRAPER_API_KEY:
         raise Exception("SCRAPER_API_KEY is missing. Add it in Render environment variables.")
 
-    api_url = f"https://api.scraperapi.com?api_key={SCRAPER_API_KEY}&url={url}"
+    api_url = build_scraperapi_url(url, render)
 
     async with httpx.AsyncClient(timeout=60) as client:
         response = await client.get(api_url)
         response.raise_for_status()
         html = response.text
-        print("HTML snippet:", html[:300])
         return html
 
 
@@ -317,8 +353,8 @@ def parse_movie_info(info: BeautifulSoup):
 @router.get("/albums", response_model=AlbumResponse)
 async def get_albums(relative_url: Optional[str] = None):
     url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
-    print("Fetching URL:", url)
-    html = await fetch_html_scraperapi(url)
+    cache_key = f"albumdetails:{url}"
+    html = await cached_fetch(url, render=True, cache_key=cache_key)
     return parse_albums(html)
 
 
@@ -329,5 +365,27 @@ async def get_albums(relative_url: Optional[str] = None):
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
     full_url = urljoin(BASE_URL, url)
-    html = await fetch_html_scraperapi(full_url)
+    html = await fetch_html_scraperapi(full_url,render=True)
     return parse_album_details(html)
+
+@router.get("/cache/keys")
+async def list_cache_keys():
+    keys = await r_async.keys("masstamilan:*")
+    return {"keys": keys}
+
+@router.get("/cache/get")
+async def get_cache_value(key: str):
+    value = await r_async.get(key)
+    return {"key": key, "value": value}
+
+@router.delete("/cache/delete")
+async def delete_cache_key(key: str):
+    await r_async.delete(key)
+    return {"deleted": key}
+
+@router.delete("/cache/clear-all")
+async def clear_all_cache():
+    keys = await r_async.keys("masstamilan:*")
+    for k in keys:
+        await r_async.delete(k)
+    return {"cleared_keys": keys}
