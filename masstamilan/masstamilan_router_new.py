@@ -73,15 +73,18 @@ async def cached_fetch_json(url: str, render: bool, cache_key: str, parser_fn):
 
     # 2. Fetch HTML
     html = await fetch_html_scraperapi(url, render)
+    print(html)
+    # 3. Parse HTML → Pydantic model
+    parsed_model = parser_fn(html)
 
-    # 3. Parse HTML → JSON
-    parsed_json = parser_fn(html)
+    # 4. Convert Pydantic model → dict
+    parsed_dict = parsed_model.dict()
 
-    # 4. Store JSON in Redis
-    await r_async.set(cache_key, json.dumps(parsed_json))
+    # 5. Store JSON in Redis
+    await r_async.set(cache_key, json.dumps(parsed_dict))
 
     print("CACHE STORE:", cache_key)
-    return parsed_json
+    return parsed_dict
 
 async def cached_fetch(url: str, render: bool = False, cache_key: str = None):
     if not cache_key:
@@ -373,7 +376,7 @@ def parse_movie_info(info: BeautifulSoup):
 @router.get("/albums", response_model=AlbumResponse)
 async def get_albums(relative_url: Optional[str] = None):
     url = urljoin(BASE_URL, relative_url) if relative_url else BASE_URL + "/"
-    cache_key = f"albums:{relative_url or 'root'}"
+    cache_key = f"masstamilan:{relative_url or 'root'}"
 
     parsed = await cached_fetch_json(
         url=url,
@@ -392,7 +395,7 @@ async def get_albums(relative_url: Optional[str] = None):
 @router.get("/albumdetails", response_model=AlbumDetails)
 async def get_album_details(url: str):
     full_url = urljoin(BASE_URL, url)
-    cache_key = f"albumdetails:{url}"
+    cache_key = f"masstamilan:{url}"
 
     parsed = await cached_fetch_json(
         url=full_url,
