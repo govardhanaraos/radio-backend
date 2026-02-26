@@ -103,6 +103,24 @@ def ensure_tables(cur, conn):
 def parse_album_details(html, base_url):
     soup = BeautifulSoup(html, "html.parser")
 
+    # VALIDATION 1: must have folder-info
+    folder = soup.find("div", class_="folder-info")
+    if not folder:
+        logger.warning("Skipping: no folder-info found (not an album details page)")
+        return None
+
+    # VALIDATION 2: must have album title <h3>
+    h3 = folder.find("h3")
+    if not h3:
+        logger.warning("Skipping: no <h3> album title found")
+        return None
+
+    # VALIDATION 3: must contain at least one song (?fid=)
+    has_song = soup.find("a", href=lambda x: x and "fid=" in x)
+    if not has_song:
+        logger.warning("Skipping: no songs found (not an album details page)")
+        return None
+
     folder = soup.find("div", class_="folder-info")
     header_img = folder.find("img")
     album_cover =  header_img["src"] if header_img else None
@@ -288,24 +306,85 @@ def save_album_details_to_db(album_id, data):
 # ---------------------------------------
 @router.get("/crawl/{album_id}")
 def crawl_album_details(album_id: int):
+    try:
+
+        conn, cur = get_connection()
+
+        # ✅ make sure all dependent tables exist
+        ensure_tables(cur, conn)
+
+        cur.execute("SELECT album_link FROM albums_list WHERE id=%s", (album_id,))
+        row = cur.fetchone()
+        conn.close()
+
+        if not row:
+            return {"error": "Album not found"}
+
+        album_url = urljoin("https://mp3.teluguwap.in/", row[0])
+        logger.debug(f"Fetching album details: {album_url}")
+
+        html = requests.get(album_url, timeout=20).text
+        data = parse_album_details(html, "https://mp3.teluguwap.in/")
+        if data is None:
+            conn, cur = get_connection()
+            cur.execute("""
+                UPDATE albums_list
+                SET details_status='skipped', details_updated_at=NOW()
+                WHERE id=%s
+            """, (album_id,))
+            conn.commit()
+            conn.close()
+            return {"status": "skipped", "reason": "Invalid album details structure"}
+
+        save_album_details_to_db(album_id, data)
+        conn, cur = get_connection()
+        cur.execute("""
+            UPDATE albums_list
+            SET details_status='success', details_updated_at=NOW()
+            WHERE id=%s
+        """, (album_id,))
+        conn.commit()
+        conn.close()
+
+        return {"status": "success", "album": data["album_name"]}
+    except Exception as e:
+        conn, cur = get_connection()
+        cur.execute("""
+            UPDATE albums_list
+            SET details_status='error', details_last_error=%s, details_updated_at=NOW()
+            WHERE id=%s
+        """, (str(e), album_id))
+        conn.commit()
+        conn.close()
+        raise
+
+@router.get("/crawl-bulk")
+def crawl_bulk(limit: int = 500):
     conn, cur = get_connection()
 
-    # ✅ make sure all dependent tables exist
-    ensure_tables(cur, conn)
+    # Fetch next 500 pending or error albums
+    cur.execute("""
+        SELECT id, album_link
+        FROM albums_list
+        WHERE details_status IN ('pending', 'error')
+        ORDER BY id
+        LIMIT %s
+    """, (limit,))
 
-    cur.execute("SELECT album_link FROM albums_list WHERE id=%s", (album_id,))
-    row = cur.fetchone()
+    albums = cur.fetchall()
     conn.close()
 
-    if not row:
-        return {"error": "Album not found"}
+    results = []
 
-    album_url = urljoin("https://mp3.teluguwap.in/", row[0])
-    logger.debug(f"Fetching album details: {album_url}")
+    for album_id, album_link in albums:
+        try:
+            result = crawl_album_details(album_id)
+            results.append({"album_id": album_id, "result": result})
+        except Exception as e:
+            results.append({"album_id": album_id, "result": str(e)})
 
-    html = requests.get(album_url, timeout=20).text
-    data = parse_album_details(html, "https://mp3.teluguwap.in/")
+    return {
+        "processed": len(results),
+        "results": results
+    }
 
-    save_album_details_to_db(album_id, data)
-
-    return {"status": "success", "album": data["album_name"]}
