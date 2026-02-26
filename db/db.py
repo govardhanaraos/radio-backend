@@ -3,6 +3,7 @@ import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
+import psycopg2
 
 MONGO_URL=os.environ.get('MONGO_URL')
 DB_NAME = os.environ.get('DB_NAME')
@@ -21,6 +22,16 @@ if DB_NAME is None or DB_NAME == "":
 
 print(f"MONGO_URL static DB_NAME: {DB_NAME}")
 
+# ---------------------------------------
+# 1. Read DATABASE_URL from environment
+# ---------------------------------------
+POSTGRESQL_DATABASE_URL = os.getenv("POSTGRESQL_DATABASE_URL")
+if POSTGRESQL_DATABASE_URL is None or POSTGRESQL_DATABASE_URL == "":
+    POSTGRESQL_DATABASE_URL='postgresql://neondb_owner:npg_ASgvFQh8mO0w@ep-young-shadow-aggb0i2u-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+if not POSTGRESQL_DATABASE_URL:
+    raise ValueError("POSTGRESQL_DATABASE_URL environment variable is not set")
+
 
 COLLECTION_NAME = os.environ.get('MONGO_COLLECTION_NAME')
 
@@ -38,6 +49,8 @@ if FIXED_IV is None or FIXED_IV == "":
 # Global variable to hold the database client instance
 client = None
 db = None
+
+
 
 async def connect_to_mongo():
     """Initializes the MongoDB connection."""

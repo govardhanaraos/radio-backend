@@ -13,6 +13,10 @@ from masstamilan.masstelugu_router import router as masstelugu_router
 from masstamilan.masstamilan_router_new import router as masstamilan_router
 from masstamilan.hindimp3bhai_router import router as hindimp3bhai_router
 from masstamilan.massmalayalam_router import router as massmalayalam_router
+from telugump3.telugump3_home_parse import router as telugump3_home_parse
+from telugump3.album_list_parsing import router as album_list_parsing
+from telugump3.song_details_crawl import router as song_details_crawl
+from telugump3.album_details_parsing import router as album_details_parsing
 
 
 
@@ -50,5 +54,9 @@ app.include_router(masstelugu_router)
 app.include_router(masstamilan_router)
 app.include_router(hindimp3bhai_router)
 app.include_router(massmalayalam_router)
+app.include_router(telugump3_home_parse)
+app.include_router(album_list_parsing)
+app.include_router(album_details_parsing)
+app.include_router(song_details_crawl)
 app.include_router(premium_router, prefix="/premium", tags=["Premium"])
 # ... include routers ...
