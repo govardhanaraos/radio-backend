@@ -14,6 +14,9 @@ router = APIRouter(
 )
 
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+logging.getLogger("pymongo.connection").setLevel(logging.WARNING)
 logger = logging.getLogger("album_details")
 
 

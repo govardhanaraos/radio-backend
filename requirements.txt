@@ -5,11 +5,10 @@ motor
 gunicorn
 redis[async]
 orjson
-flask-cors
 pydantic[email]
 pycryptodome
 firebase-admin
 requests
 beautifulsoup4
 httpx
-psycopg2
+psycopg2-binary

@@ -10,6 +10,9 @@ from db.db import POSTGRESQL_DATABASE_URL
 router = APIRouter(prefix="/telugump3albums", tags=["telugump3albums"])
 
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+logging.getLogger("pymongo.connection").setLevel(logging.WARNING)
 logger = logging.getLogger("telugump3_albums")
 
 
