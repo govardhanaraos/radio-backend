@@ -148,9 +148,9 @@ def parse_album_cards(soup):
         strong_title = a_title.find("strong") if a_title else None
         album_name = clean(strong_title.get_text(strip=True)) if strong_title else None
 
-        print(f"album_name:{album_name}")
-        print(f"album_link:{album_link}")
-        print(f"album_cover:{album_cover}")
+        #print(f"album_name:{album_name}")
+        #print(f"album_link:{album_link}")
+       # print(f"album_cover:{album_cover}")
 
         actors = None
         music = None
@@ -171,13 +171,13 @@ def parse_album_cards(soup):
                 actors_text = element.next_sibling
                 if actors_text:
                     actors = clean(str(actors_text).replace("<br/>", "").strip())
-                    print(f"actors:{actors}")
+                    #print(f"actors:{actors}")
             # 🎼 Music Director
             if element.name == "strong" and element.get_text(strip=True) == "🎼":
                 music_text = element.next_sibling
                 if music_text:
                     music = clean(str(music_text).replace("<br/>", "").strip())
-            print(f"music:{music}")
+            #print(f"music:{music}")
             # Album Type (icon + text)
             if element.name == "img" and element.get("src"):
                 img_src = element["src"]
@@ -185,11 +185,11 @@ def parse_album_cards(soup):
                 type_text = element.next_sibling
                 if type_text:
                     album_type = clean(type_text.replace("<br/>", ""))
-            print(f"album_type:{album_type}")
+            #print(f"album_type:{album_type}")
         # Fallback: detect type from icon filename
         if not album_type and img:
             album_type = detect_album_type(img["src"], info_td.get_text(" ", strip=True))
-            print(f"album_type:{album_type}")
+        print(f"album_name:{album_name}")
         albums.append({
             "album_name": album_name,
             "album_link": album_link,
@@ -265,8 +265,21 @@ def crawl_album_list(option_value):
         url = next_url
         page += 1
 
+    # ⭐ Update status after successful processing
+    update_collection_type_status(cur, conn, option_value, "completed")
+
     conn.close()
     return {"status": "success", "message": f"Completed crawling {option_value}"}
+
+def update_collection_type_status(cur, conn, option_value, status="completed"):
+    cur.execute("""
+        UPDATE teluguwap_collection_type_details
+        SET details_status = %s,
+            details_updated_at = NOW()
+        WHERE option_value = %s
+    """, (status, option_value))
+
+    conn.commit()
 
 def crawl_all_album_lists():
     conn, cur = get_connection()
