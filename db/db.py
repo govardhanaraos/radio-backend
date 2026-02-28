@@ -32,6 +32,27 @@ if POSTGRESQL_DATABASE_URL is None or POSTGRESQL_DATABASE_URL == "":
 if not POSTGRESQL_DATABASE_URL:
     raise ValueError("POSTGRESQL_DATABASE_URL environment variable is not set")
 
+POSTGRESQL_DATABASE_URL_TELUGUWAP = os.getenv("POSTGRESQL_DATABASE_URL_TELUGUWAP")
+if POSTGRESQL_DATABASE_URL_TELUGUWAP is None or POSTGRESQL_DATABASE_URL_TELUGUWAP == "":
+    POSTGRESQL_DATABASE_URL_TELUGUWAP='postgresql://neondb_owner:npg_ASgvFQh8mO0w@ep-cold-smoke-agjs017o-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+if not POSTGRESQL_DATABASE_URL_TELUGUWAP:
+    raise ValueError("POSTGRESQL_DATABASE_URL_TELUGUWAP environment variable is not set")
+
+
+BLOMP_AUTH_URL = os.getenv("BLOMP_AUTH_URL")
+if BLOMP_AUTH_URL is None or BLOMP_AUTH_URL == "":
+    BLOMP_AUTH_URL = "https://authenticate.blomp.com"
+
+BLOMP_USER = os.getenv("BLOMP_USER")
+if BLOMP_USER is None or BLOMP_USER == "":
+    BLOMP_USER = "govardhanarao.s@gmail.com"
+
+BLOMP_PASS = os.getenv("BLOMP_PASS")
+if BLOMP_PASS is None or BLOMP_PASS == "":
+    BLOMP_PASS = "Retail@505Anb"
+
+TENANT = "storage"
 
 COLLECTION_NAME = os.environ.get('MONGO_COLLECTION_NAME')
 
