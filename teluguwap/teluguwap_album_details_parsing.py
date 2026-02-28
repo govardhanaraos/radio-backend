@@ -1,393 +1,364 @@
-import logging
 import re
-from urllib.parse import urljoin
 import psycopg2
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 from fastapi import APIRouter
+from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP
 
-from db.db import POSTGRESQL_DATABASE_URL
-
-router = APIRouter(
-    prefix="/telugump3albumdetails",
-    tags=["telugump3albumdetails"],
-)
-
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("pymongo").setLevel(logging.WARNING)
-logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
-logging.getLogger("pymongo.connection").setLevel(logging.WARNING)
-logger = logging.getLogger("album_details")
+router = APIRouter(prefix="/teluguwap-album-details", tags=["teluguwap-album-details"])
 
 
-# ---------------------------------------
-# DB Connection
-# ---------------------------------------
+# ---------------------------------------------------------
+# DB CONNECTION
+# ---------------------------------------------------------
 def get_connection():
-    conn = psycopg2.connect(POSTGRESQL_DATABASE_URL)
+    conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
     return conn, conn.cursor()
 
 
-# ---------------------------------------
-# Clean text helper (removes broken emoji bytes)
-# ---------------------------------------
-def clean_text(text):
+# ---------------------------------------------------------
+# HELPERS
+# ---------------------------------------------------------
+def clean(text):
     if not text:
         return None
     text = text.encode("ascii", "ignore").decode()
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
+    return re.sub(r"\s+", " ", text).strip()
 
 
-# ---------------------------------------
-# Ensure all required tables exist
-# ---------------------------------------
-def ensure_tables(cur, conn):
+def normalize(url):
+    if not url:
+        return url
+    return (
+        url.replace("https://teluguwap.in", "")
+           .replace("http://i.teluguwap.in", "")
+           .replace("https://i.teluguwap.in", "")
+    )
+
+
+# ---------------------------------------------------------
+# INSERT / UPSERT HELPERS
+# ---------------------------------------------------------
+def upsert_actor(cur, conn, name, link, album_id):
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS actors (
-        id SERIAL PRIMARY KEY,
-        actor_name TEXT NOT NULL,
-        actor_link TEXT,
-        album_id INT REFERENCES albums_list(id) ON DELETE CASCADE
-    );
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS directors (
-        id SERIAL PRIMARY KEY,
-        director_name TEXT NOT NULL,
-        director_link TEXT,
-        album_id INT REFERENCES albums_list(id) ON DELETE CASCADE
-    );
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS music_directors (
-        id SERIAL PRIMARY KEY,
-        music_director_name TEXT NOT NULL,
-        music_director_link TEXT,
-        album_id INT REFERENCES albums_list(id) ON DELETE CASCADE
-    );
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS songs (
-        id SERIAL PRIMARY KEY,
-        album_id INT REFERENCES albums_list(id) ON DELETE CASCADE,
-        song_name TEXT NOT NULL,
-        song_link TEXT UNIQUE,
-        play_link TEXT,
-        file_size TEXT
-    );
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS singers (
-        id SERIAL PRIMARY KEY,
-        singer_name TEXT NOT NULL UNIQUE,
-        singer_link TEXT
-    );
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS song_singers (
-        song_id INT REFERENCES songs(id) ON DELETE CASCADE,
-        singer_id INT REFERENCES singers(id) ON DELETE CASCADE,
-        PRIMARY KEY (song_id, singer_id)
-    );
-    """)
-
+        INSERT INTO teluguwap_actors (actor_name, actor_link, album_id)
+        VALUES (%s, %s, %s)
+        ON CONFLICT DO NOTHING
+    """, (name, link, album_id))
     conn.commit()
 
 
-# ---------------------------------------
-# Parse Album Details HTML
-# ---------------------------------------
-def parse_album_details(html, base_url):
-    soup = BeautifulSoup(html, "html.parser")
+def upsert_director(cur, conn, name, link, album_id):
+    cur.execute("""
+        INSERT INTO teluguwap_directors (director_name, director_link, album_id)
+        VALUES (%s, %s, %s)
+        ON CONFLICT DO NOTHING
+    """, (name, link, album_id))
+    conn.commit()
 
-    # VALIDATION 1: must have folder-info
-    folder = soup.find("div", class_="folder-info")
-    if not folder:
-        logger.warning("Skipping: no folder-info found (not an album details page)")
+
+def upsert_music_director(cur, conn, name, link, album_id):
+    cur.execute("""
+        INSERT INTO teluguwap_music_directors (music_director_name, music_director_link, album_id)
+        VALUES (%s, %s, %s)
+        ON CONFLICT DO NOTHING
+    """, (name, link, album_id))
+    conn.commit()
+
+
+def upsert_singer(cur, conn, name, link):
+    cur.execute("""
+        INSERT INTO teluguwap_singers (singer_name, singer_link)
+        VALUES (%s, %s)
+        ON CONFLICT (singer_name) DO NOTHING
+        RETURNING id
+    """, (name, link))
+
+    row = cur.fetchone()
+    if row:
+        conn.commit()
+        return row[0]
+
+    # fetch existing
+    cur.execute("SELECT id FROM teluguwap_singers WHERE singer_name=%s", (name,))
+    row = cur.fetchone()
+    return row[0] if row else None
+
+
+def insert_song(cur, conn, album_id, song):
+    cur.execute("""
+        INSERT INTO teluguwap_songs (
+            album_id, song_name, song_link, play_link,
+            duration, teluguwap_singers
+        )
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (song_link)
+        DO UPDATE SET
+            song_name = EXCLUDED.song_name,
+            play_link = EXCLUDED.play_link,
+            duration = EXCLUDED.duration,
+            teluguwap_singers = EXCLUDED.teluguwap_singers
+        RETURNING id
+    """, (
+        album_id,
+        song["name"],
+        song["song_link"],
+        song["play_link"],
+        song["duration"],
+        ", ".join(song["singers"])
+    ))
+
+    row = cur.fetchone()
+    conn.commit()
+    return row[0]
+
+
+def link_song_singers(cur, conn, song_id, singer_ids):
+    for sid in singer_ids:
+        cur.execute("""
+            INSERT INTO teluguwap_song_singers (song_id, singer_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING
+        """, (song_id, sid))
+    conn.commit()
+
+
+# ---------------------------------------------------------
+# PARSE ALBUM DETAILS PAGE
+# ---------------------------------------------------------
+def parse_album_details(album_link):
+    url = "https://teluguwap.in" + album_link
+
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Linux; Android 10; SM-G975F) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Mobile Safari/537.36"
+        )
+    }
+
+    resp = requests.get(url, headers=headers, timeout=20)
+    resp.raise_for_status()
+
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    # -------------------------------
+    # ALBUM METADATA
+    # -------------------------------
+    meta = soup.find("div", class_="bg")
+    if not meta:
         return None
 
-    # VALIDATION 2: must have album title <h3>
-    h3 = folder.find("h3")
-    if not h3:
-        logger.warning("Skipping: no <h3> album title found")
-        return None
+    # Title
+    title = None
+    title_tag = meta.find("strong", string=re.compile("Title"))
+    if title_tag:
+        title = clean(title_tag.next_sibling)
 
-    # VALIDATION 3: must contain at least one song (?fid=)
-    has_song = soup.find("a", href=lambda x: x and "fid=" in x)
-    if not has_song:
-        logger.warning("Skipping: no songs found (not an album details page)")
-        return None
-
-    folder = soup.find("div", class_="folder-info")
-    header_img = folder.find("img")
-    album_cover =  header_img["src"] if header_img else None
-
-    # Album name + rating
-    # Album name + rating
-    h3_text = folder.find("h3").get_text(" ", strip=True)
-    h3_text = clean_text(h3_text)
-
-    parts = h3_text.split("⭐")
-
-    album_name = parts[0].strip()
-    rating = None
-
-    if len(parts) > 1:
-        rating = parts[1].split("(")[0].strip()
-
-    # Year + Decade
+    # Year
     year = None
-    decade = None
+    year_tag = meta.find("strong", string=re.compile("Released Year"))
+    if year_tag:
+        y = year_tag.find_next("a")
+        if y:
+            year = int(y.get_text(strip=True)[:4])
 
-    year_p = None
-    for p in folder.find_all("p"):
-        b = p.find("b")
-        if b and "📅" in b.get_text():
-            year_p = p
-            break
+    # Cast
+    cast = []
+    cast_tag = meta.find("strong", string=re.compile("Cast"))
+    if cast_tag:
+        # iterate siblings until next <strong> tag
+        for sib in cast_tag.next_siblings:
+            if getattr(sib, "name", None) == "strong":
+                break  # reached Director, stop
 
-    if year_p:
-        links = year_p.find_all("a")
-        if len(links) >= 1:
-            year = clean_text(links[0].get_text(strip=True))
-        if len(links) >= 2:
-            decade = clean_text(links[1].get_text(strip=True))
+            if getattr(sib, "name", None) == "a":
+                cast.append((clean(sib.get_text()), normalize(sib["href"])))
 
-    # Actors
-    actors = []
-    for p in folder.find_all("p"):
-        if "👫" in p.get_text():
-            for a in p.find_all("a"):
-                actors.append({
-                    "name": clean_text(a.get_text(strip=True)),
-                    "link": a["href"]
-                })
+    director = None
+    director_link = None
+    d_tag = meta.find("strong", string=re.compile("Director"))
+    if d_tag:
+        a = d_tag.find_next("a")
+        if a:
+            director = clean(a.get_text())
+            director_link = normalize(a["href"])
 
-    # Directors (can be multiple)
-    directors = []
-    for p in folder.find_all("p"):
-        if "🎥" in p.get_text():
-            for a in p.find_all("a"):
-                directors.append({
-                    "name": clean_text(a.get_text(strip=True)),
-                    "link": a["href"]
-                })
+    # Music Director
+    music = None
+    music_link = None
+    m_tag = meta.find("strong", string=re.compile("Music"))
+    if m_tag:
+        a = m_tag.find_next("a")
+        if a:
+            music = clean(a.get_text())
+            music_link = normalize(a["href"])
 
-    # Music Directors (can be multiple)
-    music_directors = []
-    for p in folder.find_all("p"):
-        if "🎹" in p.get_text():
-            for a in p.find_all("a"):
-                music_directors.append({
-                    "name": clean_text(a.get_text(strip=True)),
-                    "link": a["href"]
-                })
+    # Rating
+    rating = None
+    r_tag = meta.find("strong", string=re.compile("Rating"))
+    if r_tag:
+        rating = clean(r_tag.next_sibling)
 
-    # Songs
+    # -------------------------------
+    # SONG LIST
+    # -------------------------------
     songs = []
-    for bg in soup.find_all("div", class_="bg"):
-        song_link = bg.find("a", href=lambda x: x and "fid=" in x)
-        if not song_link:
-            continue
+    grid = soup.find("div", class_="related-albums-grid")
+    if grid:
+        cards = grid.find_all("div", class_="related-album-card")
 
-        play_link = bg.find("a", href=lambda x: x and "play=" in x)
-        size_tag = bg.find("small")
+        for card in cards:
+            td = card.find("td")
+            if not td:
+                continue
 
-        song = {
-            "song_name": clean_text(song_link.get_text(strip=True)),
-            "song_link": song_link["href"],
-            "play_link": play_link["href"] if play_link else None,
-            "file_size": clean_text(size_tag.get_text(strip=True)) if size_tag else None,
-            "singers": []
-        }
+            # Play link
+            play_btn = td.find("a", class_="sm2_button")
+            play_link = normalize(play_btn["href"]) if play_btn else None
 
-        singers_div = bg.find("div", class_="singers-info")
-        if singers_div:
-            for a in singers_div.find_all("a"):
-                song["singers"].append({
-                    "name": clean_text(a.get_text(strip=True)),
-                    "link": a["href"]
-                })
+            # Song link + name
+            a_song = td.find_all("a")[1]
+            song_link = normalize(a_song["href"])
+            song_name = clean(a_song.get_text(strip=True))
 
-        songs.append(song)
+            # Duration
+            small = td.find("small")
+            duration = clean(small.get_text(strip=True)) if small else None
+
+            # Singers
+            singers = []
+            singer_links = []
+            for a in td.find_all("a")[2:]:
+                singers.append(clean(a.get_text()))
+                singer_links.append(normalize(a["href"]))
+
+            songs.append({
+                "name": song_name,
+                "song_link": song_link,
+                "play_link": play_link,
+                "duration": duration,
+                "singers": singers,
+                "singer_links": singer_links
+            })
 
     return {
-        "album_name": album_name,
-        "album_cover": album_cover,
+        "title": title,
         "year": year,
-        "decade": decade,
+        "cast": cast,
+        "director": (director, director_link),
+        "music": (music, music_link),
         "rating": rating,
-        "actors": actors,
-        "directors": directors,
-        "music_directors": music_directors,
         "songs": songs
     }
 
 
-# ---------------------------------------
-# Save Parsed Data to DB
-# ---------------------------------------
-def save_album_details_to_db(album_id, data):
+# ---------------------------------------------------------
+# PROCESS ONE ALBUM
+# ---------------------------------------------------------
+def process_album(album_id, album_link):
     conn, cur = get_connection()
-    ensure_tables(cur, conn)
-    # Update album metadata
-    cur.execute("""
-        UPDATE albums_list
-        SET album_cover=%s, year=%s, decade=%s, rating=%s
-        WHERE id=%s
-    """, (data["album_cover"], data["year"], data["decade"], data["rating"], album_id))
 
-    # Clear old linked data
-    cur.execute("DELETE FROM actors WHERE album_id=%s", (album_id,))
-    cur.execute("DELETE FROM directors WHERE album_id=%s", (album_id,))
-    cur.execute("DELETE FROM music_directors WHERE album_id=%s", (album_id,))
-    cur.execute("DELETE FROM songs WHERE album_id=%s", (album_id,))
-
-    # Insert actors
-    for actor in data["actors"]:
-        cur.execute("""
-            INSERT INTO actors (actor_name, actor_link, album_id)
-            VALUES (%s, %s, %s)
-        """, (actor["name"], actor["link"], album_id))
-
-    # Insert directors (multiple)
-    for director in data["directors"]:
-        cur.execute("""
-            INSERT INTO directors (director_name, director_link, album_id)
-            VALUES (%s, %s, %s)
-        """, (director["name"], director["link"], album_id))
-
-    # Insert music directors (multiple)
-    for md in data["music_directors"]:
-        cur.execute("""
-            INSERT INTO music_directors (music_director_name, music_director_link, album_id)
-            VALUES (%s, %s, %s)
-        """, (md["name"], md["link"], album_id))
-
-    # Insert songs + singers
-    for song in data["songs"]:
-        cur.execute("""
-            INSERT INTO songs (album_id, song_name, song_link, play_link, file_size)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id
-        """, (album_id, song["song_name"], song["song_link"], song["play_link"], song["file_size"]))
-        song_id = cur.fetchone()[0]
-
-        for singer in song["singers"]:
-            cur.execute("""
-                INSERT INTO singers (singer_name, singer_link)
-                VALUES (%s, %s)
-                ON CONFLICT (singer_name) DO NOTHING
-                RETURNING id
-            """, (singer["name"], singer["link"]))
-
-            row = cur.fetchone()
-            if row:
-                singer_id = row[0]
-            else:
-                cur.execute("SELECT id FROM singers WHERE singer_name=%s", (singer["name"],))
-                singer_id = cur.fetchone()[0]
-
-            cur.execute("""
-                INSERT INTO song_singers (song_id, singer_id)
-                VALUES (%s, %s)
-                ON CONFLICT DO NOTHING
-            """, (song_id, singer_id))
-
-    conn.commit()
-    conn.close()
-
-
-# ---------------------------------------
-# FastAPI Route: Crawl Album Details
-# ---------------------------------------
-@router.get("/crawl/{album_id}")
-def crawl_album_details(album_id: int):
     try:
+        details = parse_album_details(album_link)
+        if not details:
+            raise Exception("Parsing failed")
 
-        conn, cur = get_connection()
-
-        # ✅ make sure all dependent tables exist
-        ensure_tables(cur, conn)
-
-        cur.execute("SELECT album_link FROM albums_list WHERE id=%s", (album_id,))
-        row = cur.fetchone()
-        conn.close()
-
-        if not row:
-            return {"error": "Album not found"}
-
-        album_url = urljoin("https://mp3.teluguwap.in/", row[0])
-        logger.debug(f"Fetching album details: {album_url}")
-
-        html = requests.get(album_url, timeout=20).text
-        data = parse_album_details(html, "https://mp3.teluguwap.in/")
-        if data is None:
-            conn, cur = get_connection()
-            cur.execute("""
-                UPDATE albums_list
-                SET details_status='skipped', details_updated_at=NOW()
-                WHERE id=%s
-            """, (album_id,))
-            conn.commit()
-            conn.close()
-            return {"status": "skipped", "reason": "Invalid album details structure"}
-
-        save_album_details_to_db(album_id, data)
-        conn, cur = get_connection()
+        # Update album metadata
         cur.execute("""
-            UPDATE albums_list
-            SET details_status='success', details_updated_at=NOW()
+            UPDATE teluguwap_albums_list
+            SET year=%s, rating=%s, details_status='completed', details_updated_at=NOW()
             WHERE id=%s
-        """, (album_id,))
+        """, (details["year"], details["rating"], album_id))
         conn.commit()
-        conn.close()
 
-        return {"status": "success", "album": data["album_name"]}
+        # Insert cast
+        for name, link in details["cast"]:
+            upsert_actor(cur, conn, name, link, album_id)
+
+        # Insert director
+        d_name, d_link = details["director"]
+        if d_name:
+            upsert_director(cur, conn, d_name, d_link, album_id)
+
+        # Insert music director
+        m_name, m_link = details["music"]
+        if m_name:
+            upsert_music_director(cur, conn, m_name, m_link, album_id)
+
+        # Insert songs + singers
+        for song in details["songs"]:
+            song_id = insert_song(cur, conn, album_id, song)
+
+            singer_ids = []
+            for name, link in zip(song["singers"], song["singer_links"]):
+                sid = upsert_singer(cur, conn, name, link)
+                if sid:
+                    singer_ids.append(sid)
+
+            link_song_singers(cur, conn, song_id, singer_ids)
+
+        conn.close()
+        return {"status": "success", "album_id": album_id}
+
     except Exception as e:
-        conn, cur = get_connection()
+        # IMPORTANT: rollback first
+        conn.rollback()
         cur.execute("""
-            UPDATE albums_list
-            SET details_status='error', details_last_error=%s, details_updated_at=NOW()
+            UPDATE teluguwap_albums_list
+            SET details_status='failed', details_last_error=%s, details_updated_at=NOW()
             WHERE id=%s
         """, (str(e), album_id))
         conn.commit()
         conn.close()
-        raise
+        return {"status": "error", "album_id": album_id, "error": str(e)}
 
-@router.get("/crawl-bulk")
-def crawl_bulk(limit: int = 500):
+# ---------------------------------------------------------
+# BULK PROCESSOR
+# ---------------------------------------------------------
+def process_pending_albums(limit=50):
     conn, cur = get_connection()
 
-    # Fetch next 500 pending or error albums
     cur.execute("""
         SELECT id, album_link
-        FROM albums_list
-        WHERE details_status IN ('pending', 'error')
+        FROM teluguwap_albums_list
+        WHERE details_status='pending'
         ORDER BY id
         LIMIT %s
     """, (limit,))
 
-    albums = cur.fetchall()
+    rows = cur.fetchall()
     conn.close()
 
     results = []
-
-    for album_id, album_link in albums:
-        try:
-            result = crawl_album_details(album_id)
-            results.append({"album_id": album_id, "result": result})
-        except Exception as e:
-            results.append({"album_id": album_id, "result": str(e)})
+    for album_id, album_link in rows:
+        result = process_album(album_id, album_link)
+        results.append(result)
 
     return {
+        "status": "success",
         "processed": len(results),
         "results": results
     }
 
+
+# ---------------------------------------------------------
+# FASTAPI ROUTES
+# ---------------------------------------------------------
+@router.get("/process-one/{album_id}")
+def process_one(album_id: int):
+    conn, cur = get_connection()
+    cur.execute("SELECT album_link FROM teluguwap_albums_list WHERE id=%s", (album_id,))
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        return {"status": "error", "message": "Album not found"}
+
+    return process_album(album_id, row[0])
+
+
+@router.get("/process-all")
+def process_all(limit: int = 50):
+    return process_pending_albums(limit)
