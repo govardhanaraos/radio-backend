@@ -143,67 +143,64 @@ def parse_album_details(album_link):
 
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # -------------------------------
-    # ALBUM METADATA
-    # -------------------------------
-    meta = soup.find("div", class_="bg")
-    if not meta:
-        return None
-
-    # Title
+    # ----------------------------------------------------
+    # DEFAULT VALUES (for pages with no metadata)
+    # ----------------------------------------------------
     title = None
-    title_tag = meta.find("strong", string=re.compile("Title"))
-    if title_tag:
-        title = clean(title_tag.next_sibling)
-
-    # Year
     year = None
-    year_tag = meta.find("strong", string=re.compile("Released Year"))
-    if year_tag:
-        y = year_tag.find_next("a")
-        if y:
-            year = int(y.get_text(strip=True)[:4])
-
-    # Cast
     cast = []
-    cast_tag = meta.find("strong", string=re.compile("Cast"))
-    if cast_tag:
-        # iterate siblings until next <strong> tag
-        for sib in cast_tag.next_siblings:
-            if getattr(sib, "name", None) == "strong":
-                break  # reached Director, stop
-
-            if getattr(sib, "name", None) == "a":
-                cast.append((clean(sib.get_text()), normalize(sib["href"])))
-
-    director = None
-    director_link = None
-    d_tag = meta.find("strong", string=re.compile("Director"))
-    if d_tag:
-        a = d_tag.find_next("a")
-        if a:
-            director = clean(a.get_text())
-            director_link = normalize(a["href"])
-
-    # Music Director
-    music = None
-    music_link = None
-    m_tag = meta.find("strong", string=re.compile("Music"))
-    if m_tag:
-        a = m_tag.find_next("a")
-        if a:
-            music = clean(a.get_text())
-            music_link = normalize(a["href"])
-
-    # Rating
+    director = (None, None)
+    music = (None, None)
     rating = None
-    r_tag = meta.find("strong", string=re.compile("Rating"))
-    if r_tag:
-        rating = clean(r_tag.next_sibling)
 
-    # -------------------------------
-    # SONG LIST
-    # -------------------------------
+    # ----------------------------------------------------
+    # TRY TO PARSE METADATA IF <div class="bg"> EXISTS
+    # ----------------------------------------------------
+    meta = soup.find("div", class_="bg")
+    if meta:
+        # Title
+        title_tag = meta.find("strong", string=re.compile("Title"))
+        if title_tag:
+            title = clean(title_tag.next_sibling)
+
+        # Year
+        year_tag = meta.find("strong", string=re.compile("Released Year"))
+        if year_tag:
+            y = year_tag.find_next("a")
+            if y:
+                year = int(y.get_text(strip=True)[:4])
+
+        # Cast
+        cast_tag = meta.find("strong", string=re.compile("Cast"))
+        if cast_tag:
+            for sib in cast_tag.next_siblings:
+                if getattr(sib, "name", None) == "strong":
+                    break
+                if getattr(sib, "name", None) == "a":
+                    cast.append((clean(sib.get_text()), normalize(sib["href"])))
+
+        # Director
+        d_tag = meta.find("strong", string=re.compile("Director"))
+        if d_tag:
+            a = d_tag.find_next("a")
+            if a:
+                director = (clean(a.get_text()), normalize(a["href"]))
+
+        # Music Director
+        m_tag = meta.find("strong", string=re.compile("Music"))
+        if m_tag:
+            a = m_tag.find_next("a")
+            if a:
+                music = (clean(a.get_text()), normalize(a["href"]))
+
+        # Rating
+        r_tag = meta.find("strong", string=re.compile("Rating"))
+        if r_tag:
+            rating = clean(r_tag.next_sibling)
+
+    # ----------------------------------------------------
+    # SONG LIST (always optional)
+    # ----------------------------------------------------
     songs = []
     grid = soup.find("div", class_="related-albums-grid")
     if grid:
@@ -219,7 +216,11 @@ def parse_album_details(album_link):
             play_link = normalize(play_btn["href"]) if play_btn else None
 
             # Song link + name
-            a_song = td.find_all("a")[1]
+            a_tags = td.find_all("a")
+            if len(a_tags) < 2:
+                continue
+
+            a_song = a_tags[1]
             song_link = normalize(a_song["href"])
             song_name = clean(a_song.get_text(strip=True))
 
@@ -230,7 +231,7 @@ def parse_album_details(album_link):
             # Singers
             singers = []
             singer_links = []
-            for a in td.find_all("a")[2:]:
+            for a in a_tags[2:]:
                 singers.append(clean(a.get_text()))
                 singer_links.append(normalize(a["href"]))
 
@@ -243,16 +244,18 @@ def parse_album_details(album_link):
                 "singer_links": singer_links
             })
 
+    # ----------------------------------------------------
+    # RETURN EVEN IF METADATA IS MISSING
+    # ----------------------------------------------------
     return {
         "title": title,
         "year": year,
         "cast": cast,
-        "director": (director, director_link),
-        "music": (music, music_link),
+        "director": director,
+        "music": music,
         "rating": rating,
         "songs": songs
     }
-
 
 # ---------------------------------------------------------
 # PROCESS ONE ALBUM
@@ -262,10 +265,8 @@ def process_album(album_id, album_link):
 
     try:
         details = parse_album_details(album_link)
-        if not details:
-            raise Exception("Parsing failed")
 
-        # Update album metadata
+        # Update album metadata (even if some fields are None)
         cur.execute("""
             UPDATE teluguwap_albums_list
             SET year=%s, rating=%s, details_status='completed', details_updated_at=NOW()
@@ -273,21 +274,21 @@ def process_album(album_id, album_link):
         """, (details["year"], details["rating"], album_id))
         conn.commit()
 
-        # Insert cast
+        # Insert cast (optional)
         for name, link in details["cast"]:
             upsert_actor(cur, conn, name, link, album_id)
 
-        # Insert director
+        # Insert director (optional)
         d_name, d_link = details["director"]
         if d_name:
             upsert_director(cur, conn, d_name, d_link, album_id)
 
-        # Insert music director
+        # Insert music director (optional)
         m_name, m_link = details["music"]
         if m_name:
             upsert_music_director(cur, conn, m_name, m_link, album_id)
 
-        # Insert songs + singers
+        # Insert songs + singers (always)
         for song in details["songs"]:
             song_id = insert_song(cur, conn, album_id, song)
 
@@ -303,7 +304,6 @@ def process_album(album_id, album_link):
         return {"status": "success", "album_id": album_id}
 
     except Exception as e:
-        # IMPORTANT: rollback first
         conn.rollback()
         cur.execute("""
             UPDATE teluguwap_albums_list
@@ -313,6 +313,7 @@ def process_album(album_id, album_link):
         conn.commit()
         conn.close()
         return {"status": "error", "album_id": album_id, "error": str(e)}
+
 
 # ---------------------------------------------------------
 # BULK PROCESSOR
