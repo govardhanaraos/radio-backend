@@ -21,6 +21,7 @@ from telugump3.album_details_parsing import router as album_details_parsing
 from teluguwap.teluguwap_home_parse import router as teluguwap_home_parse
 from teluguwap.teluguwap_album_list_parsing import router as teluguwap_album_list_parsing
 from teluguwap.teluguwap_album_details_parsing import router as teluguwap_album_details_parsing
+from teluguwap.teluguwap_song_details_crawl import router as teluguwap_song_details_crawl
 
 
 
@@ -67,4 +68,5 @@ app.include_router(premium_router, prefix="/premium", tags=["Premium"])
 app.include_router(teluguwap_home_parse)
 app.include_router(teluguwap_album_list_parsing)
 app.include_router(teluguwap_album_details_parsing)
+app.include_router(teluguwap_song_details_crawl)
 # ... include routers ...

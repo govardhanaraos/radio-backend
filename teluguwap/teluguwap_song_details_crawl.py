@@ -1,267 +1,273 @@
-import logging
-from urllib.parse import urljoin
+import re
 import psycopg2
 import requests
 from bs4 import BeautifulSoup
 from fastapi import APIRouter
-from db.db import POSTGRESQL_DATABASE_URL
-import re
+from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP
 
-router = APIRouter(
-    prefix="/telugump3songdetails",
-    tags=["telugump3songdetails"],
-)
-
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("pymongo").setLevel(logging.WARNING)
-logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
-logging.getLogger("pymongo.connection").setLevel(logging.WARNING)
-logger = logging.getLogger("song_details")
+router = APIRouter(prefix="/teluguwap-song-details", tags=["teluguwap-song-details"])
 
 
+# ---------------------------------------------------------
+# DB CONNECTION
+# ---------------------------------------------------------
 def get_connection():
-    conn = psycopg2.connect(POSTGRESQL_DATABASE_URL)
+    conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
     return conn, conn.cursor()
 
 
-def clean_text(text):
+# ---------------------------------------------------------
+# HELPERS
+# ---------------------------------------------------------
+def clean(text):
     if not text:
         return None
     text = text.encode("ascii", "ignore").decode()
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
-def clean_duration(duration):
-    if not duration:
-        return None
-    duration = re.sub(r"\(.*?\)", "", duration).strip()
-    return duration
-
-def clean_composer(composer):
-    if not composer:
-        return None
-
-    # Remove bracketed text
-    composer = re.sub(r"\[.*?\]", "", composer)
-
-    # Remove bitrate patterns
-    composer = re.sub(r"\b\d+\s?kbps\b", "", composer, flags=re.I)
-    composer = re.sub(r"\b\d+\s?k\s?bps\b", "", composer, flags=re.I)
-    composer = re.sub(r"\bBitrate:\s*\d+\b", "", composer, flags=re.I)
-
-    # Remove domain tags
-    composer = re.sub(r"teluguwap\.net", "", composer, flags=re.I)
-
-    # Clean separators and spaces
-    composer = re.sub(r"[-|–]+", " ", composer)
-    composer = re.sub(r"\s+", " ", composer).strip()
-
-    return composer
-
-def clean_download_text(text):
-    if not text:
-        return None
-    text = re.sub(r"\(.*?\)", "", text).strip()
-    return text
-
-def parse_song_details(html, base_url):
-    soup = BeautifulSoup(html, "html.parser")
-
-    download_div = soup.find("div", class_="download-options")
-    if not download_div or not download_div.find("a"):
-        return None
-
-    title_div = soup.find("div", class_="nav-section")
-    if not title_div or not title_div.find("h2"):
-        return None
-
-    song_title = title_div.find("h2").get_text(strip=True) if title_div else None
-
-    info_div = soup.find("div", class_="info")
-    singers = composer = duration = None
-
-    if info_div:
-        raw = info_div.get_text(" ", strip=True)
-        cleaned = clean_text(raw)
-
-        if "Singers:" in cleaned:
-            singers = cleaned.split("Singers:")[1].split("Composer:")[0].strip()
-
-        if "Composer:" in cleaned:
-            composer_raw = cleaned.split("Composer:")[1].split("Duration:")[0].strip()
-            composer = clean_composer(composer_raw)
-
-        if "Duration:" in cleaned:
-            duration = clean_duration(cleaned.split("Duration:")[1].strip())
+    return re.sub(r"\s+", " ", text).strip()
 
 
-    original = kb128 = kb320 = None
+def normalize(url):
+    if not url:
+        return url
+    return (
+        url.replace("https://teluguwap.in", "")
+           .replace("http://i.teluguwap.in", "")
+           .replace("https://i.teluguwap.in", "")
+    )
 
-    if download_div:
-        for a in download_div.find_all("a"):
-            raw_text = a.get_text(strip=True)
-            text = clean_download_text(raw_text)
-            href = a["href"]
-            size = None
 
-            if "(" in raw_text and ")" in raw_text:
-                size = raw_text[raw_text.find("(")+1:raw_text.find(")")]
+# ---------------------------------------------------------
+# PARSE SONG DETAILS PAGE
+# ---------------------------------------------------------
+def parse_song_details(song_link):
+    url = "https://teluguwap.in" + song_link
 
-            if "Original" in text:
-                original = {"link": href, "text": text, "size": size}
-            elif "320" in text:
-                kb320 = {"link": href, "text": text, "size": size}
-            elif "128" in text:
-                kb128 = {"link": href, "text": text, "size": size}
-
-    return {
-        "song_title": song_title,
-        "singers": singers,
-        "composer": composer,
-        "duration": duration,
-        "original": original,
-        "kb128": kb128,
-        "kb320": kb320
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Linux; Android 10; SM-G975F) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Mobile Safari/537.36"
+        )
     }
 
-def save_song_details_to_db(song_id, data):
+    resp = requests.get(url, headers=headers, timeout=20)
+    resp.raise_for_status()
+
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    # -----------------------------------------------------
+    # COMPOSER (robust detection)
+    # -----------------------------------------------------
+    composer = None
+
+    # 1) Try strong-tag version first
+    comp_tag = soup.find("strong", string=re.compile(r"Composer", re.I))
+    if comp_tag:
+        next_a = comp_tag.find_next("a")
+        if next_a:
+            composer = clean(next_a.get_text())
+        else:
+            # text after strong tag
+            composer = clean(comp_tag.next_sibling)
+    else:
+        # 2) Fallback: search raw text "Composer:"
+        text_node = soup.find(string=re.compile(r"Composer\s*:", re.I))
+        if text_node:
+            # Extract text after "Composer:"
+            after = re.split(r"Composer\s*:\s*", text_node, flags=re.I)
+            if len(after) > 1:
+                composer = clean(after[1])
+            else:
+                # maybe composer is in next <a>
+                parent = text_node.parent
+                next_a = parent.find("a")
+                if next_a:
+                    composer = clean(next_a.get_text())
+
+    # -----------------------------------------------------
+    # DOWNLOAD OPTIONS
+    # -----------------------------------------------------
+    downloads = {
+        "original": {"link": None, "text": None, "size": None},
+        "128": {"link": None, "text": None, "size": None},
+        "320": {"link": None, "text": None, "size": None},
+    }
+
+    bg = None
+    for div in soup.find_all("div", class_="bg"):
+        h2 = div.find("h2")
+        if h2 and "Download Options" in h2.get_text():
+            bg = div
+            break
+
+    if not bg:
+        return {"composer": composer, "downloads": downloads}
+
+    forms = bg.find_all("form")
+
+    index = 0
+    for form in forms:
+        hidden = {inp.get("name"): inp.get("value") for inp in form.find_all("input")}
+
+        type_ = hidden.get("type")
+        q = hidden.get("q")
+        ext = hidden.get("ext")
+        qlty = hidden.get("qlty")
+
+        if not (type_ and q and ext and qlty):
+            continue
+
+        # Construct URL (NO base URL)
+        download_url = f"files.php?type={type_}&q={q}&ext={ext}&qlty={qlty}"
+
+        # Button text
+        btn = form.find("button")
+        text = clean(btn.get_text()) if btn else None
+
+        # Size (text after </button>)
+        size_match = re.search(r"\((.*?)\)", form.decode())
+        size = clean(size_match.group(1)) if size_match else None
+
+        # Map to DB fields
+        if index == 0:
+            # ORIGINAL
+            downloads["original"] = {
+                "link": download_url,
+                "text": text,
+                "size": size
+            }
+        else:
+            if ext == "mp3" and "128" in qlty:
+                downloads["128"] = {
+                    "link": download_url,
+                    "text": text,
+                    "size": size
+                }
+            if ext == "mp3" and "320" in qlty:
+                downloads["320"] = {
+                    "link": download_url,
+                    "text": text,
+                    "size": size
+                }
+
+        index += 1
+
+    return {
+        "composer": composer,
+        "downloads": downloads
+    }
+
+
+# ---------------------------------------------------------
+# PROCESS ONE SONG
+# ---------------------------------------------------------
+def process_song(song_id, song_link):
     conn, cur = get_connection()
 
-    cur.execute("""
-        UPDATE songs SET
-            singers=%s,
-            composer=%s,
-            duration=%s,
-
-            download_link_original=%s,
-            download_text_original=%s,
-            download_size_original=%s,
-
-            download_link_128kbps=%s,
-            download_text_128kbps=%s,
-            download_size_128kbps=%s,
-
-            download_link_320kbps=%s,
-            download_text_320kbps=%s,
-            download_size_320kbps=%s,
-            details_status=%s,
-            details_updated_at=NOW()
-        WHERE id=%s
-    """, (
-        data["singers"],
-        data["composer"],
-        data["duration"],
-
-        data["original"]["link"] if data["original"] else None,
-        data["original"]["text"] if data["original"] else None,
-        data["original"]["size"] if data["original"] else None,
-
-        data["kb128"]["link"] if data["kb128"] else None,
-        data["kb128"]["text"] if data["kb128"] else None,
-        data["kb128"]["size"] if data["kb128"] else None,
-
-        data["kb320"]["link"] if data["kb320"] else None,
-        data["kb320"]["text"] if data["kb320"] else None,
-        data["kb320"]["size"] if data["kb320"] else None,
-        'success',
-        song_id
-    ))
-
-    conn.commit()
-    conn.close()
-
-
-@router.get("/crawl")
-def crawl_song_details(song_link: str):
-    db_song_id = None
-    relative_url = None
     try:
-        base_url = "https://mp3.teluguwap.in/"
+        details = parse_song_details(song_link)
+        if not details:
+            raise Exception("Parsing failed")
 
-        # Normalize input
-        clean_id = song_link.replace("?fid=", "").replace("fid=", "").strip()
-        relative_url = f"?fid={clean_id}"
+        d = details["downloads"]
 
-        # Build full URL
-        song_url = f"{base_url}{relative_url}"
-        logger.debug(f"Fetching song details: {song_url}")
+        cur.execute("""
+            UPDATE teluguwap_songs
+            SET 
+                composer=%s,
+                download_link_original=%s,
+                download_text_original=%s,
+                download_size_original=%s,
 
-        # Fetch HTML
-        html = requests.get(song_url, timeout=20).text
-        data = parse_song_details(html, base_url)
+                download_link_128kbps=%s,
+                download_text_128kbps=%s,
+                download_size_128kbps=%s,
 
-        if data is None:
-            conn, cur = get_connection()
-            cur.execute("""
-                UPDATE songs
-                SET details_status='skipped', details_updated_at=NOW()
-                WHERE song_link=%s
-            """, (relative_url,))
-            conn.commit()
-            conn.close()
-            return {"status": "skipped", "reason": "No download options found"}
-        # Find song_id in DB
-        conn, cur = get_connection()
-        cur.execute("SELECT id FROM songs WHERE song_link=%s", (relative_url,))
-        row = cur.fetchone()
-        conn.close()
+                download_link_320kbps=%s,
+                download_text_320kbps=%s,
+                download_size_320kbps=%s,
 
-        if not row:
-            return {"error": "Song not found in DB"}
+                details_status='completed',
+                details_updated_at=NOW()
+            WHERE id=%s
+        """, (
+            details["composer"],
 
-        db_song_id = row[0]
+            d["original"]["link"],
+            d["original"]["text"],
+            d["original"]["size"],
 
-        # Save parsed details
-        save_song_details_to_db(db_song_id, data)
+            d["128"]["link"],
+            d["128"]["text"],
+            d["128"]["size"],
 
-        return {
-            "status": "success",
-            "song": data["song_title"],
-            "song_id": db_song_id,
-            "relative_url": relative_url
-        }
-    except Exception as e:
-        conn, cur = get_connection()
-        if db_song_id:
-            cur.execute("""
-                    UPDATE songs
-                    SET details_status='error', details_last_error=%s, details_updated_at=NOW()
-                    WHERE id=%s
-                """, (str(e), db_song_id))
-        else:
-            cur.execute("""
-                    UPDATE songs
-                    SET details_status='error', details_last_error=%s, details_updated_at=NOW()
-                    WHERE song_link=%s
-                """, (str(e), relative_url))
+            d["320"]["link"],
+            d["320"]["text"],
+            d["320"]["size"],
+
+            song_id
+        ))
+
         conn.commit()
         conn.close()
-        raise
+        return {"status": "success", "song_id": song_id}
 
-@router.get("/crawl-bulk")
-def crawl_bulk(limit: int = 500):
+    except Exception as e:
+        conn.rollback()
+        cur.execute("""
+            UPDATE teluguwap_songs
+            SET details_status='failed', details_last_error=%s, details_updated_at=NOW()
+            WHERE id=%s
+        """, (str(e), song_id))
+        conn.commit()
+        conn.close()
+        return {"status": "error", "song_id": song_id, "error": str(e)}
+
+
+# ---------------------------------------------------------
+# BULK PROCESSOR
+# ---------------------------------------------------------
+def process_pending_songs(limit=50):
     conn, cur = get_connection()
 
     cur.execute("""
         SELECT id, song_link
-        FROM songs
-        WHERE details_status IN ('pending', 'error')
+        FROM teluguwap_songs
+        WHERE details_status='pending'
         ORDER BY id
         LIMIT %s
     """, (limit,))
 
-    songs = cur.fetchall()
+    rows = cur.fetchall()
     conn.close()
 
     results = []
-
-    for song_id, song_link in songs:
-        try:
-            result = crawl_song_details(song_link)
-            results.append({"song_id": song_id, "result": result})
-        except Exception as e:
-            results.append({"song_id": song_id, "result": str(e)})
+    for song_id, song_link in rows:
+        results.append(process_song(song_id, song_link))
 
     return {
+        "status": "success",
         "processed": len(results),
+        "results": results
     }
+
+
+# ---------------------------------------------------------
+# FASTAPI ROUTES
+# ---------------------------------------------------------
+@router.get("/process-one/{song_id}")
+def process_one(song_id: int):
+    conn, cur = get_connection()
+    cur.execute("SELECT song_link FROM teluguwap_songs WHERE id=%s", (song_id,))
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        return {"status": "error", "message": "Song not found"}
+
+    return process_song(song_id, row[0])
+
+
+@router.get("/process-all")
+def process_all(limit: int = 50):
+    return process_pending_songs(limit)
