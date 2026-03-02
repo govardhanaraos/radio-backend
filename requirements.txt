@@ -1,3 +1,6 @@
+botocore
+boto3
+blomp-api
 fastapi
 uvicorn[standard]  # Uvicorn is the high-performance ASGI server
 pydantic
@@ -14,3 +17,4 @@ httpx
 psycopg2-binary
 python-swiftclient
 python-keystoneclient
+webdavclient3
