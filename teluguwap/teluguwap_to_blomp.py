@@ -310,12 +310,29 @@ def process_pending_uploads(limit: int = Query(10)):
     conn, cur = get_db_connection()
     results = []
     try:
+        # Use SELECT FOR UPDATE SKIP LOCKED so concurrent triggers never pick the same rows
         cur.execute("""
             SELECT id, song_name, download_link_original, download_link_128kbps,
                    download_link_320kbps, song_link
-            FROM teluguwap_songs WHERE details_status = 'blomp_pending' LIMIT %s
+            FROM teluguwap_songs
+            WHERE details_status = 'blomp_pending'
+            LIMIT %s
+            FOR UPDATE SKIP LOCKED
         """, (limit,))
         pending_songs = cur.fetchall()
+
+        if not pending_songs:
+            return {"status": "batch_processed", "processed": []}
+
+        # Mark ALL picked rows as 'blomp_picked' immediately so other
+        # concurrent triggers won't select the same songs
+        picked_ids = [row[0] for row in pending_songs]
+        cur.execute(
+            "UPDATE teluguwap_songs SET details_status='blomp_picked' WHERE id = ANY(%s)",
+            (picked_ids,)
+        )
+        conn.commit()
+        print(f"DEBUG: Marked {len(picked_ids)} songs as blomp_picked: {picked_ids}")
 
         for s_id, s_name, link_orig, link_128, link_320, song_link_from_db in pending_songs:
 
