@@ -1,3 +1,4 @@
+import gc
 import re
 import time
 import psycopg2
@@ -361,6 +362,7 @@ def process_pending_uploads(limit: int = Query(10)):
                 if not q_link_db:
                     continue   # no link stored for this quality — skip
 
+                fbytes = None
                 try:
                     if not fresh_entry or not fresh_entry.get("link"):
                         raise Exception(f"No fresh link found for quality '{q_name}'")
@@ -380,6 +382,9 @@ def process_pending_uploads(limit: int = Query(10)):
                     print(f"FAIL {q_name} for song {s_id}: {e}")
                     song_success = False
 
+                finally:  # ← ADD
+                    del fbytes  # ← ADD  free audio bytes immediately
+                    gc.collect()
             new_status = "blomp_completed" if song_success else "blomp_partial_failed"
             cur.execute(
                 "UPDATE teluguwap_songs SET details_status=%s WHERE id=%s",
