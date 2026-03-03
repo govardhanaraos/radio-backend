@@ -13,7 +13,11 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, Query
 from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP, BLOMP_USER, BLOMP_PASS
 
+import logging
+
 router = APIRouter(prefix="/song-download", tags=["song-download"])
+
+logging.getLogger("keystoneclient").setLevel(logging.WARNING)
 
 # ─────────────────────────────────────────────
 # Blomp Swift Notes:
