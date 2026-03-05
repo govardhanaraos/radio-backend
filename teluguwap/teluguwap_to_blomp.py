@@ -25,15 +25,21 @@ logging.getLogger("keystoneclient").setLevel(logging.WARNING)
 #   - Public endpoint: http://swiftproxy.acs.ai.net:8080/v1/AUTH_<project_id>
 #   - Container : YOUR EMAIL ADDRESS (e.g. govardhanarao.s@gmail.com)
 #   - Folder    : use object path prefix  →  teluguwap_songs/<filename>
+#
+# Memory budget on Render free (512MB total, 1 worker):
+#   ~120MB  app base
+#   ~15MB   one MP3 in BytesIO (peak, freed immediately after PUT)
+#   ~5MB    overhead
+#   ─────────────────
+#   ~140MB peak — well within 512MB with 1 worker
 # ─────────────────────────────────────────────
+
+CHUNK_SIZE = 256 * 1024   # 256 KB read/write chunks
+
 
 def get_db_connection():
     conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
     return conn, conn.cursor()
-
-
-def calculate_md5(file_bytes):
-    return hashlib.md5(file_bytes).hexdigest()
 
 
 def clean(text):
@@ -44,16 +50,16 @@ def clean(text):
 
 
 # ─────────────────────────────────────────────
-# BLOMP UPLOAD  (Swift — direct requests PUT)
+# BLOMP AUTH
 # ─────────────────────────────────────────────
 
 def get_blomp_auth():
     """
-    Authenticates with Blomp and returns (storage_url, token).
-    Uses swiftclient only for auth — actual uploads go via raw requests.PUT
-    so we have full control over headers and avoid swiftclient bugs.
+    Returns (storage_url, token).
+    FIX: Called ONCE per batch — not once per quality upload.
+    swiftclient Connection is explicitly closed after auth to free its HTTP adapter.
     """
-    conn = swiftclient.Connection(
+    swift_conn = swiftclient.Connection(
         authurl="https://authenticate.blomp.com/v3",
         user=BLOMP_USER,
         key=BLOMP_PASS,
@@ -66,132 +72,150 @@ def get_blomp_auth():
         auth_version="3",
         insecure=True
     )
-    storage_url, token = conn.get_auth()
-    print(f"DEBUG: Raw storage_url from catalog = {storage_url}")
+    storage_url, token = swift_conn.get_auth()
+    try:
+        swift_conn.close()
+    except Exception:
+        pass
+    del swift_conn
+    print(f"DEBUG: storage_url={storage_url}")
     return storage_url, token
 
 
-def upload_to_blomp_swift(song_id, quality, original_filename, file_bytes):
-    """
-    Uploads a file to Blomp via raw HTTP PUT (bypasses swiftclient bugs).
-
-    Blomp's Swift container IS your email address.
-    'teluguwap_songs' is just a path prefix (pseudo-folder) inside it.
-
-    Final object path:  <email>/teluguwap_songs/<song_id>_<name>_<quality><ext>
-    """
-    if not file_bytes:
-        raise Exception(f"file_bytes is empty for song_id={song_id}, quality={quality}")
-
-    file_hash = calculate_md5(file_bytes)
-
-    name_only = os.path.splitext(original_filename)[0]
-    ext = os.path.splitext(original_filename)[1] or ".mp3"
-    unique_filename = f"{song_id}_{name_only}_{quality}{ext}"
-
-    # ── Container = your Blomp email ──────────────────────────────────────
-    container = BLOMP_USER          # e.g. "govardhanarao.s@gmail.com"
-    obj_path  = f"teluguwap_songs/{unique_filename}"
-
-    storage_url, token = get_blomp_auth()
-
-    # Build the full PUT URL
-    # storage_url already ends with /AUTH_<id>, e.g.:
-    #   http://swiftproxy.acs.ai.net:8080/v1/AUTH_8b989f118e624ca6957e102775583f6f
-    put_url = f"{storage_url}/{container}/{obj_path}"
-    print(f"DEBUG: PUT → {put_url}  ({len(file_bytes)} bytes)")
-
-    headers = {
-        "X-Auth-Token": token,
-        "Content-Type": "audio/mpeg",
-        "Content-Length": str(len(file_bytes)),
-    }
-
-    resp = requests.put(
-        put_url,
-        data=file_bytes,
-        headers=headers,
-        timeout=120,
-        verify=False   # swiftproxy uses self-signed cert
-    )
-
-    print(f"DEBUG: Response {resp.status_code} — {resp.text[:200]}")
-
-    if resp.status_code in (201, 200):
-        blomp_path = f"{container}/{obj_path}"
-        print(f"SUCCESS: Uploaded → {blomp_path}")
-        return blomp_path, file_hash
-
-    # ── Friendly error messages ───────────────────────────────────────────
-    if resp.status_code == 403:
-        raise Exception(
-            f"403 Forbidden — most likely causes:\n"
-            f"  1. Container '{container}' does not exist on Blomp yet.\n"
-            f"     → Log into blomp.com and create a container named exactly: {container}\n"
-            f"  2. Token scope mismatch — try logging out & back into Blomp.\n"
-            f"  Raw response: {resp.text[:300]}"
-        )
-    if resp.status_code == 404:
-        raise Exception(
-            f"404 Not Found — container '{container}' not found at {storage_url}.\n"
-            f"  Raw response: {resp.text[:300]}"
-        )
-
-    raise Exception(f"Upload failed: HTTP {resp.status_code} — {resp.text[:300]}")
-
-
 # ─────────────────────────────────────────────
-# TELUGUWAP DOWNLOAD
+# CORE: stream download → BytesIO → PUT
+#
+# FIX for memory issue:
+#   OLD: resp.content loads entire MP3 at once → 2-3 copies live in RAM
+#        (resp internal buffer + file_bytes + fbytes caller ref = ~45MB for 15MB file)
+#
+#   NEW: stream=True + iter_content(256KB) → single BytesIO buffer (~15MB max)
+#        MD5 computed on the fly — no second pass
+#        BytesIO closed + deleted immediately after PUT
+#        gc.collect() after every quality
 # ─────────────────────────────────────────────
 
-def download_song_from_source(download_url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
+def _process_one_quality(s_id, q_name, fresh_url, storage_url, token):
+    """
+    Streams audio from fresh_url, buffers in BytesIO, PUTs to Blomp.
+    Buffer freed immediately after upload regardless of success/failure.
+    Returns (blomp_path, file_hash).
+    """
+    dl_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Referer": "https://teluguwap.in/",
+        "Accept": "*/*",
         "Connection": "keep-alive",
     }
+
     session = requests.Session()
-
     try:
-        session.get("https://teluguwap.in/", headers=headers, timeout=15, verify=False)
-        print("DEBUG: Session cookies acquired")
-    except Exception as e:
-        print(f"DEBUG: Could not pre-fetch homepage: {e}")
+        session.get("https://teluguwap.in/", headers=dl_headers, timeout=15, verify=False)
+    except Exception:
+        pass  # cookie pre-fetch is best-effort
 
-    resp = session.get(download_url, headers=headers, allow_redirects=True, timeout=60, verify=False)
-
-    print(f"DEBUG: Status={resp.status_code}, Content-Type={resp.headers.get('Content-Type')}, "
-          f"Length={len(resp.content)} bytes, Final URL={resp.url}")
-
-    # Expired one-time token
-    if len(resp.content) <= 2 and resp.text.strip() in (";", ""):
-        raise Exception("Expired one-time token — re-scrape the song page for a fresh link.")
+    # ── Stream download ───────────────────────────────────────────────────
+    resp = session.get(
+        fresh_url,
+        headers=dl_headers,
+        stream=True,            # ← do NOT buffer entire body in requests
+        allow_redirects=True,
+        timeout=90,
+        verify=False
+    )
 
     content_type = resp.headers.get("Content-Type", "")
-    if "text/html" in content_type:
-        raise Exception(f"Server returned HTML instead of audio. Body: {resp.text[:300]}")
+    print(f"DEBUG: DL status={resp.status_code}, "
+          f"Content-Type={content_type}, "
+          f"Content-Length={resp.headers.get('Content-Length', '?')}")
 
     if resp.status_code != 200:
-        raise Exception(f"Source download failed: {resp.status_code}")
+        resp.close()
+        session.close()
+        raise Exception(f"Source download failed: HTTP {resp.status_code}")
 
-    file_bytes = resp.content
-    if not file_bytes:
-        raise Exception(f"Downloaded file is empty from: {download_url}")
+    if "text/html" in content_type:
+        snippet = next(resp.iter_content(256), b"")
+        resp.close()
+        session.close()
+        raise Exception(f"Got HTML instead of audio — expired token. Snippet: {snippet[:80]}")
 
     filename = os.path.basename(urlparse(resp.url).path)
     if not filename or not filename.endswith(('.mp3', '.m4a', '.flac')):
-        filename = f"song_{int(time.time())}.mp3"
+        filename = f"song_{s_id}_{q_name}_{int(time.time())}.mp3"
 
-    print(f"DEBUG: Filename={filename}, Size={len(file_bytes)} bytes")
-    return filename, file_bytes
+    # ── Buffer into BytesIO, hash on the fly ─────────────────────────────
+    buf   = BytesIO()
+    md5   = hashlib.md5()
+    total = 0
+    try:
+        for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
+            if chunk:
+                buf.write(chunk)
+                md5.update(chunk)
+                total += len(chunk)
+    finally:
+        resp.close()
+        session.close()
 
+    if total <= 2:
+        buf.close()
+        raise Exception("Expired one-time token — response was empty/minimal.")
+
+    file_hash = md5.hexdigest()
+    buf.seek(0)   # rewind for PUT
+
+    # ── PUT to Blomp with exact Content-Length ────────────────────────────
+    # (old OpenStack Swift rejects chunked Transfer-Encoding → ConnectionAbortedError 10053)
+    name_only     = os.path.splitext(filename)[0]
+    ext           = os.path.splitext(filename)[1] or ".mp3"
+    stored_name   = f"{s_id}_{name_only}_{q_name}{ext}"   # e.g. 3163_04_-_Nuvvante_Nenani_original.m4a
+    full_obj_path = f"teluguwap_songs/{stored_name}"
+    container     = BLOMP_USER
+    put_url       = f"{storage_url}/{container}/{full_obj_path}"
+
+    print(f"DEBUG: PUT {put_url}  ({total} bytes)")
+
+    try:
+        put_resp = requests.put(
+            put_url,
+            data=buf,
+            headers={
+                "X-Auth-Token": token,
+                "Content-Type": "audio/mpeg",
+                "Content-Length": str(total),   # exact size — no chunked encoding
+            },
+            timeout=300,
+            verify=False
+        )
+    finally:
+        buf.close()   # ← always free BytesIO even if PUT raises
+        del buf
+
+    print(f"DEBUG: PUT status={put_resp.status_code}")
+
+    if put_resp.status_code not in (200, 201):
+        if put_resp.status_code == 403:
+            raise Exception(
+                f"403 Forbidden — container '{container}' missing or token invalid.\n"
+                f"Raw: {put_resp.text[:300]}"
+            )
+        raise Exception(
+            f"Blomp PUT failed: HTTP {put_resp.status_code} — {put_resp.text[:200]}"
+        )
+
+    # Store only the unique filename — caller prepends container/folder prefix
+    print(f"SUCCESS {q_name} song {s_id}: {stored_name}")
+    return stored_name, file_hash
+
+
+# ─────────────────────────────────────────────
+# TELUGUWAP SCRAPER
+# ─────────────────────────────────────────────
 
 def parse_song_details(song_link):
     """Scrapes a teluguwap song page and returns FRESH one-time download URLs."""
     url = "https://teluguwap.in" + song_link
-
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Linux; Android 10; SM-G975F) "
@@ -199,10 +223,10 @@ def parse_song_details(song_link):
             "Chrome/120.0.0.0 Mobile Safari/537.36"
         )
     }
-
     resp = requests.get(url, headers=headers, timeout=20)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
+    resp.close()   # free response body once parsed into soup
 
     downloads = {
         "original": {"link": None, "text": None, "size": None},
@@ -218,11 +242,11 @@ def parse_song_details(song_link):
             break
 
     if not bg:
+        del soup
         return {"downloads": downloads}
 
-    forms = bg.find_all("form")
     index = 0
-    for form in forms:
+    for form in bg.find_all("form"):
         hidden = {inp.get("name"): inp.get("value") for inp in form.find_all("input")}
         type_ = hidden.get("type")
         q     = hidden.get("q")
@@ -247,6 +271,7 @@ def parse_song_details(song_link):
                 downloads["320"] = {"link": download_url, "text": text, "size": size}
         index += 1
 
+    del soup, bg
     return {"downloads": downloads}
 
 
@@ -262,26 +287,54 @@ def test_upload_local(
 ):
     if not os.path.exists(file_path):
         return {"status": "error", "message": f"File not found: {file_path}"}
-
     try:
-        with open(file_path, "rb") as f:
-            file_bytes = f.read()
+        storage_url, token = get_blomp_auth()
+        file_size = os.path.getsize(file_path)
+        md5 = hashlib.md5()
+        filename  = os.path.basename(file_path)
+        name_only = os.path.splitext(filename)[0]
+        ext       = os.path.splitext(filename)[1] or ".mp3"
+        obj_path  = f"teluguwap_songs/{song_id}_{name_only}_{quality}{ext}"
+        put_url   = f"{storage_url}/{BLOMP_USER}/{obj_path}"
 
-        filename = os.path.basename(file_path)
-        blomp_path, file_hash = upload_to_blomp_swift(
-            song_id=song_id,
-            quality=quality,
-            original_filename=filename,
-            file_bytes=file_bytes
-        )
+        buf = BytesIO()
+        with open(file_path, "rb") as f:
+            while True:
+                chunk = f.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                md5.update(chunk)
+                buf.write(chunk)
+        buf.seek(0)
+
+        try:
+            resp = requests.put(
+                put_url,
+                data=buf,
+                headers={
+                    "X-Auth-Token": token,
+                    "Content-Type": "audio/mpeg",
+                    "Content-Length": str(file_size),
+                },
+                timeout=300,
+                verify=False
+            )
+        finally:
+            buf.close()
+            del buf
+
+        if resp.status_code not in (200, 201):
+            return {"status": "error", "message": f"HTTP {resp.status_code}: {resp.text[:300]}"}
         return {
             "status": "success",
-            "uploaded_to": blomp_path,
-            "md5_hash": file_hash,
-            "size_bytes": len(file_bytes)
+            "uploaded_to": f"{BLOMP_USER}/{obj_path}",
+            "md5_hash": md5.hexdigest(),
+            "size_bytes": file_size
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    finally:
+        gc.collect()
 
 
 @router.get("/get-128kbps/{song_id}")
@@ -296,26 +349,35 @@ def get_128kbps_link(song_id: int):
         if not row or not row[0]:
             return {"status": "error", "message": "Song link not found"}
 
-        # Always scrape a fresh token — stored links are one-time use
         details   = parse_song_details(row[2])
         fresh_url = "https://teluguwap.in/" + details["downloads"]["128"]["link"]
+        del details
 
-        filename, file_bytes = download_song_from_source(fresh_url)
-        path, b_hash = upload_to_blomp_swift(song_id, "128kbps", filename, file_bytes)
-
+        storage_url, token = get_blomp_auth()
+        path, b_hash = _process_one_quality(song_id, "128kbps", fresh_url, storage_url, token)
         return {"status": "success", "blomp_path": path, "hash": b_hash}
     finally:
         cur.close()
         conn.close()
+        gc.collect()
 
 
 @router.get("/process-pending-uploads")
-def process_pending_uploads(limit: int = Query(10)):
-    """Batch processes songs with 'blomp_pending' status."""
+def process_pending_uploads(limit: int = Query(2)):
+    """
+    Batch processes songs with 'blomp_pending' status.
+
+    RENDER FREE TIER SETTINGS:
+      limit=2   (safe default — ~45MB peak per request with 3 qualities × 15MB)
+      1 worker  (see gunicorn start command below)
+
+    GUNICORN START COMMAND for render.yaml / start command:
+      gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 300
+                        ─────────── ← was 4, now 1 — saves ~300MB RAM at startup
+    """
     conn, cur = get_db_connection()
     results = []
     try:
-        # Use SELECT FOR UPDATE SKIP LOCKED so concurrent triggers never pick the same rows
         cur.execute("""
             SELECT id, song_name, download_link_original, download_link_128kbps,
                    download_link_320kbps, song_link
@@ -329,30 +391,32 @@ def process_pending_uploads(limit: int = Query(10)):
         if not pending_songs:
             return {"status": "batch_processed", "processed": []}
 
-        # Mark ALL picked rows as 'blomp_picked' immediately so other
-        # concurrent triggers won't select the same songs
         picked_ids = [row[0] for row in pending_songs]
         cur.execute(
             "UPDATE teluguwap_songs SET details_status='blomp_picked' WHERE id = ANY(%s)",
             (picked_ids,)
         )
         conn.commit()
-        print(f"DEBUG: Marked {len(picked_ids)} songs as blomp_picked: {picked_ids}")
+        print(f"DEBUG: Picked {len(picked_ids)} songs: {picked_ids}")
+
+        # ── FIX: auth ONCE per batch (not once per quality = not 6x per song) ──
+        storage_url, token = get_blomp_auth()
 
         for s_id, s_name, link_orig, link_128, link_320, song_link_from_db in pending_songs:
 
-            # Scrape fresh one-time tokens ONCE per song
             try:
                 details     = parse_song_details(song_link_from_db)
                 fresh_links = details["downloads"]
+                del details
             except Exception as e:
-                print(f"Failed to scrape fresh links for song {s_id}: {e}")
+                print(f"Scrape failed song {s_id}: {e}")
                 cur.execute(
-                    "UPDATE teluguwap_songs SET details_status='blomp_scrape_failed' WHERE id=%s",
+                    "UPDATE teluguwap_songs SET details_status='blomp_scrape_failed', details_updated_at=NOW() WHERE id=%s",
                     (s_id,)
                 )
                 conn.commit()
                 results.append({"id": s_id, "status": "blomp_scrape_failed"})
+                gc.collect()
                 continue
 
             quality_work = [
@@ -360,44 +424,50 @@ def process_pending_uploads(limit: int = Query(10)):
                 ("128kbps",  link_128,  fresh_links.get("128"),      "blomp_path_128kbps",  "blomp_hash_128kbps"),
                 ("320kbps",  link_320,  fresh_links.get("320"),      "blomp_path_320kbps",  "blomp_hash_320kbps"),
             ]
+            del fresh_links
 
             song_success = True
             for q_name, q_link_db, fresh_entry, path_col, hash_col in quality_work:
                 if not q_link_db:
-                    continue   # no link stored for this quality — skip
+                    continue
 
-                fbytes = None
                 try:
                     if not fresh_entry or not fresh_entry.get("link"):
-                        raise Exception(f"No fresh link found for quality '{q_name}'")
+                        raise Exception(f"No fresh link for '{q_name}'")
 
                     fresh_url = "https://teluguwap.in/" + fresh_entry["link"]
-                    fname, fbytes = download_song_from_source(fresh_url)
-                    b_path, b_hash = upload_to_blomp_swift(s_id, q_name, fname, fbytes)
+
+                    # stream download + PUT — peak RAM = 1 file at a time
+                    b_path, b_hash = _process_one_quality(
+                        s_id, q_name, fresh_url, storage_url, token
+                    )
 
                     cur.execute(
-                        f"UPDATE teluguwap_songs SET {path_col}=%s, {hash_col}=%s WHERE id=%s",
+                        f"UPDATE teluguwap_songs SET {path_col}=%s, {hash_col}=%s, details_updated_at=NOW() WHERE id=%s",
                         (b_path, b_hash, s_id)
                     )
                     conn.commit()
-                    print(f"OK  {q_name} for song {s_id} → {b_path}")
+                    print(f"OK  {q_name} song {s_id} → {b_path}")
 
                 except Exception as e:
-                    print(f"FAIL {q_name} for song {s_id}: {e}")
+                    print(f"FAIL {q_name} song {s_id}: {e}")
                     song_success = False
 
-                finally:  # ← ADD
-                    del fbytes  # ← ADD  free audio bytes immediately
-                    gc.collect()
+                finally:
+                    gc.collect()   # after every quality
+
             new_status = "blomp_completed" if song_success else "blomp_partial_failed"
             cur.execute(
-                "UPDATE teluguwap_songs SET details_status=%s WHERE id=%s",
+                "UPDATE teluguwap_songs SET details_status=%s, details_updated_at=NOW() WHERE id=%s",
                 (new_status, s_id)
             )
             conn.commit()
             results.append({"id": s_id, "status": new_status})
+            gc.collect()   # after every song
 
         return {"status": "batch_processed", "processed": results}
+
     finally:
         cur.close()
         conn.close()
+        gc.collect()
