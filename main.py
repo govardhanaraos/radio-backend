@@ -24,7 +24,7 @@ from teluguwap.teluguwap_album_details_parsing import router as teluguwap_album_
 from teluguwap.teluguwap_song_details_crawl import router as teluguwap_song_details_crawl
 from teluguwap.teluguwap_to_blomp import router as teluguwap_to_blomp
 
-
+from mail.automate_login_blomp import router as automate_login_blomp
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -50,7 +50,7 @@ app.add_middleware(
     allow_methods=["*"],  # GET, POST, PUT, DELETE, OPTIONS
     allow_headers=["*"],  # Authorization, Content-Type, etc.
 )
-
+app.include_router(automate_login_blomp)
 
 app.include_router(stations_router)
 app.include_router(analytics_router)
@@ -69,5 +69,6 @@ app.include_router(premium_router, prefix="/premium", tags=["Premium"])
 app.include_router(teluguwap_home_parse)
 app.include_router(teluguwap_album_list_parsing)
 app.include_router(teluguwap_album_details_parsing)
+app.include_router(teluguwap_song_details_crawl)
 app.include_router(teluguwap_to_blomp)
 # ... include routers ...

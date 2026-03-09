@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, Query
 from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP, BLOMP_USER, BLOMP_PASS
 
+
 import logging
 
 router = APIRouter(prefix="/song-download", tags=["song-download"])
@@ -37,6 +38,26 @@ logging.getLogger("keystoneclient").setLevel(logging.WARNING)
 CHUNK_SIZE = 256 * 1024   # 256 KB read/write chunks
 
 
+# ─────────────────────────────────────────────
+# user_mail_accounts helpers
+# ─────────────────────────────────────────────
+
+def get_next_blomp_account(cur):
+    """
+    Round-robin account selection: returns the (id, mail) from user_mail_accounts
+    that has the fewest completed songs assigned to it.
+    Falls back to the first account if none exist.
+    """
+    cur.execute("""
+         SELECT uma.id, uma.email
+        FROM user_mail_accounts uma
+        where uma.default_account='Y' order by uma.sort_order LIMIT 1
+    """)
+    row = cur.fetchone()
+    if not row:
+        raise Exception("No accounts found in user_mail_accounts table.")
+    return row  # (id, mail)
+
 def get_db_connection():
     conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
     return conn, conn.cursor()
@@ -53,16 +74,21 @@ def clean(text):
 # BLOMP AUTH
 # ─────────────────────────────────────────────
 
-def get_blomp_auth():
+def get_blomp_auth(user: str = None, password: str = None):
     """
     Returns (storage_url, token).
     FIX: Called ONCE per batch — not once per quality upload.
     swiftclient Connection is explicitly closed after auth to free its HTTP adapter.
+
+    If `user` / `password` are supplied (from user_mail_accounts), they override
+    the default BLOMP_USER / BLOMP_PASS env vars.
     """
+    auth_user = user or BLOMP_USER
+    auth_pass = password or BLOMP_PASS
     swift_conn = swiftclient.Connection(
         authurl="https://authenticate.blomp.com/v3",
-        user=BLOMP_USER,
-        key=BLOMP_PASS,
+        user=auth_user,
+        key=auth_pass,
         os_options={
             'project_name': 'storage',
             'user_domain_name': 'Default',
@@ -95,7 +121,7 @@ def get_blomp_auth():
 #        gc.collect() after every quality
 # ─────────────────────────────────────────────
 
-def _process_one_quality(s_id, q_name, fresh_url, storage_url, token):
+def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container: str = None):
     """
     Streams audio from fresh_url, buffers in BytesIO, PUTs to Blomp.
     Buffer freed immediately after upload regardless of success/failure.
@@ -171,11 +197,12 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token):
     ext           = os.path.splitext(filename)[1] or ".mp3"
     stored_name   = f"{s_id}_{name_only}_{q_name}{ext}"   # e.g. 3163_04_-_Nuvvante_Nenani_original.m4a
     full_obj_path = f"teluguwap_songs/{stored_name}"
-    container     = BLOMP_USER
+    container     = container or BLOMP_USER   # use supplied account email, fallback to env default
     put_url       = f"{storage_url}/{container}/{full_obj_path}"
 
     print(f"DEBUG: PUT {put_url}  ({total} bytes)")
 
+    put_resp = None
     try:
         put_resp = requests.put(
             put_url,
@@ -188,6 +215,15 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token):
             timeout=300,
             verify=False
         )
+    except Exception as put_exc:
+        # If we already received a valid response object (2xx), a trailing SSL
+        # teardown error on connection close is harmless — swallow it and continue.
+        # If we have no response at all, the upload genuinely failed — re-raise.
+        if put_resp is None or put_resp.status_code not in (200, 201):
+            buf.close()
+            del buf
+            raise
+        print(f"WARNING: PUT succeeded ({put_resp.status_code}) but got SSL teardown noise: {put_exc}")
     finally:
         buf.close()   # ← always free BytesIO even if PUT raises
         del buf
@@ -400,7 +436,10 @@ def process_pending_uploads(limit: int = Query(2)):
         print(f"DEBUG: Picked {len(picked_ids)} songs: {picked_ids}")
 
         # ── FIX: auth ONCE per batch (not once per quality = not 6x per song) ──
-        storage_url, token = get_blomp_auth()
+        # Select the least-loaded Blomp account for this batch
+        blomp_account_id, blomp_account_mail = get_next_blomp_account(cur)
+        print(f"DEBUG: Using Blomp account id={blomp_account_id} mail={blomp_account_mail}")
+        storage_url, token = get_blomp_auth(user=blomp_account_mail)
 
         for s_id, s_name, link_orig, link_128, link_320, song_link_from_db in pending_songs:
 
@@ -410,6 +449,10 @@ def process_pending_uploads(limit: int = Query(2)):
                 del details
             except Exception as e:
                 print(f"Scrape failed song {s_id}: {e}")
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
                 cur.execute(
                     "UPDATE teluguwap_songs SET details_status='blomp_scrape_failed', details_updated_at=NOW() WHERE id=%s",
                     (s_id,)
@@ -439,7 +482,8 @@ def process_pending_uploads(limit: int = Query(2)):
 
                     # stream download + PUT — peak RAM = 1 file at a time
                     b_path, b_hash = _process_one_quality(
-                        s_id, q_name, fresh_url, storage_url, token
+                        s_id, q_name, fresh_url, storage_url, token,
+                        container=blomp_account_mail   # ← use selected account's email as container
                     )
 
                     cur.execute(
@@ -452,14 +496,22 @@ def process_pending_uploads(limit: int = Query(2)):
                 except Exception as e:
                     print(f"FAIL {q_name} song {s_id}: {e}")
                     song_success = False
+                    try:
+                        conn.rollback()   # reset aborted transaction so cursor stays usable
+                    except Exception:
+                        pass
 
                 finally:
                     gc.collect()   # after every quality
 
             new_status = "blomp_completed" if song_success else "blomp_partial_failed"
             cur.execute(
-                "UPDATE teluguwap_songs SET details_status=%s, details_updated_at=NOW() WHERE id=%s",
-                (new_status, s_id)
+                """UPDATE teluguwap_songs
+                   SET details_status=%s,
+                       details_updated_at=NOW(),
+                       blomp_user_id=%s
+                   WHERE id=%s""",
+                (new_status, blomp_account_id, s_id)   # always record which account was used
             )
             conn.commit()
             results.append({"id": s_id, "status": new_status})
@@ -471,3 +523,76 @@ def process_pending_uploads(limit: int = Query(2)):
         cur.close()
         conn.close()
         gc.collect()
+
+@router.get("/check-existence/{song_id}")
+def check_blomp_file_exists(
+    song_id: int,
+    quality: str = Query(..., description="Accepted values: 'original', '128kbps', or '320kbps'")
+):
+    """
+    Checks if a song file exists in Blomp storage.
+    :param song_id: The ID of the song in the database.
+    :param quality_type: '128kbps', '320kbps', or 'original'.
+    """
+    # 1. Map input text to your database column names
+    column_map = {
+        '128kbps': 'blomp_path_128kbps',
+        '320kbps': 'blomp_path_320kbps',
+        'original': 'blomp_path_original'
+    }
+
+    col_name = column_map.get(quality.lower())
+    if not col_name:
+        return {"error": f"Invalid quality type: {quality}"}
+
+    conn = None
+    try:
+        # 2. Connect to Postgres to get the Blomp path
+        conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
+        cur = conn.cursor()
+        query = f"""
+            SELECT ts.{col_name}, uma.email
+            FROM teluguwap_songs ts
+            LEFT JOIN user_mail_accounts uma ON uma.id = ts.blomp_user_id
+            WHERE ts.id = %s
+        """
+        cur.execute(query, (song_id,))
+        result = cur.fetchone()
+
+        if not result or not result[0]:
+            return {"song_id": song_id, "exists": False, "reason": "No path found in database"}
+
+        blomp_object_path = result[0]
+        container_name    = result[1] or BLOMP_USER   # fallback to env default if not set
+
+        # 3. Connect to Blomp Swift API using the resolved account email
+        swift_conn = swiftclient.Connection(
+            authurl="https://authenticate.blomp.com/v3",
+            user=container_name,
+            key=BLOMP_PASS,
+            auth_version="3",
+            os_options={"tenant_name": "storage"}
+        )
+
+        # 4. Use head_object to check existence without downloading
+        # In Blomp, the 'container' is the registered email address of the account.
+
+        blomp_object_path=f"teluguwap_songs/{blomp_object_path}"
+
+        try:
+            swift_conn.head_object(container_name, blomp_object_path)
+            return {"song_id": song_id, "quality": quality, "exists": True, "path": blomp_object_path}
+        except swiftclient.exceptions.ClientException as e:
+            if e.http_status == 404:
+                return {"song_id": song_id, "exists": False, "reason": "File not found on Blomp"}
+            raise e
+
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        if conn:
+            conn.close()
+
+# Example Usage:
+# result = check_blomp_file_exists(1234, '128kbps')
+# print(result)
