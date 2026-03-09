@@ -18,3 +18,4 @@ psycopg2-binary
 python-swiftclient
 python-keystoneclient
 webdavclient3
+selenium
