@@ -70,3 +70,8 @@ async def get_complaint(reference_no: str):
     result["created_at"] = result["created_at"].isoformat()
 
     return result
+
+
+@router.get("/serviceawake")
+async def get_complaint():
+   return {"result":"Service awake"}
