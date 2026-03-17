@@ -13,7 +13,7 @@ Mount in your main app with:
     from python_api_download_screen_config import router as download_screen_router
     app.include_router(download_screen_router)
 
-MongoDB collection:  app_config
+MongoDB collection:  app_parameters
 Document identifier: { "config_key": "download_screen" }
 
 ──────────────────────────────────────────────────────────────────────────────
@@ -160,43 +160,6 @@ class DownloadScreenConfig(BaseModel):
     #               AND content_types_enabled=true AND content_types non-empty.
 
 
-# ── Default config returned when no document exists in MongoDB ────────────────
-
-DEFAULT_CONFIG = DownloadScreenConfig(
-    languages_enabled=True,
-    languages=[
-        LangOption(label="Telugu", value="Telugu"),
-        LangOption(label="Hindi",  value="Hindi"),
-    ],
-    content_types_enabled=True,
-    content_types=[
-        ContentTypeOption(label="Song",   value="Song",   icon="music_note"),
-        ContentTypeOption(label="Movie",  value="Movie",  icon="movie"),
-        ContentTypeOption(label="Album",  value="Album",  icon="album"),
-        ContentTypeOption(label="Artist", value="Artist", icon="mic"),
-    ],
-    browse_by_album_enabled=True,
-    album_entries=[
-        AlbumBrowseEntry(
-            label="Telugu", lang="telugu", base_url="",
-            icon="library_music", color_a="#7C4DFF", color_b="#9C6FFF",
-        ),
-        AlbumBrowseEntry(
-            label="Tamil", lang="tamil", base_url="",
-            icon="library_music", color_a="#E91E63", color_b="#FF5722",
-        ),
-        AlbumBrowseEntry(
-            label="Hindi", lang="hindi", base_url="",
-            icon="library_music", color_a="#FF6D00", color_b="#FF9800",
-        ),
-        AlbumBrowseEntry(
-            label="Malayalam", lang="malayalam", base_url="",
-            icon="library_music", color_a="#00897B", color_b="#26C6DA",
-        ),
-    ],
-    old_archive_enabled=True,
-)
-
 # ── Router ─────────────────────────────────────────────────────────────────────
 
 
@@ -214,23 +177,25 @@ DEFAULT_CONFIG = DownloadScreenConfig(
     ),
 )
 async def get_download_screen_config():
-    try:
-        db = get_db()
-        doc = await db["app_config"].find_one(
-            {"config_key": "download_screen"},
-            {"_id": 0},  # Exclude MongoDB _id from response
+    db = get_db()
+    doc = await db["app_parameters"].find_one(
+        {"config_key": "download_screen"},
+        {"_id": 0},  # Exclude MongoDB _id from response
+    )
+    if doc is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No download screen config found in DB (config_key='download_screen'). "
+                   "Use PUT /appconfig/download-screen to create one.",
         )
-        if doc is None:
-            # No document in DB yet — return safe defaults
-            return DEFAULT_CONFIG
+    # Remove any extra MongoDB-only fields not in the Pydantic model
+    doc.pop("parameter_code", None)
+    try:
         return DownloadScreenConfig(**doc)
-    except NotImplementedError:
-        # get_db not wired up — still return defaults so Flutter doesn't break
-        return DEFAULT_CONFIG
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to fetch download screen config: {exc}",
+            detail=f"DB document found but failed to parse: {exc}",
         )
 
 
@@ -249,17 +214,12 @@ async def upsert_download_screen_config(config: DownloadScreenConfig):
         db = get_db()
         doc = config.model_dump()
         doc["config_key"] = "download_screen"
-        await db["app_config"].replace_one(
+        await db["app_parameters"].replace_one(
             {"config_key": "download_screen"},
             doc,
             upsert=True,
         )
         return config
-    except NotImplementedError:
-        raise HTTPException(
-            status_code=501,
-            detail="Database not configured on this server.",
-        )
     except Exception as exc:
         raise HTTPException(
             status_code=500,
@@ -279,7 +239,7 @@ async def upsert_download_screen_config(config: DownloadScreenConfig):
 async def patch_album_entry_enabled(lang: str, enabled: bool):
     try:
         db = get_db()
-        result = await db["app_config"].update_one(
+        result = await db["app_parameters"].update_one(
             {
                 "config_key": "download_screen",
                 "album_entries.lang": lang,
@@ -291,14 +251,13 @@ async def patch_album_entry_enabled(lang: str, enabled: bool):
                 status_code=404,
                 detail=f"No album entry found with lang='{lang}'",
             )
-        doc = await db["app_config"].find_one(
+        doc = await db["app_parameters"].find_one(
             {"config_key": "download_screen"}, {"_id": 0}
         )
+        doc.pop("parameter_code", None)
         return DownloadScreenConfig(**doc)
     except HTTPException:
         raise
-    except NotImplementedError:
-        raise HTTPException(status_code=501, detail="Database not configured.")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
