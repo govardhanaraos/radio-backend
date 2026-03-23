@@ -178,24 +178,35 @@ class DownloadScreenConfig(BaseModel):
 )
 async def get_download_screen_config():
     db = get_db()
-    doc = await db["app_parameters"].find_one(
-        {"config_key": "download_screen"},
-        {"_id": 0},  # Exclude MongoDB _id from response
-    )
+    if db is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database not connected. Check MongoDB connection on startup.",
+        )
+    try:
+        doc = await db["app_parameters"].find_one(
+            {"config_key": "download_screen"},
+            {"_id": 0},  # Exclude MongoDB _id from response
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"MongoDB query failed: {exc}",
+        )
     if doc is None:
         raise HTTPException(
             status_code=404,
-            detail="No download screen config found in DB (config_key='download_screen'). "
-                   "Use PUT /appconfig/download-screen to create one.",
+            detail="No document found with config_key='download_screen' in app_config collection.",
         )
-    # Remove any extra MongoDB-only fields not in the Pydantic model
-    doc.pop("parameter_code", None)
+    # Strip extra fields not in the Pydantic model (e.g. parameter_code)
+    for extra_field in ("parameter_code", "config_key"):
+        doc.pop(extra_field, None)
     try:
         return DownloadScreenConfig(**doc)
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"DB document found but failed to parse: {exc}",
+            detail=f"DB document found but failed to parse into DownloadScreenConfig: {exc}",
         )
 
 
@@ -210,8 +221,13 @@ async def get_download_screen_config():
     ),
 )
 async def upsert_download_screen_config(config: DownloadScreenConfig):
+    db = get_db()
+    if db is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database not connected. Check MongoDB connection on startup.",
+        )
     try:
-        db = get_db()
         doc = config.model_dump()
         doc["config_key"] = "download_screen"
         await db["app_parameters"].replace_one(
@@ -237,8 +253,13 @@ async def upsert_download_screen_config(config: DownloadScreenConfig):
     ),
 )
 async def patch_album_entry_enabled(lang: str, enabled: bool):
+    db = get_db()
+    if db is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database not connected. Check MongoDB connection on startup.",
+        )
     try:
-        db = get_db()
         result = await db["app_parameters"].update_one(
             {
                 "config_key": "download_screen",
@@ -254,7 +275,8 @@ async def patch_album_entry_enabled(lang: str, enabled: bool):
         doc = await db["app_parameters"].find_one(
             {"config_key": "download_screen"}, {"_id": 0}
         )
-        doc.pop("parameter_code", None)
+        for extra_field in ("parameter_code", "config_key"):
+            doc.pop(extra_field, None)
         return DownloadScreenConfig(**doc)
     except HTTPException:
         raise

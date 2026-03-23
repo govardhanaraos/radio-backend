@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from stations.analytics_router import router as analytics_router
 from complaints.router import router as complaints_router
 from config.router import router as config_router
+from stations.postgresql_analytics_router import router as pg_analytics_router
 from premium.router import router as premium_router
 from masstamilan.masstelugu_router import router as masstelugu_router
 from masstamilan.masstamilan_router_new import router as masstamilan_router
@@ -56,6 +57,7 @@ app.include_router(stations_router)
 app.include_router(analytics_router)
 app.include_router(complaints_router)
 app.include_router(config_router)
+app.include_router(pg_analytics_router)
 app.include_router(masstelugu_router)
 app.include_router(masstamilan_router)
 app.include_router(hindimp3bhai_router)
