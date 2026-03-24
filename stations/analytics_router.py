@@ -3,6 +3,11 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 from db.db import get_db
 from db.redis_config import r_async, CACHE_TTL
+from config.ads_config_normalize import (
+    sanitize_ads_document_for_storage,
+    expand_for_analytics_client,
+    replace_sanitized_ads_doc,
+)
 import orjson
 
 router = APIRouter(
@@ -53,43 +58,11 @@ class ScreenAdsConfig(BaseModel):
     """
     Per-screen ads config returned by GET /analytics/ads/{screen}.
 
-    The four list keys (stations_list, mp3_list, downloads_list,
-    recordings_list) each carry their own InListAdPlacement block so
-    every list inside a single screen can be tuned independently.
-
-    MongoDB document shape (example for 'radio' screen):
-    {
-        "screen": "radio",
-        "ads_enabled": true,
-        "banner_enabled": true,
-        "interstitial_enabled": false,
-        "interstitial_every_n_taps": 5,
-        "inlist_enabled": true,
-        "stations_list": {
-            "enabled": true,
-            "every_n_items": 6,
-            "first_ad_position": 0,
-            "max_ads": 0
-        },
-        "mp3_list": {
-            "enabled": false,
-            "every_n_items": 8,
-            "first_ad_position": 0,
-            "max_ads": 3
-        },
-        "downloads_list": {
-            "enabled": false,
-            "every_n_items": 6,
-            "first_ad_position": 0,
-            "max_ads": 0
-        },
-        "recordings_list": {
-            "enabled": false,
-            "every_n_items": 6,
-            "first_ad_position": 0,
-            "max_ads": 0
-        }
-    }
+    Response always includes all four list keys for backward compatibility.
+    Storage in MongoDB is screen-scoped:
+      - radio: only ``stations_list`` is stored; other lists are forced off in the API.
+      - player: ``mp3_list``, ``downloads_list``, ``recordings_list`` only.
+      - mp3_download: no list documents stored; API returns all lists disabled.
     """
     screen: str
 
@@ -186,6 +159,17 @@ async def _invalidate_cache(key: str):
             print(f"⚠️ Redis delete error ({key}): {e}")
 
 
+async def invalidate_ads_config_cache(screen: str | None = None):
+    """
+    Invalidate Redis entries used by ads config GET endpoints.
+    When `screen` is None, only the global cache key is cleared.
+    """
+    if screen:
+        await _invalidate_cache(f"ads_config:{screen}")
+    else:
+        await _invalidate_cache("ads_config:global")
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # READ endpoints
 # ─────────────────────────────────────────────────────────────────────────────
@@ -241,7 +225,8 @@ async def get_ads_config(screen: str):
             cached = await r_async.get(cache_key)
             if cached:
                 print(f"🚀 Cache Hit: ads config for '{screen}'")
-                return ScreenAdsConfig(**orjson.loads(cached))
+                loaded = orjson.loads(cached)
+                return ScreenAdsConfig(**expand_for_analytics_client(screen, loaded))
         except Exception as e:
             print(f"⚠️ Redis read error ({screen}), falling back to DB: {e}")
 
@@ -252,14 +237,16 @@ async def get_ads_config(screen: str):
             detail=f"Ads config for screen '{screen}' not found."
         )
 
+    expanded = expand_for_analytics_client(screen, ads_doc)
+
     if r_async is not None:
         try:
-            await r_async.set(cache_key, orjson.dumps(ads_doc), ex=CACHE_TTL)
+            await r_async.set(cache_key, orjson.dumps(expanded), ex=CACHE_TTL)
             print(f"💾 Cache Miss: stored ads config for '{screen}'")
         except Exception as e:
             print(f"⚠️ Redis write error ({screen}): {e}")
 
-    return ScreenAdsConfig(**ads_doc)
+    return ScreenAdsConfig(**expanded)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -367,14 +354,18 @@ async def upsert_screen_ads_config(screen: str, payload: AdsConfigUpsert):
         return_document=True,  # pymongo ReturnDocument.AFTER equivalent in motor
     )
 
-    # Invalidate Redis so the next GET reflects the update immediately.
-    await _invalidate_cache(f"ads_config:{screen}")
-
     if result is None:
         raise HTTPException(status_code=500, detail="Upsert failed unexpectedly.")
 
-    result.pop("_id", None)
-    return ScreenAdsConfig(**result)
+    oid = result["_id"]
+    sanitized = sanitize_ads_document_for_storage(result)
+    await replace_sanitized_ads_doc(db, oid, sanitized)
+    final = await db["ads_config"].find_one({"_id": oid}, {"_id": 0})
+
+    await _invalidate_cache(f"ads_config:{screen}")
+
+    expanded = expand_for_analytics_client(screen, final)
+    return ScreenAdsConfig(**expanded)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -160,6 +160,17 @@ class DownloadScreenConfig(BaseModel):
     #               AND content_types_enabled=true AND content_types non-empty.
 
 
+class AppUpdateConfig(BaseModel):
+    """
+    App update configuration stored in `app_parameters` collection.
+    The document is identified by `parameter_code`.
+    """
+
+    app_update_enabled: bool = False
+    app_update_version: str = ""
+    app_update_url: str = ""
+
+
 # ── Router ─────────────────────────────────────────────────────────────────────
 
 
@@ -303,4 +314,35 @@ async def get_app_config():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/availableupdate", summary="Update App Update parameters")
+async def upsert_app_update_config(config: AppUpdateConfig):
+    """
+    Updates the `app_update_*` records in `app_parameters`, matched by `parameter_code`.
+    """
+
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database connection failed.")
+
+    try:
+        enabled_value = "true" if config.app_update_enabled else "false"
+        updates: Dict[str, Any] = {
+            "app_update_enabled": enabled_value,
+            "app_update_version": config.app_update_version,
+            "app_update_url": config.app_update_url,
+        }
+
+        collection = db["app_parameters"]
+        for parameter_code, value in updates.items():
+            await collection.update_one(
+                {"parameter_code": parameter_code},
+                {"$set": {"value": value}},
+                upsert=True,
+            )
+
+        return {"status": "success", "config": updates}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
 

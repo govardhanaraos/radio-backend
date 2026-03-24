@@ -3,13 +3,18 @@ from fastapi import FastAPI
 # Import the functions directly from the db.db module
 from db.db import connect_to_mongo, close_mongo_connection
 from stations.router import router as stations_router
+from stations.admin_router import router as admin_stations_router
+from auth.router import router as auth_router, setup_default_admin
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from stations.analytics_router import router as analytics_router
 from complaints.router import router as complaints_router
 from config.router import router as config_router
+from config.ads_router import router as ads_config_router
+from config.app_settings_router import router as app_settings_router
 from stations.postgresql_analytics_router import router as pg_analytics_router
 from premium.router import router as premium_router
+from premium.premium_users_router import router as premium_users_admin_router
 from masstamilan.masstelugu_router import router as masstelugu_router
 from masstamilan.masstamilan_router_new import router as masstamilan_router
 from masstamilan.hindimp3bhai_router import router as hindimp3bhai_router
@@ -25,13 +30,21 @@ from teluguwap.teluguwap_album_details_parsing import router as teluguwap_album_
 from teluguwap.teluguwap_song_details_crawl import router as teluguwap_song_details_crawl
 from teluguwap.teluguwap_to_blomp import router as teluguwap_to_blomp
 
+from hindiflacs.hindiflacs_home_parse import router as hindiflacs_home_parse
+from hindiflacs.hindiflacs_album_list_parsing import router as hindiflacs_album_list_parsing
+from hindiflacs.hindiflacs_album_details_parsing import router as hindiflacs_album_details_parsing
+from hindiflacs.hindiflacs_song_details_crawl import router as hindiflacs_song_details_crawl
+from hindiflacs.hindiflacs_to_blomp import router as hindiflacs_to_blomp
+
 from mail.automate_login_blomp import router as automate_login_blomp
+from ai_assistant.ai_router import router as ai_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 1. Logic to run on startup (before the app starts)
     print("Application Startup: Connecting to Mongo...")
     await connect_to_mongo()
+    await setup_default_admin()
     yield # <-- Application is now running and serving requests
     # 2. Logic to run on shutdown (when the app shuts down)
     print("Application Shutdown: Closing Mongo connection...")
@@ -51,12 +64,16 @@ app.add_middleware(
     allow_methods=["*"],  # GET, POST, PUT, DELETE, OPTIONS
     allow_headers=["*"],  # Authorization, Content-Type, etc.
 )
+app.include_router(auth_router)
 app.include_router(automate_login_blomp)
 
 app.include_router(stations_router)
+app.include_router(admin_stations_router)
 app.include_router(analytics_router)
 app.include_router(complaints_router)
 app.include_router(config_router)
+app.include_router(ads_config_router)
+app.include_router(app_settings_router)
 app.include_router(pg_analytics_router)
 app.include_router(masstelugu_router)
 app.include_router(masstamilan_router)
@@ -67,10 +84,18 @@ app.include_router(album_list_parsing)
 app.include_router(album_details_parsing)
 app.include_router(song_details_crawl)
 app.include_router(premium_router, prefix="/premium", tags=["Premium"])
+app.include_router(premium_users_admin_router)
 
 app.include_router(teluguwap_home_parse)
 app.include_router(teluguwap_album_list_parsing)
 app.include_router(teluguwap_album_details_parsing)
 app.include_router(teluguwap_song_details_crawl)
 app.include_router(teluguwap_to_blomp)
-# ... include routers ...
+
+app.include_router(hindiflacs_home_parse)
+app.include_router(hindiflacs_album_list_parsing)
+app.include_router(hindiflacs_album_details_parsing)
+app.include_router(hindiflacs_song_details_crawl)
+app.include_router(hindiflacs_to_blomp)
+app.include_router(ai_router)
+# ... include routers ...

@@ -21,8 +21,7 @@ try:
         password=REDIS_PASSWORD,
         decode_responses=True
     )
-    r_async.ping()
-    print("✅ Redis connection successful!")
+    print("Redis client initialized successfully!")
 except Exception as e:
-    print(f"❌ Could not connect to Redis: {e}")
+    print(f"Could not connect to Redis: {e}")
     r_async = None # Set to None if connection fails

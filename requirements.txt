@@ -19,3 +19,6 @@ python-swiftclient
 python-keystoneclient
 webdavclient3
 selenium
+google-genai
+PyJWT
+passlib[bcrypt]
