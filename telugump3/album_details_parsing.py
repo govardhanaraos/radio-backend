@@ -91,9 +91,10 @@ def ensure_tables(cur, conn):
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS song_singers (
+        id SERIAL PRIMARY KEY,
         song_id INT REFERENCES songs(id) ON DELETE CASCADE,
         singer_id INT REFERENCES singers(id) ON DELETE CASCADE,
-        PRIMARY KEY (song_id, singer_id)
+        UNIQUE (song_id, singer_id)
     );
     """)
 

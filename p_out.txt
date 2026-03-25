@@ -1,0 +1,14 @@
+<div class="pagination">
+ <a href="Kohrra-2-Web-Series-2026-Ajrh2l-1">
+  «
+ </a>
+ <a href="Kohrra-2-Web-Series-2026-Ajrh2l-1">
+  1
+ </a>
+ <span class="active">
+  2
+ </span>
+ <span class="disabled">
+  »
+ </span>
+</div>

@@ -120,9 +120,10 @@ def setup_db():
         """,
         """
         CREATE TABLE IF NOT EXISTS hindiflacs_song_singers (
+            id SERIAL PRIMARY KEY,
             song_id INTEGER REFERENCES hindiflacs_songs(id) ON DELETE CASCADE,
             singer_id INTEGER REFERENCES hindiflacs_singers(id) ON DELETE CASCADE,
-            PRIMARY KEY (song_id, singer_id)
+            UNIQUE(song_id, singer_id)
         )
         """
     ]

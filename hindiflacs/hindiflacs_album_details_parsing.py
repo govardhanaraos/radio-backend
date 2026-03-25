@@ -41,6 +41,14 @@ def normalize(url):
 # INSERT / UPSERT HELPERS
 # ---------------------------------------------------------
 def upsert_actor(cur, conn, name, link, album_id):
+    # Try to find existing actor first to avoid consuming sequence on conflict
+    cur.execute("""
+        SELECT id FROM hindiflacs_actors 
+        WHERE actor_link=%s AND album_id=%s
+    """, (link, album_id))
+    if cur.fetchone():
+        return
+
     cur.execute("""
         INSERT INTO hindiflacs_actors (actor_name, actor_link, album_id)
         VALUES (%s, %s, %s)
@@ -50,6 +58,14 @@ def upsert_actor(cur, conn, name, link, album_id):
 
 
 def upsert_director(cur, conn, name, link, album_id):
+    # Try to find existing director first to avoid consuming sequence on conflict
+    cur.execute("""
+        SELECT id FROM hindiflacs_directors 
+        WHERE director_link=%s AND album_id=%s
+    """, (link, album_id))
+    if cur.fetchone():
+        return
+
     cur.execute("""
         INSERT INTO hindiflacs_directors (director_name, director_link, album_id)
         VALUES (%s, %s, %s)
@@ -59,6 +75,14 @@ def upsert_director(cur, conn, name, link, album_id):
 
 
 def upsert_music_director(cur, conn, name, link, album_id):
+    # Try to find existing music director first to avoid consuming sequence on conflict
+    cur.execute("""
+        SELECT id FROM hindiflacs_music_directors 
+        WHERE music_director_link=%s AND album_id=%s
+    """, (link, album_id))
+    if cur.fetchone():
+        return
+
     cur.execute("""
         INSERT INTO hindiflacs_music_directors (music_director_name, music_director_link, album_id)
         VALUES (%s, %s, %s)
@@ -68,6 +92,13 @@ def upsert_music_director(cur, conn, name, link, album_id):
 
 
 def upsert_singer(cur, conn, name, link):
+    # Try to find existing singer first to avoid consuming sequence on conflict
+    cur.execute("SELECT id FROM hindiflacs_singers WHERE singer_name=%s", (name,))
+    row = cur.fetchone()
+    if row:
+        return row[0]
+
+    # If not found, try to insert
     cur.execute("""
         INSERT INTO hindiflacs_singers (singer_name, singer_link)
         VALUES (%s, %s)
@@ -80,6 +111,7 @@ def upsert_singer(cur, conn, name, link):
         conn.commit()
         return row[0]
 
+    # If conflict happened between SELECT and INSERT
     cur.execute("SELECT id FROM hindiflacs_singers WHERE singer_name=%s", (name,))
     row = cur.fetchone()
     return row[0] if row else None
@@ -123,11 +155,36 @@ def link_song_singers(cur, conn, song_id, singer_ids):
     conn.commit()
 
 
+def find_next_page_url(soup, current_url):
+    pagination = soup.find("div", class_="pagination")
+    if not pagination:
+        return None
+
+    elements = list(pagination.children)
+    active_found = False
+
+    for el in elements:
+        if not hasattr(el, "name"):
+            continue
+
+        if el.name == "span" and "active" in (el.get("class") or []):
+            active_found = True
+            continue
+
+        if active_found and el.name == "a":
+            href = el.get("href")
+            if href:
+                return urljoin(current_url, href)
+
+    return None
+
+
 # ---------------------------------------------------------
 # PARSE ALBUM DETAILS PAGE
 # ---------------------------------------------------------
 def parse_album_details(album_link):
-    url = "https://hindiflacs.com" + album_link
+    base_url = "https://hindiflacs.com"
+    current_url = urljoin(base_url, album_link)
 
     headers = {
         "User-Agent": (
@@ -137,65 +194,68 @@ def parse_album_details(album_link):
         )
     }
 
-    resp = requests.get(url, headers=headers, timeout=20)
-    resp.raise_for_status()
-
-    soup = BeautifulSoup(resp.text, "html.parser")
-
     title = None
     year = None
     cast = []
     director = (None, None)
     music = (None, None)
     rating = None
-
-    meta = soup.find("div", class_="bg")
-    if meta:
-        title_tag = meta.find("strong", string=re.compile("Title"))
-        if title_tag:
-            title = clean(title_tag.next_sibling)
-
-        year_tag = meta.find("strong", string=re.compile("Released Year"))
-        if year_tag:
-            y = year_tag.find_next("a")
-            if y:
-                year_text = y.get_text(strip=True)[:4]
-                try:
-                    year = int(year_text)
-                except:
-                    year = None
-
-        cast_tag = meta.find("strong", string=re.compile("Cast"))
-        if cast_tag:
-            for sib in cast_tag.next_siblings:
-                if getattr(sib, "name", None) == "strong":
-                    break
-                if getattr(sib, "name", None) == "a":
-                    cast.append((clean(sib.get_text()), normalize(sib["href"])))
-
-        d_tag = meta.find("strong", string=re.compile("Director"))
-        if d_tag:
-            a = d_tag.find_next("a")
-            if a:
-                director = (clean(a.get_text()), normalize(a["href"]))
-
-        m_tag = meta.find("strong", string=re.compile("Music"))
-        if m_tag:
-            a = m_tag.find_next("a")
-            if a:
-                music = (clean(a.get_text()), normalize(a["href"]))
-
-        r_tag = meta.find("strong", string=re.compile("Rating"))
-        if r_tag:
-            rating = clean(r_tag.next_sibling)
-
     songs = []
-    grid = soup.find("div", class_="related-albums-grid")
-    if grid:
-        cards = grid.find_all("div", class_="related-album-card")
 
-        for card in cards:
-            td = card.find("td")
+    page = 1
+    while current_url:
+        resp = requests.get(current_url, headers=headers, timeout=20)
+        resp.raise_for_status()
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        if page == 1:
+            meta = soup.find("div", class_="bg")
+            if meta:
+                title_tag = meta.find("strong", string=re.compile("Title"))
+                if title_tag:
+                    title = clean(title_tag.next_sibling)
+
+                year_tag = meta.find("strong", string=re.compile("Released Year"))
+                if year_tag:
+                    y = year_tag.find_next("a")
+                    if y:
+                        year_text = y.get_text(strip=True)[:4]
+                        try:
+                            year = int(year_text)
+                        except:
+                            year = None
+
+                cast_tag = meta.find("strong", string=re.compile("Cast"))
+                if cast_tag:
+                    for sib in cast_tag.next_siblings:
+                        if getattr(sib, "name", None) == "strong":
+                            break
+                        if getattr(sib, "name", None) == "a":
+                            cast.append((clean(sib.get_text()), normalize(sib["href"])))
+
+                d_tag = meta.find("strong", string=re.compile("Director"))
+                if d_tag:
+                    a = d_tag.find_next("a")
+                    if a:
+                        director = (clean(a.get_text()), normalize(a["href"]))
+
+                m_tag = meta.find("strong", string=re.compile("Music"))
+                if m_tag:
+                    a = m_tag.find_next("a")
+                    if a:
+                        music = (clean(a.get_text()), normalize(a["href"]))
+
+                r_tag = meta.find("strong", string=re.compile("Rating"))
+                if r_tag:
+                    rating = clean(r_tag.next_sibling)
+
+        grid = soup.find("div", class_="related-albums-grid")
+        if grid:
+            cards = grid.find_all("div", class_="related-album-card")
+
+            for card in cards:
+                td = card.find("td")
             if not td:
                 continue
 
@@ -227,6 +287,9 @@ def parse_album_details(album_link):
                 "singers": singers,
                 "singer_links": singer_links
             })
+
+        current_url = find_next_page_url(soup, current_url)
+        page += 1
 
     return {
         "title": title,

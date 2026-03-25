@@ -1,0 +1,1745 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; background: #f8f9fa; padding-bottom: 60px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 10px; }
+        .bg { background: #fff; margin: 8px 0; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .current-path { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
+		
+/* UNIFIED MOBILE-FIRST CSS FOR MUSIC STREAMING SITE */
+/* Optimized for performance and mobile experience */
+
+/* === CSS VARIABLES === */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --white: #ffffff;
+    --dark: #333333;
+    --border-color: #e9ecef;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
+    --transition: all 0.3s ease;
+    --border-radius: 8px;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* === BASE STYLES === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding-bottom: 70px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* === LAYOUT === */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+/* === TYPOGRAPHY === */
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    color: var(--primary-color);
+}
+
+h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0.75rem 0 0.25rem;
+}
+
+h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0 0.25rem;
+}
+
+h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+/* === HEADER === */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+    opacity: 0.5;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.header h4 {
+    font-size: 1.1rem;
+    font-weight: 300;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+.current-path {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--white);
+    padding: 15px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    transform: translateZ(0);
+}
+
+/* === NAVIGATION === */
+.nav-section {
+    background: var(--white);
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nav-section a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.nav-section a:hover {
+    background: var(--light-bg);
+    color: var(--dark);
+}
+
+/* === BREADCRUMB === */
+.breadcrumb-nav {
+    background: var(--white);
+    padding: 12px 15px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-nav a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: var(--secondary-color);
+    margin: 0 5px;
+}
+
+/* === CONTENT CARDS === */
+.bg {
+    background: var(--white);
+    margin-bottom: 8px;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border-left: 4px solid transparent;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.bg:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    border-left-color: var(--primary-color);
+}
+
+.bg:active {
+    transform: scale(0.98);
+    border-left-color: var(--primary-color);
+}
+
+/* === SEARCH SECTION === */
+.search-section {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px 20px;
+    margin: 10px 0 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    font-size: 16px;
+    transition: var(--transition);
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    background: var(--white);
+}
+
+/* === TOGGLE SWITCHES === */
+.switch-group {
+    display: inline-flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    background: var(--light-bg);
+    border-radius: 30px;
+    padding: 5px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.switch-group input[type="radio"] {
+    display: none;
+}
+
+.switch-group label.switch {
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.switch-group input[type="radio"]:checked + label {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+/* === NAVIGATION LISTS === */
+.nav-lists {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.nav-item {
+    background: var(--light-bg);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border-left: 4px solid transparent;
+    transition: var(--transition);
+}
+
+.nav-item:hover {
+    background: #f1f1f1;
+    border-left-color: var(--primary-color);
+}
+
+.nav-item strong {
+    color: var(--primary-color);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* === MENU LINKS === */
+.menu-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.menu-link {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--light-bg);
+    border-radius: 15px;
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 13px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.menu-link:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.menu-link h5 {
+    font-size: 13px;
+    margin: 0;
+    display: inline;
+}
+
+.menu-link small {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.menu-more {
+    color: var(--secondary-color);
+    font-size: 12px;
+    padding: 6px 8px;
+}
+
+.menu-show-all {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* === DECADES LINKS === */
+.decades-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.decades-links a {
+    display: inline-block;
+    padding: 4px 8px;
+    background: var(--light-bg);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 12px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.decades-links a:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* === IMAGES === */
+.img {
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 100%;
+    height: auto;
+    will-change: transform;
+}
+
+.img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* === ALBUM/MOVIE GRIDS === */
+.albums-grid,
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.album-card,
+.movie-card {
+    padding: 12px;
+}
+
+.album-layout,
+.movie-layout {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.album-cover,
+.movie-poster {
+    flex-shrink: 0;
+    width: 80px;
+}
+
+.album-info,
+.movie-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.album-info h3,
+.movie-info h2 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.album-info a,
+.movie-info a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.album-info a:hover,
+.movie-info a:hover {
+    color: var(--primary-color);
+}
+
+/* === AUDIO PLAYER BUTTON === */
+.sm2_button {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--success-color), #20c997);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    color: var(--white);
+    text-decoration: none;
+    margin-right: 10px;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    position: relative;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.sm2_button:before {
+    content: "▶";
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sm2_button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.sm2_button:active {
+    transform: scale(1.1);
+}
+
+/* === LINKS === */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--dark);
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #551a8b;
+}
+
+a:active {
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* === FORMS === */
+select,
+input {
+    padding: 8px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 150px;
+    font-family: inherit;
+}
+
+select:focus,
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* === PAGINATION === */
+.pagination-nav {
+    text-align: center;
+    padding: 20px 0;
+    margin: 20px 0;
+}
+
+.pagination-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0 3px;
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 500;
+    min-width: 45px;
+    text-align: center;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.pagination-btn:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.pagination-btn.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.pagination-btn.disabled {
+    color: var(--secondary-color);
+    background: var(--light-bg);
+    border-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.pagination-btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* === DOWNLOAD OPTIONS === */
+.download-options {
+    background: var(--white);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 20px 0;
+}
+
+.download-options h2,
+.download-options h3 {
+    color: var(--dark);
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.download-options a {
+    display: block;
+    margin: 8px 0;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: var(--white);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.download-options a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    color: var(--white);
+}
+
+.download-options a:active {
+    transform: scale(0.95);
+}
+
+
+/* === ZIP DOWNLOAD BUTTONS === */
+/* ACTION BAR (Play + ZIP in one line) */
+.action-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+/* Shared Button Style */
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+/* Play Button */
+.play-btn {
+    background: #28a745;
+    color: #fff;
+}
+
+.play-btn:hover {
+    background: #218838;
+}
+
+/* ZIP Toggle Button */
+.zip-btn {
+    background: #667eea;
+    color: #fff;
+}
+
+.zip-btn:hover {
+    background: #5563c1;
+}
+
+/* ZIP Section */
+.zip-container {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+/* Individual ZIP Buttons */
+.zip-item {
+    margin-bottom: 8px;
+}
+
+.zip-btn-inner {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.zip-btn-inner:hover {
+    background: #f0f0f0;
+}
+
+/* Mobile Adjust */
+@media (max-width: 600px) {
+    .action-bar {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* === INFO SECTIONS === */
+.info {
+    background: var(--light-bg);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin: 15px 0;
+    border-left: 4px solid var(--primary-color);
+}
+
+.content-section {
+    background: var(--white);
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.content-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.content-section li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-section li:last-child {
+    border-bottom: none;
+}
+
+/* === FOLDER INFO === */
+.folder-info {
+    background: var(--white);
+    margin: 15px 0;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.folder-info h3 {
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.folder-info p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.folder-info a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.folder-info a:hover {
+    text-decoration: underline;
+}
+
+/* === SEARCH RESULTS === */
+.search-item {
+    background: var(--white);
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+
+.search-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#results {
+    list-style: none;
+    margin-top: 15px;
+    padding: 0;
+}
+
+#results li {
+    background: var(--white);
+    padding: 12px 18px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+
+#results li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* === SINGERS INFO === */
+.singers-info {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.singers-info small {
+    color: var(--secondary-color);
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.singers-info a {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* === ALBUM METADATA === */
+.album-meta {
+    font-size: 13px;
+    margin: 5px 0;
+    color: var(--secondary-color);
+}
+
+.album-meta strong {
+    color: var(--dark);
+}
+
+.album-meta a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.album-meta a:hover {
+    text-decoration: underline;
+}
+
+/* === SONG COUNT === */
+.song-count {
+    font-size: 13px;
+    color: var(--secondary-color);
+    margin-top: 8px;
+}
+
+.song-count strong {
+    color: var(--success-color);
+}
+
+/* === FILE SIZE === */
+.file-size {
+    color: var(--secondary-color);
+    font-size: 11px;
+}
+
+/* === NO FILES MESSAGE === */
+.no-files {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    color: var(--secondary-color);
+    font-size: 16px;
+}
+
+.no-files h2 {
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+/* === FOOTER === */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: var(--white);
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 99;
+    transform: translateZ(0);
+}
+
+.footer a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.footer a:hover {
+    color: var(--white);
+    text-shadow: 0 0 8px #3498db;
+}
+
+/* === LOADING STATE === */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.highlight-primary {
+    background-color: #ffeb3b;
+    color: #333;
+}
+
+.highlight-secondary {
+    background-color: #ffc107;
+    color: #333;
+}
+
+/* === UTILITIES === */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Mobile First - Base styles above are for mobile */
+
+/* Small tablets and large phones */
+@media (min-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .bg {
+        padding: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .current-path,
+    .header {
+        padding: 18px;
+    }
+    
+    .albums-grid,
+    .movies-grid {
+        gap: 15px;
+    }
+    
+    .album-cover,
+    .movie-poster {
+        width: 100px;
+    }
+    
+    .search-input {
+        font-size: 16px;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .bg {
+        padding: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .current-path {
+        font-size: 18px;
+        padding: 20px;
+    }
+    
+    .header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .albums-grid,
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 18px;
+    }
+    
+    .album-cover,
+    .movie-poster {
+        width: 120px;
+    }
+    
+    .folder-info,
+    .download-options,
+    .content-section {
+        padding: 25px;
+    }
+    
+    /* Hover effects for non-touch devices */
+    .bg:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-2px);
+        border-left-color: var(--primary-color);
+    }
+    
+    .img:hover {
+        transform: scale(1.02);
+    }
+    
+    .sm2_button:hover {
+        transform: scale(1.1);
+    }
+    
+    /* Remove active states on larger screens */
+    a {
+        min-height: auto;
+        line-height: normal;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+    
+    .bg {
+        padding: 25px;
+        margin-bottom: 15px;
+    }
+    
+    .albums-grid,
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 20px;
+    }
+    
+    .album-cover,
+    .movie-poster {
+        width: 140px;
+    }
+    
+    .search-input {
+        max-width: 600px;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    .albums-grid,
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    }
+}
+
+/* === ACCESSIBILITY === */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+a:focus,
+select:focus,
+input:focus,
+.pagination-btn:focus,
+.sm2_button:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+
+/* === PERFORMANCE OPTIMIZATIONS === */
+.bg,
+.pagination-btn,
+.sm2_button,
+.download-options a,
+.zip-main-btn,
+.menu-link {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+hr {
+  border: 0;
+  border-top: 1px dashed rgba(0, 0, 0, 0.2); /* Dashed line with transparency */
+  height: 1px;
+}
+
+/* Side-by-side layout for movie info */
+.album-header-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.album-cover-large {
+    flex-shrink: 0;
+    width: 200px; /* Adjust as needed */
+}
+
+.album-cover-large img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.no-cover {
+    width: 200px;
+    height: 300px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    border-radius: 8px;
+    border: 2px dashed #ccc;
+}
+
+.album-details {
+    flex: 1;
+    min-width: 0; /* Allows text to wrap properly */
+}
+
+.album-title {
+    margin: 0 0 15px 0;
+    font-size: 1.8em;
+    line-height: 1.2;
+}
+
+.rating {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+.runtime {
+    color: #666;
+    font-weight: normal;
+}
+
+.year-info, .meta-info {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.year-info a, .meta-info a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.year-info a:hover, .meta-info a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design - stack on smaller screens */
+@media (max-width: 768px) {
+    .album-header-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .album-cover-large {
+        width: 150px;
+        margin-bottom: 15px;
+    }
+    
+    .no-cover {
+        width: 150px;
+        height: 225px;
+    }
+    
+    .album-details {
+        text-align: center;
+    }
+}
+
+.new-badge-mini{
+  background:#ff5252;
+  color:#fff;
+  min-width:14px;
+  height:14px;
+  padding:0 3px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:600;
+  margin-left:1px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+
+
+/* Grid Layout for Search Results */
+.related-albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.related-album-card {
+    background: var(--light-bg);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.related-album-card:hover {
+    background: var(--white);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.related-album-cover {
+    flex-shrink: 0;
+    width: 80px;
+    height: 100px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--border-color);
+}
+
+.related-album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.related-album-card:hover .related-album-cover img {
+    transform: scale(1.05);
+}
+
+.no-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--border-color), #d1ecf1);
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+}
+
+.related-album-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.related-album-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: left;
+}
+
+.related-album-info h4 a {
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.related-album-info h4 a:hover {
+    color: var(--primary-color);
+}
+
+.album-year,
+.album-stars,
+.album-music,
+.album-songs {
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+    margin-bottom: 4px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-align: left;
+    justify-content: flex-start;
+}
+
+.album-songs {
+    font-weight: 500;
+    color: var(--success-color);
+}
+
+/* Search term highlighting */
+.highlight {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .related-albums-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .related-album-card {
+        padding: 10px;
+    }
+    
+    .related-album-cover {
+        width: 70px;
+        height: 85px;
+    }
+}
+
+@media (max-width: 480px) {
+    .related-album-cover {
+        width: 60px;
+        height: 75px;
+    }
+    
+    .related-album-info h4 {
+        font-size: 0.85rem;
+    }
+    
+    .album-year,
+    .album-stars,
+    .album-music,
+    .album-songs {
+        font-size: 0.7rem;
+    }
+}
+
+
+
+</style>
+<style>
+/* Action bar */
+.action-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    background: #111;
+    color: #fff;
+}
+
+/* Hidden by default */
+.sort-options {
+    display: none;
+    margin-top: 10px;
+}
+
+/* When visible */
+.sort-options.show {
+    display: flex;
+    justify-content: center;   /* CENTER horizontally */
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;           /* Wrap to next line if many buttons */
+}
+
+
+
+/* Sort pill buttons */
+.sort-pill {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: #ff8800;       /* orange */
+    color: #ffffff;            /* white text */
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.sort-pill:hover {
+    background: #ff6a00;       /* darker orange */
+}
+
+.sort-pill.active {
+    background: #222;          /* active = dark */
+    color: #fff;
+}
+/* === PAGINATION === */
+.pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 15px 10px;
+}
+
+.pagination a,
+.pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    background: #f3f3f3;
+    color: #333;
+    transition: 0.2s ease;
+}
+
+.pagination a:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.pagination .active {
+    background: #007bff;
+    color: #fff;
+    font-weight: 600;
+}
+
+.pagination .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.back-wrapper {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #0056b3;
+}
+
+
+</style>
+<meta name="title" content="Kohrra 2 Web Series Hindi Music">
+<meta name="description" content="Kohrra 2 Web Series Hindi Music">
+<meta name="keywords" content="Kohrra 2 Web Series Hindi Music">
+<meta name="robots" content="index, follow">
+<meta name="language" content="English">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="./inc/css/mb.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="./inc/js/sm2.js"></script>
+<script type="text/javascript" src="./inc/js/mb.js"></script>
+
+<title>Kohrra 2 Web Series Hindi Music</title><script>
+function toggleSortOptions() {
+    var box = document.getElementById("sortOptions");
+    box.classList.toggle("show");
+}
+</script>
+
+
+<script>
+function toggleZipOptions() {
+    var box = document.getElementById("zipOptions");
+    var btn = document.getElementById("zipToggleBtn");
+
+    if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+        btn.innerHTML = "📦 Hide ZIP";
+    } else {
+        box.style.display = "none";
+        btn.innerHTML = "📦 ZIP";
+    }
+}
+</script>
+
+
+<script>
+function createZip(dir, type, shortID, btn) {
+
+    btn.disabled = true;
+    btn.innerText = "Creating...";
+
+    fetch(`zip.php?action=createZip&zipdir=${encodeURIComponent(dir)}&ziptype=${type}&sid=${encodeURIComponent(shortID)}`)
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+            window.location.href = data.downloadLink;
+        } else {
+            btn.disabled = false;
+            btn.innerText = "Create";
+            console.error(data.message);
+        }
+
+    }).catch(() => {
+        btn.disabled = false;
+        btn.innerText = "Create";
+    });
+}
+</script>
+
+<script>
+    function startDownload(dir, filename, path) {
+        var url;
+        if (filename && dir && path) {
+            url = './files.php?dir=' + encodeURIComponent(dir) +
+                  '&filename=' + encodeURIComponent(filename) +
+                  '&path=' + encodeURIComponent(path);
+		 
+        } else {
+            url = './files.php?link=' + encodeURIComponent(path);
+		
+        }
+		window.open(url, '_blank');
+    }
+</script>
+
+<script>
+function fileDownload(type, q, ext, qlty, path, btn) {
+
+    let url;
+
+    if (type && q && ext && qlty) {
+        url = './files.php?type=' + encodeURIComponent(type) +
+              '&q=' + encodeURIComponent(q) +
+              '&ext=' + encodeURIComponent(ext) +
+              '&qlty=' + encodeURIComponent(qlty);
+    } else {
+        url = './files.php?link=' + encodeURIComponent(path);
+    }
+
+    // Optional: prevent double tap
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Downloading...";
+    }
+
+    window.location.href = url;
+
+    return false;
+}
+</script>
+</head><body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>Kohrra 2 Web Series Hindi Music</h1>
+    </header>
+
+
+<div class="bg"><table><tbody><tr><td><div style='related-album-cover'>
+            <a href='http://i.hindiflacs.com/B/jrh2l-Acover.jpg'><img src='http://i.hindiflacs.com/i/jrh2l-Acover.jpg' alt='cover of' /></a>
+          </div><td/><td><strong>Title:</strong> Kohrra 2 (Kohrra 2)<br/><strong>Released Year:</strong> <a href="./"></a><br/><strong>Cast:</strong> <br/><strong>Director:</strong> <br/><strong>Music:</strong> <br/><strong>Rating:</strong> 0<br/><strong>Plot:</strong> </td></tr></tbody></table></div><div class="head2">
+<center>
+<div class="switch-group" role="radiogroup" aria-label="Quick access">
+        
+        
+    <!-- SORT Toggle -->
+    <button onclick="toggleSortOptions()" id="sortToggleBtn" class="action-btn sort-btn">
+        ⇅ Sort
+    </button>
+    
+            <!-- Play All -->
+        <form method="POST" action="" class="playlist-form" style="display: inline-block; margin: 0;">
+            <input type="hidden" name="type" value="did">
+            <input type="hidden" name="q" value="jrh2l">
+            <input type="hidden" name="playlist" value="1">
+            <button type="submit" class="action-btn play-btn">
+                <img src="/inc/img/playlist.png" width="18" alt="">
+                Play All
+            </button>
+        </form>
+        
+                    <!-- ZIP Toggle -->
+            <button onclick="toggleZipOptions()" id="zipToggleBtn" class="action-btn zip-btn">
+                📦 ZIP
+            </button>
+            </div>
+</center>
+
+<!-- ZIP OPTIONS -->
+<div id="zipOptions" class="zip-container">
+
+<div class="zip-item"><button class='zip-btn-inner'
+            onclick="fileDownload('did','jrh2l','zip','320Kbps','', this)">
+            320Kbps (83.47 MB)
+          </button></div><div class="zip-item"><button class='zip-btn-inner'
+            onclick="fileDownload('did','jrh2l','zip','128Kbps','', this)">
+            128Kbps (52.56 MB)
+          </button></div>
+</div>
+<div id="sortOptions" class="sort-options">
+
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="az">
+    <button type="submit"
+    class="sort-pill ">
+        A to Z    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="za">
+    <button type="submit"
+    class="sort-pill ">
+        Z to A    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="ldl">
+    <button type="submit"
+    class="sort-pill ">
+        Low Dwnlds    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="hdl">
+    <button type="submit"
+    class="sort-pill ">
+        High Dwnlds    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="no">
+    <button type="submit"
+    class="sort-pill ">
+        New To Old    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="on">
+    <button type="submit"
+    class="sort-pill ">
+        Old to New    </button>
+</form>
+</div>
+
+<div class="search-section"><div class="related-albums-grid"><div class="related-album-card"><table><tbody><tr><td><a href="https://hindiflacs.com/play.php?play=tu8mc" type="audio/mpeg" class="sm2_button"></a><a href="https://hindiflacs.com/Rahaa-Di-Dhoorh-Ftu8mc"><strong>Rahaa Di Dhoorh</strong></a> (<small></small>) <font color="red">[</font><small>1<font color="red"></small>]</font><br/><img class="img" src="https://hindiflacs.com/inc/img/mic.png" width="10" alt="album"/> <a href="singer-benedict-taylor-songs">Benedict Taylor</a>, <a href="singer-naren-chandavarkar-songs">Naren Chandavarkar</a>, <a href="singer-ruby-khan-songs">Ruby Khan</a></td></tr></tbody></table></div><div class="related-album-card"><table><tbody><tr><td><a href="https://hindiflacs.com/play.php?play=4wp9i" type="audio/mpeg" class="sm2_button"></a><a href="https://hindiflacs.com/Rakesh-Kumar-F4wp9i"><strong>Rakesh Kumar</strong></a> (<small></small>) <font color="red">[</font><small>1<font color="red"></small>]</font><br/><img class="img" src="https://hindiflacs.com/inc/img/mic.png" width="10" alt="album"/> <a href="singer-benedict-taylor-songs">Benedict Taylor</a>, <a href="singer-naren-chandavarkar-songs">Naren Chandavarkar</a></td></tr></tbody></table></div><div class="related-album-card"><table><tbody><tr><td><a href="https://hindiflacs.com/play.php?play=j9w29" type="audio/mpeg" class="sm2_button"></a><a href="https://hindiflacs.com/Rakesh-Returns-Fj9w29"><strong>Rakesh Returns</strong></a> (<small></small>) <font color="red">[</font><small>1<font color="red"></small>]</font><br/><img class="img" src="https://hindiflacs.com/inc/img/mic.png" width="10" alt="album"/> <a href="singer-benedict-taylor-songs">Benedict Taylor</a>, <a href="singer-naren-chandavarkar-songs">Naren Chandavarkar</a></td></tr></tbody></table></div><div class="related-album-card"><table><tbody><tr><td><a href="https://hindiflacs.com/play.php?play=2qhv3" type="audio/mpeg" class="sm2_button"></a><a href="https://hindiflacs.com/The-Fall-F2qhv3"><strong>The Fall</strong></a> (<small></small>) <font color="red">[</font><small>1<font color="red"></small>]</font><br/><img class="img" src="https://hindiflacs.com/inc/img/mic.png" width="10" alt="album"/> <a href="singer-benedict-taylor-songs">Benedict Taylor</a>, <a href="singer-naren-chandavarkar-songs">Naren Chandavarkar</a>, <a href="singer-ruby-khan-songs">Ruby Khan</a></td></tr></tbody></table></div><div class="related-album-card"><table><tbody><tr><td><a href="https://hindiflacs.com/play.php?play=qe7pc" type="audio/mpeg" class="sm2_button"></a><a href="https://hindiflacs.com/The-Second-Year-Fqe7pc"><strong>The Second Year</strong></a> (<small></small>) <font color="red">[</font><small>1<font color="red"></small>]</font><br/><img class="img" src="https://hindiflacs.com/inc/img/mic.png" width="10" alt="album"/> <a href="singer-tajdar-junaid-songs">Tajdar Junaid</a></td></tr></tbody></table></div></div></div>
+
+<div id="search-section">
+
+<div class='pagination'><a href='Kohrra-2-Web-Series-2026-Ajrh2l-1'>«</a><a href='Kohrra-2-Web-Series-2026-Ajrh2l-1'>1</a><span class='active'>2</span><span class='disabled'>»</span></div>
+<div id="sortOptions" class="sort-options">
+
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="az">
+    <button type="submit"
+    class="sort-pill ">
+        A to Z    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="za">
+    <button type="submit"
+    class="sort-pill ">
+        Z to A    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="ldl">
+    <button type="submit"
+    class="sort-pill ">
+        Low Dwnlds    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="hdl">
+    <button type="submit"
+    class="sort-pill ">
+        High Dwnlds    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="no">
+    <button type="submit"
+    class="sort-pill ">
+        New To Old    </button>
+</form>
+<form method="post" style="margin:0;">
+    <input type="hidden" name="sort" value="on">
+    <button type="submit"
+    class="sort-pill ">
+        Old to New    </button>
+</form>
+</div>
+
+
+</div>
+</div>
+
+<div class="footer">&copy; <a href="https://hindiflacs.com/">HindiFlacs.COM</a> 2026</div></div></body></html><iframe 
+id="musicPlayerFrame"
+src="/player/player.html"
+style="
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:70px;
+border:none;
+z-index:9999;">
+</iframe>
