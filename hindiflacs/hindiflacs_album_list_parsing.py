@@ -23,14 +23,16 @@ def clean(text):
     text = text.encode("ascii", "ignore").decode()
     return re.sub(r"\s+", " ", text).strip()
 
-def get_all_option_values(cur):
+def get_all_option_values(cur, limit=5):
     cur.execute("""
-        SELECT option_value 
+        SELECT id, option_value 
         FROM hindiflacs_collection_type_details
+        WHERE details_status != 'completed' OR details_status IS NULL
         ORDER BY id
-    """)
+        LIMIT %s
+    """, (limit,))
     rows = cur.fetchall()
-    return [row[0] for row in rows] if rows else []
+    return [(row[0], row[1]) for row in rows] if rows else []
 
 def detect_album_type(img_src, text_block):
     if img_src:
@@ -65,15 +67,15 @@ def detect_album_type(img_src, text_block):
 
     return "unknown"
 
-def upsert_album(cur, conn, album):
+def upsert_album(cur, conn, album, collection_id=None):
     cur.execute(
         """
         INSERT INTO hindiflacs_albums_list (
             album_name, album_link, album_cover,
             hindiflacs_actors, director_name, music_director,
-            total_files, album_type
+            total_files, album_type, collection_id
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (album_link)
         DO UPDATE SET
             album_name = EXCLUDED.album_name,
@@ -82,7 +84,8 @@ def upsert_album(cur, conn, album):
             director_name = EXCLUDED.director_name,
             music_director = EXCLUDED.music_director,
             total_files = EXCLUDED.total_files,
-            album_type = EXCLUDED.album_type
+            album_type = EXCLUDED.album_type,
+            collection_id = COALESCE(EXCLUDED.collection_id, hindiflacs_albums_list.collection_id)
         RETURNING id
         """,
         (
@@ -94,6 +97,7 @@ def upsert_album(cur, conn, album):
             album["music"],
             album["total_files"],
             album["album_type"],
+            collection_id,
         ),
     )
     row = cur.fetchone()
@@ -199,7 +203,7 @@ def find_next_page_url(soup, current_url):
 
     return None
 
-def crawl_album_list(option_value):
+def crawl_album_list(option_value, collection_id=None):
     base_url = "https://hindiflacs.com/"
     start_url = urljoin(base_url, option_value.lstrip("/"))
 
@@ -226,7 +230,7 @@ def crawl_album_list(option_value):
         logger.info(f"Found {len(albums)} albums on page {page}")
 
         for album in albums:
-            album_id = upsert_album(cur, conn, album)
+            album_id = upsert_album(cur, conn, album, collection_id)
             logger.debug(f"Saved album: {album['album_name']} (ID: {album_id})")
 
         next_url = find_next_page_url(soup, url)
@@ -252,19 +256,19 @@ def update_collection_type_status(cur, conn, option_value, status="completed"):
 
     conn.commit()
 
-def crawl_all_album_lists():
+def crawl_all_album_lists(limit: int = 5):
     conn, cur = get_connection()
-    option_values = get_all_option_values(cur)
+    option_values = get_all_option_values(cur, limit)
     conn.close()
 
     if not option_values:
         return {"status": "error", "message": "No option values found"}
 
     results = []
-    for option_value in option_values:
+    for collection_id, option_value in option_values:
         logger.info(f"Starting crawl for: {option_value}")
         try:
-            result = crawl_album_list(option_value)
+            result = crawl_album_list(option_value, collection_id)
             results.append(result)
         except Exception as e:
             logger.error(f"Error crawling {option_value}: {e}")
@@ -278,9 +282,15 @@ def crawl_all_album_lists():
     }
 
 @router.get("/crawl/{option_value}")
-def crawl(option_value: str):
-    return crawl_album_list(option_value)
+def crawl(option_value: str, collection_id: int = None):
+    if collection_id is None:
+        conn, cur = get_connection()
+        cur.execute("SELECT id FROM hindiflacs_collection_type_details WHERE option_value = %s", (option_value,))
+        row = cur.fetchone()
+        conn.close()
+        collection_id = row[0] if row else None
+    return crawl_album_list(option_value, collection_id)
 
 @router.get("/crawl-all")
-def crawl_all():
-    return crawl_all_album_lists()
+def crawl_all(limit: int = 5):
+    return crawl_all_album_lists(limit)

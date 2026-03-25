@@ -47,6 +47,7 @@ def setup_db():
             album_type VARCHAR(100),
             year INTEGER,
             rating VARCHAR(50),
+            collection_id INTEGER REFERENCES hindiflacs_collection_type_details(id) ON DELETE SET NULL,
             details_status VARCHAR(50) DEFAULT 'pending',
             details_last_error TEXT,
             details_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
