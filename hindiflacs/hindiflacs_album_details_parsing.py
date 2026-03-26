@@ -256,37 +256,37 @@ def parse_album_details(album_link):
 
             for card in cards:
                 td = card.find("td")
-            if not td:
-                continue
+                if not td:
+                    continue
 
-            play_btn = td.find("a", class_="sm2_button")
-            play_link = normalize(play_btn["href"]) if play_btn else None
+                play_btn = td.find("a", class_="sm2_button")
+                play_link = normalize(play_btn["href"]) if play_btn else None
 
-            a_tags = td.find_all("a")
-            if len(a_tags) < 2:
-                continue
+                a_tags = td.find_all("a")
+                if len(a_tags) < 2:
+                    continue
 
-            a_song = a_tags[1]
-            song_link = normalize(a_song["href"])
-            song_name = clean(a_song.get_text(strip=True))
+                a_song = a_tags[1]
+                song_link = normalize(a_song["href"])
+                song_name = clean(a_song.get_text(strip=True))
 
-            small = td.find("small")
-            duration = clean(small.get_text(strip=True)) if small else None
+                small = td.find("small")
+                duration = clean(small.get_text(strip=True)) if small else None
 
-            singers = []
-            singer_links = []
-            for a in a_tags[2:]:
-                singers.append(clean(a.get_text()))
-                singer_links.append(normalize(a["href"]))
+                singers = []
+                singer_links = []
+                for a in a_tags[2:]:
+                    singers.append(clean(a.get_text()))
+                    singer_links.append(normalize(a["href"]))
 
-            songs.append({
-                "name": song_name,
-                "song_link": song_link,
-                "play_link": play_link,
-                "duration": duration,
-                "singers": singers,
-                "singer_links": singer_links
-            })
+                songs.append({
+                    "name": song_name,
+                    "song_link": song_link,
+                    "play_link": play_link,
+                    "duration": duration,
+                    "singers": singers,
+                    "singer_links": singer_links
+                })
 
         current_url = find_next_page_url(soup, current_url)
         page += 1
