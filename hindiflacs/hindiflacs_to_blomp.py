@@ -6,7 +6,7 @@ import os
 import hashlib
 import requests
 from io import BytesIO
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 import swiftclient
 from bs4 import BeautifulSoup
@@ -64,10 +64,11 @@ def get_blomp_auth(user: str = None, password: str = None):
     del swift_conn
     return storage_url, token
 
-def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container: str = None):
+def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container: str = None, song_link: str = None):
+    _referer = ("https://hindiflacs.com" + song_link) if song_link else "https://hindiflacs.com/"
     dl_headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "https://hindiflacs.com/",
+        "Referer": _referer,
         "Accept": "*/*",
         "Connection": "keep-alive",
     }
@@ -77,6 +78,11 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
         session.get("https://hindiflacs.com/", headers=dl_headers, timeout=15, verify=False)
     except Exception:
         pass
+    if song_link:
+        try:
+            session.get("https://hindiflacs.com" + song_link, headers=dl_headers, timeout=15, verify=False)
+        except Exception:
+            pass
 
     resp = session.get(
         fresh_url,
@@ -101,7 +107,9 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
 
     filename = os.path.basename(urlparse(resp.url).path)
     if not filename or not filename.endswith(('.mp3', '.m4a', '.flac')):
-        filename = f"song_{s_id}_{q_name}_{int(time.time())}.mp3"
+        qs_ext = parse_qs(urlparse(fresh_url).query).get("ext", [None])[0]
+        fallback_ext = f".{qs_ext}" if qs_ext in ("mp3", "m4a", "flac") else ".mp3"
+        filename = f"song_{s_id}_{q_name}_{int(time.time())}{fallback_ext}"
 
     buf   = BytesIO()
     md5   = hashlib.md5()
@@ -130,6 +138,9 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
     container     = container or BLOMP_USER
     put_url       = f"{storage_url}/{container}/{full_obj_path}"
 
+    _mime_map = {".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".flac": "audio/flac"}
+    content_type_upload = _mime_map.get(ext.lower(), "audio/mpeg")
+
     put_resp = None
     try:
         put_resp = requests.put(
@@ -137,7 +148,7 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
             data=buf,
             headers={
                 "X-Auth-Token": token,
-                "Content-Type": "audio/mpeg",
+                "Content-Type": content_type_upload,
                 "Content-Length": str(total),
             },
             timeout=300,
@@ -232,11 +243,14 @@ def get_128kbps_link(song_id: int):
             return {"status": "error", "message": "Song link not found"}
 
         details   = parse_song_details(row[2])
-        fresh_url = "https://hindiflacs.com/" + details["downloads"]["128"]["link"]
+        _128_link = details["downloads"]["128"]["link"]
         del details
+        if not _128_link:
+            return {"status": "error", "message": "No 128kbps download link found for this song"}
+        fresh_url = "https://hindiflacs.com/" + _128_link
 
         storage_url, token = get_blomp_auth()
-        path, b_hash = _process_one_quality(song_id, "128kbps", fresh_url, storage_url, token)
+        path, b_hash = _process_one_quality(song_id, "128kbps", fresh_url, storage_url, token, song_link=row[2])
         return {"status": "success", "blomp_path": path, "hash": b_hash}
     finally:
         cur.close()
@@ -307,7 +321,7 @@ def process_pending_uploads(limit: int = Query(2)):
                     fresh_url = "https://hindiflacs.com/" + fresh_entry["link"]
                     b_path, b_hash = _process_one_quality(
                         s_id, q_name, fresh_url, storage_url, token,
-                        container=blomp_account_mail
+                        container=blomp_account_mail, song_link=song_link_from_db
                     )
                     cur.execute(
                         f"UPDATE hindiflacs_songs SET {path_col}=%s, {hash_col}=%s, details_updated_at=NOW() WHERE id=%s",

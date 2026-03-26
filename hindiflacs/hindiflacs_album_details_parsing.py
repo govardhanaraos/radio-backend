@@ -366,9 +366,19 @@ def process_pending_albums(limit=50):
         WHERE details_status='pending'
         ORDER BY id
         LIMIT %s
+        FOR UPDATE SKIP LOCKED
     """, (limit,))
 
     rows = cur.fetchall()
+
+    if rows:
+        picked_ids = [r[0] for r in rows]
+        cur.execute(
+            "UPDATE hindiflacs_albums_list SET details_status='in_progress' WHERE id = ANY(%s)",
+            (picked_ids,)
+        )
+        conn.commit()
+
     conn.close()
 
     results = []
