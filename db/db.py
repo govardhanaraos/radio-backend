@@ -15,8 +15,6 @@ RADIO_GARDEN_CHANNELS_COLLECTION = os.environ.get('RADIO_GARDEN_CHANNELS_COLLECT
 SECRET_KEY = os.environ.get('SECRET_KEY')
 FIXED_IV = os.environ.get('FIXED_IV')
 
-print('MONGO_URL:', MONGO_URL)
-print('DB_NAME:', DB_NAME)
 
 if DB_NAME is None or DB_NAME == "":
     DB_NAME = "GRRadio"

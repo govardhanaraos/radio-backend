@@ -21,12 +21,14 @@ CHUNK_SIZE = 256 * 1024
 
 # --- FILE-LIKE ADAPTER FOR STREAMING ---
 # Tricks requests into streaming with an exact Content-Length instead of chunked encoding
+# --- FILE-LIKE ADAPTER FOR STREAMING ---
 class IterStreamAdapter:
-    def __init__(self, iterable, md5_hash, size_tracker):
+    def __init__(self, iterable, md5_hash, size_tracker, total_size):
         self.iterator = iter(iterable)
         self.buffer = b''
         self.md5_hash = md5_hash
         self.size_tracker = size_tracker
+        self.total_size = int(total_size) # Store the total size
 
     def read(self, size=-1):
         if size == -1:
@@ -49,6 +51,12 @@ class IterStreamAdapter:
             self.md5_hash.update(chunk)
             self.size_tracker[0] += len(chunk)
         return chunk
+
+    # 💡 THIS IS THE MAGIC FIX: 
+    # Telling 'requests' the exact size prevents chunked encoding.
+    def __len__(self):
+        return self.total_size
+
 
 
 def get_next_blomp_account(cur):
@@ -173,7 +181,8 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
             stream_adapter = IterStreamAdapter(
                 resp.iter_content(chunk_size=CHUNK_SIZE), 
                 md5_hash, 
-                size_tracker
+                size_tracker,
+                source_size
             )
             
             put_resp = requests.put(
