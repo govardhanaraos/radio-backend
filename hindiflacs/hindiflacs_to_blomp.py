@@ -19,6 +19,38 @@ logging.getLogger("keystoneclient").setLevel(logging.WARNING)
 
 CHUNK_SIZE = 256 * 1024
 
+# --- FILE-LIKE ADAPTER FOR STREAMING ---
+# Tricks requests into streaming with an exact Content-Length instead of chunked encoding
+class IterStreamAdapter:
+    def __init__(self, iterable, md5_hash, size_tracker):
+        self.iterator = iter(iterable)
+        self.buffer = b''
+        self.md5_hash = md5_hash
+        self.size_tracker = size_tracker
+
+    def read(self, size=-1):
+        if size == -1:
+            chunk = self.buffer + b''.join(self.iterator)
+            self.buffer = b''
+            if chunk:
+                self.md5_hash.update(chunk)
+                self.size_tracker[0] += len(chunk)
+            return chunk
+
+        while len(self.buffer) < size:
+            try:
+                self.buffer += next(self.iterator)
+            except StopIteration:
+                break
+
+        chunk = self.buffer[:size]
+        self.buffer = self.buffer[size:]
+        if chunk:
+            self.md5_hash.update(chunk)
+            self.size_tracker[0] += len(chunk)
+        return chunk
+
+
 def get_next_blomp_account(cur):
     cur.execute("""
          SELECT uma.id, uma.email
@@ -84,6 +116,7 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
         except Exception:
             pass
 
+    # Initiate stream from source
     resp = session.get(
         fresh_url,
         headers=dl_headers,
@@ -111,26 +144,6 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
         fallback_ext = f".{qs_ext}" if qs_ext in ("mp3", "m4a", "flac") else ".mp3"
         filename = f"song_{s_id}_{q_name}_{int(time.time())}{fallback_ext}"
 
-    buf   = BytesIO()
-    md5   = hashlib.md5()
-    total = 0
-    try:
-        for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
-            if chunk:
-                buf.write(chunk)
-                md5.update(chunk)
-                total += len(chunk)
-    finally:
-        resp.close()
-        session.close()
-
-    if total <= 2:
-        buf.close()
-        raise Exception("Expired one-time token — response was empty/minimal.")
-
-    file_hash = md5.hexdigest()
-    buf.seek(0)
-
     name_only     = os.path.splitext(filename)[0]
     ext           = os.path.splitext(filename)[1] or ".mp3"
     stored_name   = f"{s_id}_{name_only}_{q_name}{ext}"
@@ -141,32 +154,76 @@ def _process_one_quality(s_id, q_name, fresh_url, storage_url, token, container:
     _mime_map = {".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".flac": "audio/flac"}
     content_type_upload = _mime_map.get(ext.lower(), "audio/mpeg")
 
+    # 💡 SAFE STREAMING LOGIC
+    source_size = resp.headers.get("Content-Length")
+    md5_hash = hashlib.md5()
+    size_tracker = [0]
+
+    put_headers = {
+        "X-Auth-Token": token,
+        "Content-Type": content_type_upload,
+    }
+
     put_resp = None
     try:
-        put_resp = requests.put(
-            put_url,
-            data=buf,
-            headers={
-                "X-Auth-Token": token,
-                "Content-Type": content_type_upload,
-                "Content-Length": str(total),
-            },
-            timeout=300,
-            verify=False
-        )
-    except Exception as put_exc:
-        if put_resp is None or put_resp.status_code not in (200, 201):
+        if source_size:
+            # Optimal Path: We know the size, so we wrap it in our IterStreamAdapter
+            # to stream directly to Blomp without chunked encoding.
+            put_headers["Content-Length"] = str(source_size)
+            stream_adapter = IterStreamAdapter(
+                resp.iter_content(chunk_size=CHUNK_SIZE), 
+                md5_hash, 
+                size_tracker
+            )
+            
+            put_resp = requests.put(
+                put_url,
+                data=stream_adapter,
+                headers=put_headers,
+                timeout=300,
+                verify=False
+            )
+        else:
+            # Fallback Path: If source drops Content-Length, Swift WILL NOT accept a stream.
+            # We must pull into memory first to calculate the exact size.
+            buf = BytesIO()
+            for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
+                if chunk:
+                    buf.write(chunk)
+                    md5_hash.update(chunk)
+                    size_tracker[0] += len(chunk)
+            
+            put_headers["Content-Length"] = str(size_tracker[0])
+            buf.seek(0)
+            
+            put_resp = requests.put(
+                put_url,
+                data=buf,
+                headers=put_headers,
+                timeout=300,
+                verify=False
+            )
             buf.close()
-            del buf
-            raise
+            
+    except Exception as put_exc:
+        raise put_exc
     finally:
-        buf.close()
-        del buf
+        resp.close()
+        session.close()
 
-    if put_resp.status_code not in (200, 201):
-        if put_resp.status_code == 403:
+    total_bytes = size_tracker[0]
+    if total_bytes <= 2:
+        raise Exception("Expired one-time token — response was empty/minimal.")
+
+    if put_resp is None or put_resp.status_code not in (200, 201):
+        if put_resp and put_resp.status_code == 403:
             raise Exception(f"403 Forbidden — container '{container}' missing or token invalid.")
-        raise Exception(f"Blomp PUT failed: HTTP {put_resp.status_code} — {put_resp.text[:200]}")
+        
+        err_text = put_resp.text[:200] if put_resp else "None"
+        code = put_resp.status_code if put_resp else "Unknown"
+        raise Exception(f"Blomp PUT failed: HTTP {code} — {err_text}")
+
+    file_hash = md5_hash.hexdigest()
 
     return stored_name, file_hash
 

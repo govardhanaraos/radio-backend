@@ -1,3 +1,4 @@
+protobuf
 python-dotenv
 botocore
 boto3
@@ -24,3 +25,4 @@ google-genai
 PyJWT
 passlib[bcrypt]
 python-multipart
+asyncpg>=0.31.0
