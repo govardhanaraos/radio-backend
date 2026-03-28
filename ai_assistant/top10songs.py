@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from google import genai  # <-- 1. Updated Import
+from groq import Groq
 
 # Import your DB connection function
 from db.db import get_pg_conn
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/v1/ai", tags=["AI Assistant"])
 
 # --- Configure the AI Assistant (Gemini) ---
 # 2. Use the new Client object
-ai_client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY", ""))
+groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY", ""))
 
 # --- Caching Setup ---
 # Simple in-memory cache: { "language_quality": {"data": [...], "expires_at": timestamp} }
@@ -42,9 +42,6 @@ def generate_temp_blomp_url(path: str, file_hash: str) -> str:
 
 
 def get_ai_song_recommendations(language: str) -> List[dict]:
-    """
-    Calls the AI to get a JSON array of popular songs.
-    """
     prompt = f"""
     You are a music expert. Provide a list of the 15 most popular {language} songs.
     Return ONLY a valid JSON array of objects. Do not include markdown formatting or backticks.
@@ -53,24 +50,30 @@ def get_ai_song_recommendations(language: str) -> List[dict]:
     """
 
     try:
-        # 3. Generate content using the new client syntax
-        response = ai_client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
+        # Call Groq's extremely fast Llama 3 model
+        chat_completion = groq_client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant",
+            temperature=0.7,
+            # Force the model to return valid JSON
+            response_format={"type": "json_object"}
         )
-        print(f"response: {response.text}")
 
-        # Strip markdown code blocks if the AI accidentally includes them
-        raw_text = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-        print(f"raw_text: {raw_text}")
+        raw_text = chat_completion.choices[0].message.content.strip()
+        print(f"Groq Response: {raw_text}")
 
-        songs = json.loads(raw_text)
-        print(f"songs: {songs}")
-        return songs
+        # Groq will return something like {"songs": [{"song_name": "...", ...}]}
+        data = json.loads(raw_text)
+
+        # Extract the array from the JSON object
+        for key in data.keys():
+            if isinstance(data[key], list):
+                return data[key]
+
+        return []
     except Exception as e:
         print(f"AI Generation Error: {e}")
         return []
-
 
 # --- Endpoint ---
 @router.get("/top-songs", response_model=List[AISongResponse])

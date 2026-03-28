@@ -26,3 +26,4 @@ PyJWT
 passlib[bcrypt]
 python-multipart
 asyncpg>=0.31.0
+groq
