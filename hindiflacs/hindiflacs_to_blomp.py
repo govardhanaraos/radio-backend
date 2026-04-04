@@ -63,7 +63,7 @@ def get_next_blomp_account(cur):
     cur.execute("""
          SELECT uma.id, uma.email
         FROM user_mail_accounts uma
-        where uma.default_account='Y' order by uma.sort_order LIMIT 1
+        where uma.default_account='H' order by uma.sort_order LIMIT 1
     """)
     row = cur.fetchone()
     if not row:
@@ -328,6 +328,17 @@ def process_pending_uploads(limit: int = Query(2)):
     conn, cur = get_db_connection()
     results = []
     try:
+        try:
+            blomp_account_id, blomp_account_mail = get_next_blomp_account(cur)
+            # Pre-authenticate to ensure the account is actually valid/working
+            storage_url, token = get_blomp_auth(user=blomp_account_mail)
+        except Exception as e:
+            # If no account or auth fails, exit early without touching song records
+            return {
+                "status": "error",
+                "message": f"Aborting: Blomp account not available. {str(e)}"
+            }
+
         cur.execute("""
             SELECT id, song_name, download_link_original, download_link_128kbps,
                    download_link_320kbps, song_link
@@ -348,8 +359,6 @@ def process_pending_uploads(limit: int = Query(2)):
         )
         conn.commit()
 
-        blomp_account_id, blomp_account_mail = get_next_blomp_account(cur)
-        storage_url, token = get_blomp_auth(user=blomp_account_mail)
 
         for s_id, s_name, link_orig, link_128, link_320, song_link_from_db in pending_songs:
             try:
