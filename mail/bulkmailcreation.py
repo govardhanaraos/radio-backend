@@ -1,8 +1,15 @@
 import requests
-import uuid
+import random
+import string
 import time
 import psycopg2
-from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP, BLOMP_USER, BLOMP_PASS
+from fastapi import APIRouter, Query
+
+from db.db import POSTGRESQL_DATABASE_URL_TELUGUWAP
+
+
+router = APIRouter(prefix="/blomp-mails", tags=["blomp-mails"])
+
 
 def get_db_connection():
     conn = psycopg2.connect(POSTGRESQL_DATABASE_URL_TELUGUWAP)
@@ -38,7 +45,9 @@ def create_bulk_accounts(count=50):
         domain = domain_res['hydra:member'][0]['domain']
 
         # 2. Generate Account
-        email = f"user_ref_{uuid.uuid4().hex[:6]}@{domain}"
+        random_string = ''.join(random.choices(string.ascii_lowercase, k=15))
+        email = f"userref{random_string}@{domain}"
+
         email_pass = "MailPass123!"
 
         # 3. Register with Mail.tm
@@ -56,6 +65,8 @@ def create_bulk_accounts(count=50):
             print("Rate limit or error. Waiting 60s...")
             time.sleep(60)
 
+@router.get("/trigger-mail-creation")
+async def trigger_login(limit: int = Query(2)):
+    create_bulk_accounts(limit)
+    return {"status": "Bulk mails creation started"}
 
-if __name__ == "__main__":
-    create_bulk_accounts(10)  # Start with 10 to test

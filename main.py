@@ -37,6 +37,7 @@ from hindiflacs.hindiflacs_song_details_crawl import router as hindiflacs_song_d
 from hindiflacs.hindiflacs_to_blomp import router as hindiflacs_to_blomp
 
 from mail.automate_login_blomp import router as automate_login_blomp
+from mail.bulkmailcreation import router as bulkmailcreation
 from ai_assistant.ai_router import router as ai_router
 from ai_assistant.top10songs import router as top10_songs
 
@@ -67,6 +68,7 @@ app.add_middleware(
 )
 app.include_router(auth_router)
 app.include_router(automate_login_blomp)
+app.include_router(bulkmailcreation)
 
 app.include_router(stations_router)
 app.include_router(admin_stations_router)
