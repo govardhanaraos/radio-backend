@@ -1,16 +1,14 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-
 import uuid
-from bson import ObjectId
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr, Field, AliasChoices, ConfigDict
 
 from auth.dependencies import verify_admin_token
-from db.db import get_db
+from db.db import get_pg_pool
 
 router = APIRouter()
-
 
 # -----------------------------
 # Pydantic models
@@ -28,22 +26,21 @@ class ComplaintModel(BaseModel):
         validation_alias=AliasChoices("device_id", "deviceId", "deviceID"),
     )
 
-
 class ComplaintReplyBody(BaseModel):
     admin_response: str = Field(..., min_length=1)
 
+def _generate_id():
+    return uuid.uuid4().hex[:24]
 
 def _serialize_complaint(doc: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     if not doc:
         return {}
     out = dict(doc)
-    out["_id"] = str(out["_id"])
     for key in ("created_at", "replied_at"):
         val = out.get(key)
         if val is not None and hasattr(val, "isoformat"):
             out[key] = val.isoformat()
     return out
-
 
 # -----------------------------
 # Public (mobile app)
@@ -51,30 +48,21 @@ def _serialize_complaint(doc: Optional[Dict[str, Any]]) -> Dict[str, Any]:
 @router.post("/submitcomplaint")
 async def submit_complaint(data: ComplaintModel):
     try:
-        db = get_db()
-        if db is None:
+        pool = get_pg_pool()
+        if pool is None:
             raise HTTPException(status_code=503, detail="Database connection failed.")
 
-        collection = db["cust_feedback_complaints"]
-
         reference_no = f"GR-{uuid.uuid4().hex[:8].upper()}"
-
         device_id = (data.device_id or "").strip() or None
+        new_id = _generate_id()
+        now = datetime.utcnow()
 
-        complaint_doc: Dict[str, Any] = {
-            "reference_no": reference_no,
-            "name": data.name,
-            "subject": data.subject,
-            "email": str(data.email),
-            "contact": data.contact,
-            "description": data.description,
-            "status": "P",
-            "created_at": datetime.utcnow(),
-        }
-        if device_id:
-            complaint_doc["device_id"] = device_id
-
-        await collection.insert_one(complaint_doc)
+        async with pool.acquire() as conn:
+            await conn.execute("""
+                INSERT INTO cust_feedback_complaints 
+                (id, reference_no, name, subject, email, contact, description, status, created_at, device_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            """, new_id, reference_no, data.name, data.subject, str(data.email), data.contact, data.description, "P", now, device_id)
 
         return {
             "status": "success",
@@ -85,21 +73,19 @@ async def submit_complaint(data: ComplaintModel):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.get("/getcomplaint/{reference_no}")
 async def get_complaint_by_reference(reference_no: str):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
-    collection = db["cust_feedback_complaints"]
+        
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow("SELECT * FROM cust_feedback_complaints WHERE reference_no = $1", reference_no)
 
-    result = await collection.find_one({"reference_no": reference_no})
+        if not row:
+            raise HTTPException(status_code=404, detail="Complaint not found")
 
-    if not result:
-        raise HTTPException(status_code=404, detail="Complaint not found")
-
-    return _serialize_complaint(result)
-
+        return _serialize_complaint(dict(row))
 
 # -----------------------------
 # Admin
@@ -109,53 +95,44 @@ async def get_complaint_by_reference(reference_no: str):
     dependencies=[Depends(verify_admin_token)],
 )
 async def list_complaints_admin(limit: int = 500) -> List[Dict[str, Any]]:
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
     try:
-        collection = db["cust_feedback_complaints"]
-        cursor = (
-            collection.find({})
-            .sort("created_at", -1)
-            .limit(min(max(limit, 1), 1000))
-        )
-        docs = await cursor.to_list(length=1000)
-        return [_serialize_complaint(d) for d in docs]
+        actual_limit = min(max(limit, 1), 1000)
+        async with pool.acquire() as conn:
+            rows = await conn.fetch("SELECT * FROM cust_feedback_complaints ORDER BY created_at DESC LIMIT $1", actual_limit)
+            return [_serialize_complaint(dict(r)) for r in rows]
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
-
 
 @router.patch(
     "/admin/complaints/{complaint_id}",
     dependencies=[Depends(verify_admin_token)],
 )
 async def reply_to_complaint_admin(complaint_id: str, body: ComplaintReplyBody):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
     try:
-        oid = ObjectId(complaint_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid complaint id.")
-
-    collection = db["cust_feedback_complaints"]
-    now = datetime.utcnow()
-    res = await collection.update_one(
-        {"_id": oid},
-        {
-            "$set": {
-                "admin_response": body.admin_response.strip(),
-                "replied_at": now,
-                "status": "R",
-            }
-        },
-    )
-    if res.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Complaint not found.")
-
-    updated = await collection.find_one({"_id": oid})
-    return _serialize_complaint(updated)
-
+        now = datetime.utcnow()
+        async with pool.acquire() as conn:
+            exists = await conn.fetchval("SELECT 1 FROM cust_feedback_complaints WHERE id = $1", complaint_id)
+            if not exists:
+                raise HTTPException(status_code=404, detail="Complaint not found.")
+                
+            await conn.execute("""
+                UPDATE cust_feedback_complaints 
+                SET admin_response = $1, replied_at = $2, status = 'R'
+                WHERE id = $3
+            """, body.admin_response.strip(), now, complaint_id)
+            
+            updated = await conn.fetchrow("SELECT * FROM cust_feedback_complaints WHERE id = $1", complaint_id)
+            return _serialize_complaint(dict(updated))
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
 
 @router.get("/serviceawake")
 async def service_awake():

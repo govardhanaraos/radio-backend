@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
-from db.db import get_db
+from db.db import get_pg_pool
 from db.redis_config import r_async, CACHE_TTL
 from config.ads_config_normalize import (
     sanitize_ads_document_for_storage,
@@ -122,10 +122,10 @@ class LogEntry(BaseModel):
 # Internal helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
-async def _get_global_ads(db) -> dict:
+async def _get_global_ads(pool) -> dict:
     """
     Return the global ads document, preferring Redis cache.
-    Raises HTTP 404 if the document does not exist in MongoDB.
+    Raises HTTP 404 if the document does not exist in PostgreSQL.
     """
     global_cache_key = "ads_config:global"
 
@@ -137,9 +137,14 @@ async def _get_global_ads(db) -> dict:
         except Exception as e:
             print(f"⚠️ Redis read error (global): {e}")
 
-    doc = await db["ads_config"].find_one({"screen": {"$exists": False}}, {"_id": 0})
-    if not doc:
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow("SELECT ads_data FROM ads_config WHERE screen = 'global'")
+        
+    if not row:
         raise HTTPException(status_code=404, detail="Global ads config not found.")
+
+    d = dict(row)
+    doc = orjson.loads(d["ads_data"]) if isinstance(d["ads_data"], str) else (d.get("ads_data") or {})
 
     if r_async is not None:
         try:
@@ -183,11 +188,11 @@ async def get_global_ads_status():
     --------
     { "ads_enabled": true }
     """
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
-    return await _get_global_ads(db)
+    return await _get_global_ads(pool)
 
 
 @router.get("/ads/{screen}", response_model=ScreenAdsConfig)
@@ -206,12 +211,12 @@ async def get_ads_config(screen: str):
     numbers (every_n_items, first_ad_position, max_ads) for all four
     list types: stations, mp3, downloads, recordings.
     """
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
     # ── Step 1: global check ─────────────────────────────────────────────────
-    global_ads = await _get_global_ads(db)
+    global_ads = await _get_global_ads(pool)
 
     if not global_ads.get("ads_enabled", False):
         # Return fully-disabled config — no need to hit the screen document.
@@ -230,12 +235,17 @@ async def get_ads_config(screen: str):
         except Exception as e:
             print(f"⚠️ Redis read error ({screen}), falling back to DB: {e}")
 
-    ads_doc = await db["ads_config"].find_one({"screen": screen}, {"_id": 0})
-    if not ads_doc:
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow("SELECT ads_data FROM ads_config WHERE screen = $1", screen)
+        
+    if not row:
         raise HTTPException(
             status_code=404,
             detail=f"Ads config for screen '{screen}' not found."
         )
+
+    d = dict(row)
+    ads_doc = orjson.loads(d["ads_data"]) if isinstance(d["ads_data"], str) else (d.get("ads_data") or {})
 
     expanded = expand_for_analytics_client(screen, ads_doc)
 
@@ -265,17 +275,23 @@ async def upsert_global_ads_config(payload: GlobalAdsConfigUpsert):
     ------------
     { "ads_enabled": true }
     """
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
     update_doc = {"ads_enabled": payload.ads_enabled}
+    import uuid
 
-    await db["ads_config"].update_one(
-        {"screen": {"$exists": False}},   # match the global document
-        {"$set": update_doc},
-        upsert=True,
-    )
+    async with pool.acquire() as conn:
+        exists = await conn.fetchval("SELECT id FROM ads_config WHERE screen = 'global'")
+        if exists:
+            # We must load, update, save
+            row = await conn.fetchrow("SELECT ads_data FROM ads_config WHERE id = $1", exists)
+            d = orjson.loads(row["ads_data"]) if isinstance(row["ads_data"], str) else (dict(row.get("ads_data") or {}))
+            d["ads_enabled"] = payload.ads_enabled
+            await conn.execute("UPDATE ads_config SET ads_data = $1 WHERE id = $2", orjson.dumps(d).decode(), exists)
+        else:
+            await conn.execute("INSERT INTO ads_config (id, screen, ads_data) VALUES ($1, 'global', $2)", uuid.uuid4().hex[:24], orjson.dumps(update_doc).decode())
 
     await _invalidate_cache("ads_config:global")
 
@@ -330,8 +346,8 @@ async def upsert_screen_ads_config(screen: str, payload: AdsConfigUpsert):
         }
     }
     """
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
     # Build $set payload from only the provided (non-None) fields.
@@ -340,27 +356,46 @@ async def upsert_screen_ads_config(screen: str, payload: AdsConfigUpsert):
     payload_dict = payload.dict(exclude_none=True)
     for field, value in payload_dict.items():
         if isinstance(value, dict):
-            # Flatten nested models (InListAdPlacement) into dot-notation keys
-            # so we do a targeted update rather than overwriting the whole sub-doc.
             for sub_key, sub_val in value.items():
                 set_fields[f"{field}.{sub_key}"] = sub_val
         else:
             set_fields[field] = value
 
-    result = await db["ads_config"].find_one_and_update(
-        {"screen": screen},
-        {"$set": set_fields},
-        upsert=True,
-        return_document=True,  # pymongo ReturnDocument.AFTER equivalent in motor
-    )
+    import uuid
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow("SELECT * FROM ads_config WHERE screen = $1", screen)
+        if row:
+            oid = row["id"]
+            d = orjson.loads(row["ads_data"]) if isinstance(row["ads_data"], str) else (dict(row.get("ads_data") or {}))
+            for k, v in set_fields.items():
+                if "." in k:
+                    parent, child = k.split(".")
+                    if parent not in d:
+                        d[parent] = {}
+                    d[parent][child] = v
+                else:
+                    d[k] = v
+            # Now we use the sanitize method which expects a whole mongodb-like doc
+            sanitized = sanitize_ads_document_for_storage({**d, "screen": screen})
+            await replace_sanitized_ads_doc(pool, oid, sanitized)
+        else:
+            oid = uuid.uuid4().hex[:24]
+            d = {}
+            for k, v in set_fields.items():
+                if "." in k:
+                    parent, child = k.split(".")
+                    if parent not in d:
+                        d[parent] = {}
+                    d[parent][child] = v
+                else:
+                    d[k] = v
+            sanitized = sanitize_ads_document_for_storage({**d, "screen": screen})
+            sanitized.pop("screen", None)
+            await conn.execute("INSERT INTO ads_config (id, screen, ads_data) VALUES ($1, $2, $3)", oid, screen, orjson.dumps(sanitized).decode())
 
-    if result is None:
-        raise HTTPException(status_code=500, detail="Upsert failed unexpectedly.")
-
-    oid = result["_id"]
-    sanitized = sanitize_ads_document_for_storage(result)
-    await replace_sanitized_ads_doc(db, oid, sanitized)
-    final = await db["ads_config"].find_one({"_id": oid}, {"_id": 0})
+        final_row = await conn.fetchrow("SELECT * FROM ads_config WHERE id = $1", oid)
+        final = orjson.loads(final_row["ads_data"]) if isinstance(final_row["ads_data"], str) else (dict(final_row.get("ads_data") or {}))
+        final["screen"] = screen
 
     await _invalidate_cache(f"ads_config:{screen}")
 
@@ -375,28 +410,32 @@ async def upsert_screen_ads_config(screen: str, payload: AdsConfigUpsert):
 @router.post("/device/register")
 async def register_device(device: DeviceRegistration):
     """Register a device ID in the database."""
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
-    existing = await db["devices"].find_one({"deviceId": device.deviceId})
-    if existing:
-        return {"message": "Device already registered."}
+    async with pool.acquire() as conn:
+        existing = await conn.fetchval("SELECT 1 FROM devices WHERE device_id = $1", device.deviceId)
+        if existing:
+            return {"message": "Device already registered."}
 
-    await db["devices"].insert_one({
-        "deviceId": device.deviceId,
-        "platform": device.platform,
-        "registeredAt": None,
-    })
+        await conn.execute("INSERT INTO devices (device_id, platform) VALUES ($1, $2)", device.deviceId, device.platform)
+
     return {"message": "Device registered successfully."}
 
 
 @router.post("/log")
 async def log_activity(log: LogEntry):
-    """Store user activity logs in MongoDB."""
-    db = get_db()
-    if db is None:
+    """Store user activity logs in PostgreSQL."""
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
-    await db["logs"].insert_one(log.dict())
+    from datetime import datetime
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "INSERT INTO user_actions_logs (device_id, event, details, client_timestamp) VALUES ($1, $2, $3, $4)",
+            log.deviceId, log.event, orjson.dumps(log.details).decode() if log.details else None, log.timestamp
+        )
+
     return {"message": "Log stored successfully."}

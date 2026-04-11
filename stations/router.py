@@ -2,8 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 # Assuming Station and StationFilter are defined in stations.models
 from stations.models import Station, StationFilter
-# Assuming get_db, DB_NAME, and COLLECTION_NAME are defined in db.db
-from db.db import get_db, DB_NAME, COLLECTION_NAME,RADIO_GARDEN_CHANNELS_COLLECTION
+from db.db import get_pg_pool
 import orjson
 from db.redis_config import (r_async, CACHE_TTL, CACHE_KEY_FIRST_PAGE)
 
@@ -39,9 +38,9 @@ async def fetch_stations(
             print(f"⚠️ Redis read error, falling back to database: {e}")
             pass  # Continue to database logic if Redis fails
 
-    database = get_db()
+    pool = get_pg_pool()
 
-    if database is None:
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed during startup.")
 
     # --- Pagination Constants ---
@@ -55,81 +54,43 @@ async def fetch_stations(
     skip_count = (filters.page - 1) * filters.limit
     # ----------------------------
 
-    # The collection to start the aggregation pipeline from (radio_stations)
-    radio_stations_collection = database[COLLECTION_NAME]
-
     # 1. Base Query for Filtering
-    match_query = {}
+    query_parts = []
+    params = []
+    
     if filters.language:
-        # Note: The field name must match the name AFTER projection/standardization (i.e., 'language')
-        match_query['language'] = filters.language
-        match_query['page'] = filters.language
+        params.append(filters.language)
+        # Note: In Mongo it matched BOTH language AND page to filters.language because it was a dict with two keys
+        query_parts.append(f"language = ${len(params)} AND page = ${len(params)}")
+    
     if filters.genre:
-        match_query['genre'] = filters.genre
-        match_query['page'] = filters.genre
+        params.append(filters.genre)
+        query_parts.append(f"genre = ${len(params)} AND page = ${len(params)}")
 
-
-    # 2. Aggregation Pipeline Definition
-    pipeline = [
-        # Stage 1: Standardize fields from the starting collection (radio_stations)
-        {
-            "$project": {
-                "_id": 0,  # Exclude MongoDB's internal _id
-                "id": "$id",
-                "name": "$name",
-                "logoUrl": "$logoUrl",
-                "streamUrl": "$streamUrl",
-                "language": "$language",  # Already matches the target structure
-                "genre": "$genre",  # Already matches the target structure
-                "page": "$page"
-            }
-        },
-
-        # Stage 2: Combine with the second collection (radio_garden_channels)
-        {
-            "$unionWith": {
-                "coll": RADIO_GARDEN_CHANNELS_COLLECTION,
-                "pipeline": [
-                    # Sub-Stage for the second collection: Standardize its fields
-                    {
-                        "$project": {
-                            "_id": 0,
-                            "id": "$id",
-                            "name": "$name",
-                            "logoUrl": "$logoUrl",
-                            "streamUrl": "$streamUrl",
-                            "language": "$language",
-                            "genre": "$genre",
-                            "page": "$page"
-                            # radio_garden_channels fields 'radio_garden_id', 'country', 'state' are dropped
-                        }
-                    }
-                ]
-            }
-        },
-
-        # Stage 3: Apply Filters (Matching on the combined and standardized set)
-        {
-            "$match": match_query
-        },
-
-        # Stage 4: Pagination - Skip (offset)
-        {
-            "$skip": skip_count
-        },
-
-        # Stage 5: Pagination - Limit (page size)
-        {
-            "$limit": filters.limit
-        }
-    ]
+    where_clause = " AND ".join(query_parts)
+    if where_clause:
+        where_clause = "WHERE " + where_clause
 
     try:
-        # Run the aggregation pipeline
-        stations_cursor = radio_stations_collection.aggregate(pipeline)
-
-        # Convert the motor cursor result into a list
-        stations_list = await stations_cursor.to_list(length=filters.limit)
+        sql = f"""
+            SELECT * FROM (
+                SELECT id, name, logo_url AS "logoUrl", stream_url AS "streamUrl", language, genre, page
+                FROM radio_stations
+                
+                UNION ALL
+                
+                SELECT id, name, logo_url AS "logoUrl", stream_url AS "streamUrl", language, genre, page
+                FROM radio_garden_channels
+            ) AS combined
+            {where_clause}
+            OFFSET ${len(params) + 1} LIMIT ${len(params) + 2}
+        """
+        params.extend([skip_count, filters.limit])
+        
+        async with pool.acquire() as conn:
+            rows = await conn.fetch(sql, *params)
+        
+        stations_list = [dict(row) for row in rows]
 
         # --- Caching Logic: Store in Redis on Cache Miss ---
         if is_cacheable_request and r_async is not None and not filters.language and not filters.genre:

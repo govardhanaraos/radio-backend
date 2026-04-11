@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
 import psycopg2
+import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,6 +49,7 @@ print(f"COLLECTION_NAME db.py: {COLLECTION_NAME}")
 # Global variable to hold the database client instance
 client = None
 db = None
+pg_pool: Optional[asyncpg.Pool] = None
 
 
 
@@ -85,8 +87,36 @@ def get_db() -> Optional[AsyncIOMotorDatabase]:
     # This is the safest way to access the global variable set in startup
     return db
 
+async def connect_to_pg():
+    """Initializes the PostgreSQL async connection pool."""
+    global pg_pool
+    if pg_pool:
+        return
+    print("Connecting to PostgreSQL (asyncpg)...")
+    try:
+        pg_pool = await asyncpg.create_pool(
+            POSTGRESQL_DATABASE_URL_TELUGUWAP, 
+            min_size=1, 
+            max_size=20
+        )
+        print("Successfully connected to PostgreSQL via asyncpg.")
+    except Exception as e:
+        print(f"Failed to connect to PostgreSQL (asyncpg): {e}")
+        raise
+
+async def close_pg_connection():
+    """Closes the PostgreSQL async connection pool."""
+    global pg_pool
+    if pg_pool:
+        print("Closing PostgreSQL asyncpg connection pool.")
+        await pg_pool.close()
+
+def get_pg_pool() -> Optional[asyncpg.Pool]:
+    """Returns the initialized asyncpg pool."""
+    return pg_pool
+
 def get_pg_conn():
-    """Returns a new PostgreSQL connection."""
+    """Returns a new psycopg2 PostgreSQL connection (blocking)."""
     try:
         conn = psycopg2.connect(POSTGRESQL_DATABASE_URL)
         return conn

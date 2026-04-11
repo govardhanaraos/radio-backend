@@ -1,8 +1,12 @@
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from db.db import get_db
+from db.db import get_pg_pool
+import json as py_json
+import uuid
+
+def _generate_id():
+    return uuid.uuid4().hex[:24]
 
 """
 python_api_download_screen_config.py
@@ -188,31 +192,27 @@ class AppUpdateConfig(BaseModel):
     ),
 )
 async def get_download_screen_config():
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(
             status_code=503,
-            detail="Database not connected. Check MongoDB connection on startup.",
+            detail="Database not connected. Check PostgreSQL connection on startup.",
         )
     try:
-        doc = await db["app_parameters"].find_one(
-            {"config_key": "download_screen"},
-            {"_id": 0},  # Exclude MongoDB _id from response
-        )
+        async with pool.acquire() as conn:
+            row = await conn.fetchrow("SELECT parameter_data FROM app_parameters WHERE parameter_code = 'download_screen'")
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"MongoDB query failed: {exc}",
+            detail=f"DB query failed: {exc}",
         )
-    if doc is None:
-        raise HTTPException(
-            status_code=404,
-            detail="No document found with config_key='download_screen' in app_config collection.",
-        )
-    # Strip extra fields not in the Pydantic model (e.g. parameter_code)
-    for extra_field in ("parameter_code", "config_key"):
-        doc.pop(extra_field, None)
+    if row is None:
+        return DownloadScreenConfig()
+        
     try:
+        doc = py_json.loads(row["parameter_data"]) if isinstance(row["parameter_data"], str) else (row["parameter_data"] or {})
+        doc.pop("parameter_code", None)
+        doc.pop("config_key", None)
         return DownloadScreenConfig(**doc)
     except Exception as exc:
         raise HTTPException(
@@ -232,20 +232,23 @@ async def get_download_screen_config():
     ),
 )
 async def upsert_download_screen_config(config: DownloadScreenConfig):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(
             status_code=503,
-            detail="Database not connected. Check MongoDB connection on startup.",
+            detail="Database not connected. Check PostgreSQL connection on startup.",
         )
     try:
         doc = config.model_dump()
-        doc["config_key"] = "download_screen"
-        await db["app_parameters"].replace_one(
-            {"config_key": "download_screen"},
-            doc,
-            upsert=True,
-        )
+        doc.pop("config_key", None)
+        doc.pop("parameter_code", None)
+        
+        async with pool.acquire() as conn:
+            exists = await conn.fetchval("SELECT id FROM app_parameters WHERE parameter_code = 'download_screen'")
+            if exists:
+                await conn.execute("UPDATE app_parameters SET parameter_data = $1 WHERE id = $2", py_json.dumps(doc), exists)
+            else:
+                await conn.execute("INSERT INTO app_parameters (id, parameter_code, parameter_data) VALUES ($1, $2, $3)", _generate_id(), 'download_screen', py_json.dumps(doc))
         return config
     except Exception as exc:
         raise HTTPException(
@@ -264,31 +267,33 @@ async def upsert_download_screen_config(config: DownloadScreenConfig):
     ),
 )
 async def patch_album_entry_enabled(lang: str, enabled: bool):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(
             status_code=503,
-            detail="Database not connected. Check MongoDB connection on startup.",
+            detail="Database not connected. Check PostgreSQL connection on startup.",
         )
     try:
-        result = await db["app_parameters"].update_one(
-            {
-                "config_key": "download_screen",
-                "album_entries.lang": lang,
-            },
-            {"$set": {"album_entries.$.enabled": enabled}},
-        )
-        if result.matched_count == 0:
-            raise HTTPException(
-                status_code=404,
-                detail=f"No album entry found with lang='{lang}'",
-            )
-        doc = await db["app_parameters"].find_one(
-            {"config_key": "download_screen"}, {"_id": 0}
-        )
-        for extra_field in ("parameter_code", "config_key"):
-            doc.pop(extra_field, None)
-        return DownloadScreenConfig(**doc)
+        async with pool.acquire() as conn:
+            row = await conn.fetchrow("SELECT id, parameter_data FROM app_parameters WHERE parameter_code = 'download_screen'")
+            if not row:
+                raise HTTPException(status_code=404, detail="No download screen configuration found.")
+                
+            doc = py_json.loads(row["parameter_data"]) if isinstance(row["parameter_data"], str) else (row["parameter_data"] or {})
+            
+            found = False
+            for entry in doc.get("album_entries", []):
+                if entry.get("lang") == lang:
+                    entry["enabled"] = enabled
+                    found = True
+                    break
+                    
+            if not found:
+                raise HTTPException(status_code=404, detail=f"No album entry found with lang='{lang}'")
+                
+            await conn.execute("UPDATE app_parameters SET parameter_data = $1 WHERE id = $2", py_json.dumps(doc), row["id"])
+            return DownloadScreenConfig(**doc)
+            
     except HTTPException:
         raise
     except Exception as exc:
@@ -299,31 +304,30 @@ async def patch_album_entry_enabled(lang: str, enabled: bool):
 @router.get("/availableupdate")
 async def get_app_config():
     try:
-        db = get_db()
-        if db is None:
+        pool = get_pg_pool()
+        if pool is None:
             raise HTTPException(status_code=503, detail="Database connection failed.")
-        collection = db["app_parameters"]
+            
+        async with pool.acquire() as conn:
+            rows = await conn.fetch("SELECT parameter_code, parameter_data FROM app_parameters")
+            params = {}
 
-        cursor = collection.find({})
-        params = {}
+            for row in rows:
+                p_data = py_json.loads(row["parameter_data"]) if isinstance(row["parameter_data"], str) else (row["parameter_data"] or {})
+                params[row["parameter_code"]] = p_data.get("value")
 
-        async for doc in cursor:
-            params[doc["parameter_code"]] = doc.get("value")
-
-        return {"status": "success", "config": params}
+            return {"status": "success", "config": params}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.put("/availableupdate", summary="Update App Update parameters")
 async def upsert_app_update_config(config: AppUpdateConfig):
     """
-    Updates the `app_update_*` records in `app_parameters`, matched by `parameter_code`.
+    Updates the `app_update_*` records in `app_parameters`.
     """
-
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
     try:
@@ -334,13 +338,14 @@ async def upsert_app_update_config(config: AppUpdateConfig):
             "app_update_url": config.app_update_url,
         }
 
-        collection = db["app_parameters"]
-        for parameter_code, value in updates.items():
-            await collection.update_one(
-                {"parameter_code": parameter_code},
-                {"$set": {"value": value}},
-                upsert=True,
-            )
+        async with pool.acquire() as conn:
+            for parameter_code, value in updates.items():
+                exists = await conn.fetchval("SELECT id FROM app_parameters WHERE parameter_code = $1", parameter_code)
+                p_data = py_json.dumps({"value": value})
+                if exists:
+                    await conn.execute("UPDATE app_parameters SET parameter_data = $1 WHERE id = $2", p_data, exists)
+                else:
+                    await conn.execute("INSERT INTO app_parameters (id, parameter_code, parameter_data) VALUES ($1, $2, $3)", _generate_id(), parameter_code, p_data)
 
         return {"status": "success", "config": updates}
     except Exception as exc:

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 # Import the functions directly from the db.db module
-from db.db import connect_to_mongo, close_mongo_connection
+from db.db import connect_to_mongo, close_mongo_connection, connect_to_pg, close_pg_connection
 from stations.router import router as stations_router
 from stations.admin_router import router as admin_stations_router
 from auth.router import router as auth_router, setup_default_admin
@@ -44,12 +44,14 @@ from ai_assistant.top10songs import router as top10_songs
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 1. Logic to run on startup (before the app starts)
-    print("Application Startup: Connecting to Mongo...")
+    print("Application Startup: Connecting to Mongo and PG...")
     await connect_to_mongo()
+    await connect_to_pg()
     await setup_default_admin()
     yield # <-- Application is now running and serving requests
     # 2. Logic to run on shutdown (when the app shuts down)
-    print("Application Shutdown: Closing Mongo connection...")
+    print("Application Shutdown: Closing DB connections...")
+    await close_pg_connection()
     await close_mongo_connection()
 
 

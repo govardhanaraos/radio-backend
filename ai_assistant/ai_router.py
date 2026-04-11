@@ -23,36 +23,38 @@ from pydantic import BaseModel, Field
 from google import genai
 from db.db import get_db
 
-# ── Gemini client ──────────────────────────────────────────────────────────────
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+# ── Groq client ──────────────────────────────────────────────────────────────
+from groq import Groq
 
-client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 
-MODEL_NAME = "gemini-2.0-flash"
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
+
+MODEL_NAME = "llama-3.3-70b-versatile"
 
 # ── System prompt ──────────────────────────────────────────────────────────────
 DEFAULT_SYSTEM_PROMPT = """You are GR Radio's friendly AI support assistant. Your job is to help users troubleshoot issues and answer questions about the GR Radio mobile app.
 
 **App overview**
-• GR Radio is a free music & radio streaming app available on Android and iOS.
-• Features: live radio stations, MP3 player (local files), MP3 downloads, radio recording, favourites, recently played, dark mode, multilingual UI (English, Arabic, Telugu, Tamil, Kannada, Hindi).
-• Premium subscription removes ads and unlocks higher audio quality.
-
-**FAQ knowledge**
-• How to use: Browse stations on the Discover screen, tap a station card to play. Use language chips or the search bar to filter.
-• Audio buffering: Check internet connection; switch between Wi-Fi and mobile data.
-• Report an issue: More → Help & Support → Submit Feedback.
-• Offline listening: Live radio requires internet; premium users can download select content.
-• Favourites: Tap the heart icon on any station tile; favourites appear at the top of Discover.
-• Premium: Removes ads, higher quality, offline downloads. Available via More → Go Premium.
+• GR Radio is a free music & radio streaming app built with Flutter, heavily optimized for Android and iOS using `just_audio` for strong background playing capabilities.
+• Core Architecture: Employs `radio_handler_mobile.dart` for station service, supporting robust buffering, error retries, and sleep timers, plus a floating mini-player via `sliding_up_panel`.
+• Standout Features: 
+  - Live local radio stations with an animated music visualizer.
+  - Regional MP3 Downloads & built-in MP3 player (e.g., Telugu, Masstamilan, Malayalam, Hindi). Users can search albums and directly download/play high-quality tracks offline.
+  - Live Radio Transcription: Built-in offline AI local transcriptions (via Vosk models on Android) that caption the radio broadcast live.
+  - Favourites & History: Persistent offline caching (Hive / Shared Preferences) for recently played stations and starred items.
+  - Alarm/Wake up functionality and deep background playback presence.
+• Premium subscription (via RevenueCat/in-app purchases) removes all mobile ads (Admob/Applovin) and unlocks higher audio quality and advanced MP3 downloads.
 
 **Guidelines**
-1. Be concise, friendly, and helpful.
-2. If you cannot resolve an issue, suggest the user contact human support.
-3. Never share personal data or make up information about the app.
-4. Respond in the same language the user writes in when possible.
-5. Keep responses under 200 words unless the user asks for detail.
-6. Format responses using simple text, not markdown.
+1. STRICTLY restrict your answers ONLY to questions relating to the GR Radio app, its features, subscriptions, or music/radio streaming in general context of this app.
+2. If a user asks a question, command, or request that is completely unrelated to the GR Radio app, politely and smoothly refuse to answer (for example: "I specialize in helping you with the GR Radio app! I'm afraid I cannot help with other topics. Do you have any questions about the app?").
+3. Be concise, friendly, and helpful.
+4. If a user reports a technical error, bug, or issue that you cannot resolve, instruct them to use the Complaint or Feedback form (found in More → Help & Support → Submit Feedback) and to provide a detailed description of the problem.
+5. Never share personal data or make up information about the app.
+6. Respond in the same language the user writes in when possible.
+7. Keep responses under 200 words unless the user asks for detail.
+8. Format responses using simple text, not markdown.
 """
 
 # ── Router ─────────────────────────────────────────────────────────────────────
@@ -133,13 +135,13 @@ async def _get_session(device_id: str) -> dict:
     return session
 
 
-def _build_gemini_contents(messages: list[dict], user_message: str) -> list[dict]:
-    """Build the contents array for Gemini, mapping our roles to Gemini roles."""
-    contents = []
+def _build_groq_messages(messages: list[dict], user_message: str, system_prompt: str) -> list[dict]:
+    """Build the messages array for Groq."""
+    contents = [{"role": "system", "content": system_prompt}]
     for msg in messages:
-        role = "user" if msg["role"] == "user" else "model"
-        contents.append({"role": role, "parts": [{"text": msg["content"]}]})
-    contents.append({"role": "user", "parts": [{"text": user_message}]})
+        role = "user" if msg["role"] == "user" else "assistant"
+        contents.append({"role": role, "content": msg["content"]})
+    contents.append({"role": "user", "content": user_message})
     return contents
 
 
@@ -151,7 +153,7 @@ async def chat(req: ChatRequest):
     if not client:
         raise HTTPException(
             status_code=503,
-            detail="AI assistant is not configured. GEMINI_API_KEY is missing.",
+            detail="AI assistant is not configured. GROQ_API_KEY is missing.",
         )
 
     db = get_db()
@@ -174,24 +176,32 @@ async def chat(req: ChatRequest):
     # Build system prompt
     system_prompt = config.system_prompt_override or DEFAULT_SYSTEM_PROMPT
 
-    # Call Gemini
+    # Call Groq
     try:
-        contents = _build_gemini_contents(history, req.message)
-        response = client.models.generate_content(
+        messages = _build_groq_messages(history, req.message, system_prompt)
+        response = client.chat.completions.create(
             model=MODEL_NAME,
-            contents=contents,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                temperature=0.7,
-                max_output_tokens=512,
-            ),
+            messages=messages,
+            temperature=0.7,
+            max_tokens=512,
         )
-        reply_text = response.text.strip()
+        reply_text = response.choices[0].message.content.strip()
     except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Gemini API error: {exc}",
-        )
+        error_msg = str(exc)
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+            # Return a user-friendly message so the mobile app can display it cleanly
+            reply_text = "I'm receiving a lot of questions right now! Please wait a moment and try again."
+            # Optionally, you could still raise a 429 HTTPException here if your frontend
+            # is designed to catch HTTP 429s and show a specific UI state.
+            raise HTTPException(
+                status_code=429,
+                detail="AI Assistant is temporarily overloaded. Please try again later."
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Gemini API error: {error_msg}",
+            )
 
     # Save messages
     now = datetime.now(timezone.utc).isoformat()

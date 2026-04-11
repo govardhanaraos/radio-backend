@@ -89,11 +89,20 @@ def expand_for_analytics_client(screen: str, doc: Dict[str, Any]) -> Dict[str, A
     return merged
 
 
-async def replace_sanitized_ads_doc(db, oid, sanitized: Dict[str, Any]) -> Dict[str, Any]:
-    """Write full sanitized document; returns stored doc with _id as ObjectId."""
-    from bson import ObjectId
-
+async def replace_sanitized_ads_doc(pool, oid: str, sanitized: Dict[str, Any]) -> Dict[str, Any]:
+    import json as py_json
     to_store = deepcopy(sanitized)
-    to_store["_id"] = oid
-    await db["ads_config"].replace_one({"_id": oid}, to_store)
-    return await db["ads_config"].find_one({"_id": oid})
+    screen = to_store.pop("screen", "global")
+    
+    async with pool.acquire() as conn:
+        await conn.execute("""
+            UPDATE ads_config SET screen = $1, ads_data = $2 WHERE id = $3
+        """, screen, py_json.dumps(to_store), oid)
+        
+        row = await conn.fetchrow("SELECT * FROM ads_config WHERE id = $1", oid)
+        if not row:
+            return {}
+        
+        d = dict(row)
+        cdata = py_json.loads(d["ads_data"]) if isinstance(d["ads_data"], str) else (d.get("ads_data") or {})
+        return {**cdata, "id": d["id"], "screen": d["screen"]}

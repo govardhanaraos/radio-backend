@@ -10,7 +10,6 @@ import { Trash, Edit, Plus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface DBStation {
-  id_mongo: string;
   id?: string;
   name: string;
   logoUrl?: string;
@@ -90,8 +89,8 @@ export default function RadioStationsManager() {
     const dataToSave = { ...formData };
     if (!dataToSave.id) dataToSave.id = Math.floor(Math.random() * 100000000).toString();
 
-    if (editingStation) {
-      updateMutation.mutate({ id: editingStation.id_mongo, data: dataToSave });
+    if (editingStation && editingStation.id) {
+      updateMutation.mutate({ id: editingStation.id, data: dataToSave });
     } else {
       createMutation.mutate(dataToSave);
     }
@@ -106,7 +105,7 @@ export default function RadioStationsManager() {
           <h3 className="text-xl font-semibold">Native Radio Stations</h3>
           <p className="text-sm text-muted-foreground">Manage entries in the radio_stations collection.</p>
           <p className="text-xs text-muted-foreground">
-            Key: <span className="font-mono">_id (id_mongo)</span>
+            Key: <span className="font-mono">id</span>
           </p>
         </div>
         <div className="flex items-center gap-4 flex-1 justify-end">
@@ -144,7 +143,7 @@ export default function RadioStationsManager() {
                <TableRow><TableCell colSpan={5} className="text-center py-8">No stations found.</TableCell></TableRow>
             ) : (
               filteredStations?.map(station => (
-                <TableRow key={station.id_mongo}>
+                <TableRow key={station.id}>
                   <TableCell>
                     {station.logoUrl ? (
                       <img src={station.logoUrl} className="w-8 h-8 rounded object-cover bg-black/10" />
@@ -159,7 +158,7 @@ export default function RadioStationsManager() {
                     </Button>
                     <Button variant="ghost" size="icon" className="text-destructive" onClick={() => {
                         if (confirm('Are you sure you want to delete this station?')) {
-                          deleteMutation.mutate(station.id_mongo);
+                          deleteMutation.mutate(station.id as string);
                         }
                       }}>
                       <Trash className="h-4 w-4" />

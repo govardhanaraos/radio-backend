@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
-from db.db import get_db
+from db.db import get_pg_pool
 from pydantic import BaseModel
 import bcrypt
 import jwt
@@ -37,25 +37,28 @@ class Token(BaseModel):
 
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    db = get_db()
-    users_collection = db.get_collection("admin_users")
+    pool = get_pg_pool()
+    if pool is None:
+        raise HTTPException(status_code=503, detail="Database not connected.")
+        
+    async with pool.acquire() as conn:
+        user_row = await conn.fetchrow("SELECT username, password FROM admin_users WHERE username = $1", form_data.username)
     
-    user = await users_collection.find_one({"username": form_data.username})
-    if not user:
+    if not user_row:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    if not verify_password(form_data.password, user["password"]):
+    if not verify_password(form_data.password, user_row["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
         
-    access_token = create_access_token(data={"sub": user["username"]})
+    access_token = create_access_token(data={"sub": user_row["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
 class ChangePasswordRequest(BaseModel):
@@ -64,28 +67,33 @@ class ChangePasswordRequest(BaseModel):
 
 @router.post("/change-password", summary="Change Admin Password")
 async def change_admin_password(req: ChangePasswordRequest, username: str = Depends(verify_admin_token)):
-    db = get_db()
-    users_collection = db.get_collection("admin_users")
-    
-    user = await users_collection.find_one({"username": username})
-    if not user:
-        raise HTTPException(status_code=404, detail="Admin user not found")
+    pool = get_pg_pool()
+    if pool is None:
+        raise HTTPException(status_code=503, detail="Database not connected.")
         
-    if not verify_password(req.old_password, user["password"]):
-        raise HTTPException(status_code=400, detail="Incorrect original password")
+    async with pool.acquire() as conn:
+        user_row = await conn.fetchrow("SELECT username, password FROM admin_users WHERE username = $1", username)
         
-    new_hashed_pw = get_password_hash(req.new_password)
-    await users_collection.update_one(
-        {"username": username},
-        {"$set": {"password": new_hashed_pw}}
-    )
+        if not user_row:
+            raise HTTPException(status_code=404, detail="Admin user not found")
+            
+        if not verify_password(req.old_password, user_row["password"]):
+            raise HTTPException(status_code=400, detail="Incorrect original password")
+            
+        new_hashed_pw = get_password_hash(req.new_password)
+        await conn.execute("UPDATE admin_users SET password = $1 WHERE username = $2", new_hashed_pw, username)
+        
     return {"success": True, "message": "Password changed successfully"}
 
 async def setup_default_admin():
-    db = get_db()
-    users_collection = db.get_collection("admin_users")
-    user_count = await users_collection.count_documents({})
-    if user_count == 0:
-        hashed_pw = get_password_hash("admin123")
-        await users_collection.insert_one({"username": "admin", "password": hashed_pw})
-        print("NOTICE: Created default admin user: admin / admin123")
+    pool = get_pg_pool()
+    if pool is None:
+        print("PG pool not connected. Cannot setup default admin.")
+        return
+        
+    async with pool.acquire() as conn:
+        user_count = await conn.fetchval("SELECT COUNT(*) FROM admin_users")
+        if user_count == 0:
+            hashed_pw = get_password_hash("admin123")
+            await conn.execute("INSERT INTO admin_users (username, password) VALUES ($1, $2)", "admin", hashed_pw)
+            print("NOTICE: Created default admin user: admin / admin123")

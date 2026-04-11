@@ -1,79 +1,91 @@
+import uuid
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any, List
-from db.db import get_db
-from bson import ObjectId
+from db.db import get_pg_pool
 from auth.dependencies import verify_admin_token
+import json as py_json
 
 router = APIRouter(prefix="/premium-users-admin", tags=["Premium Users Admin"], dependencies=[Depends(verify_admin_token)])
 
-def format_doc(doc):
-    if not doc:
-        return doc
-    doc['id'] = str(doc['_id'])
-    del doc['_id']
-    
-    if "created_at" in doc and hasattr(doc["created_at"], "isoformat"):
-        doc["created_at"] = doc["created_at"].isoformat()
-    return doc
+def _generate_id():
+    return uuid.uuid4().hex[:24]
 
 @router.get("/", summary="Get all Premium Users")
 async def get_premium_users():
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database not connected.")
     try:
-        cursor = db["premium_users"].find({})
-        docs = await cursor.to_list(length=500)
-        return [format_doc(doc) for doc in docs]
+        async with pool.acquire() as conn:
+            rows = await conn.fetch("SELECT * FROM premium_users ORDER BY id DESC LIMIT 500")
+            out = []
+            for row in rows:
+                d = dict(row)
+                if isinstance(d.get("created_at"), str) is False and d.get("created_at") is not None:
+                    d["created_at"] = str(d["created_at"])
+                if isinstance(d.get("active_devices"), str):
+                    d["active_devices"] = py_json.loads(d["active_devices"])
+                out.append(d)
+            return out
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
 @router.post("/", summary="Create a new Premium User license")
 async def create_premium_user(user: Dict[Any, Any]):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database not connected.")
     try:
-        user.pop('id', None)
-        user.pop('_id', None)
-        result = await db["premium_users"].insert_one(user)
-        new_doc = await db["premium_users"].find_one({"_id": result.inserted_id})
-        return format_doc(new_doc)
+        new_id = _generate_id()
+        async with pool.acquire() as conn:
+            await conn.execute("""
+                INSERT INTO premium_users (id, plain_key, license_key, active_devices, created_at)
+                VALUES ($1, $2, $3, $4, $5)
+            """, new_id, user.get("plain_key"), user.get("license_key"), py_json.dumps(user.get("active_devices", [])), user.get("created_at"))
+            row = await conn.fetchrow("SELECT * FROM premium_users WHERE id = $1", new_id)
+            d = dict(row)
+            d["active_devices"] = py_json.loads(d["active_devices"]) if isinstance(d.get("active_devices"), str) else []
+            if d.get("created_at"):
+                d["created_at"] = str(d["created_at"])
+            return d
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
 @router.put("/{user_id}", summary="Update an existing Premium User")
 async def update_premium_user(user_id: str, user: Dict[Any, Any]):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database not connected.")
     try:
-        user.pop('id', None)
-        user.pop('_id', None)
-        # Prevent wiping created_at if it's sent as string
-        if "created_at" in user and isinstance(user["created_at"], str):
-             user.pop("created_at")
-
-        result = await db["premium_users"].update_one(
-            {"_id": ObjectId(user_id)},
-            {"$set": user}
-        )
-        if result.matched_count == 0:
-            raise HTTPException(status_code=404, detail="Premium User not found.")
-        updated_doc = await db["premium_users"].find_one({"_id": ObjectId(user_id)})
-        return format_doc(updated_doc)
+        async with pool.acquire() as conn:
+            exists = await conn.fetchval("SELECT 1 FROM premium_users WHERE id = $1", user_id)
+            if not exists:
+                raise HTTPException(status_code=404, detail="Premium User not found.")
+            await conn.execute("""
+                UPDATE premium_users 
+                SET plain_key = $1, license_key = $2, active_devices = $3
+                WHERE id = $4
+            """, user.get("plain_key"), user.get("license_key"), py_json.dumps(user.get("active_devices", [])), user_id)
+            
+            row = await conn.fetchrow("SELECT * FROM premium_users WHERE id = $1", user_id)
+            d = dict(row)
+            d["active_devices"] = py_json.loads(d["active_devices"]) if isinstance(d.get("active_devices"), str) else []
+            if d.get("created_at"):
+                d["created_at"] = str(d["created_at"])
+            return d
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
 @router.delete("/{user_id}", summary="Delete a Premium User")
 async def delete_premium_user(user_id: str):
-    db = get_db()
-    if db is None:
+    pool = get_pg_pool()
+    if pool is None:
         raise HTTPException(status_code=503, detail="Database not connected.")
     try:
-        result = await db["premium_users"].delete_one({"_id": ObjectId(user_id)})
-        if result.deleted_count == 0:
-            raise HTTPException(status_code=404, detail="Premium User not found")
+        async with pool.acquire() as conn:
+            result = await conn.execute("DELETE FROM premium_users WHERE id = $1", user_id)
+            if result == "DELETE 0":
+                raise HTTPException(status_code=404, detail="Premium User not found")
         return {"success": True}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

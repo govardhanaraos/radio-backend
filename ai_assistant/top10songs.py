@@ -62,13 +62,16 @@ def get_ai_song_recommendations(language: str) -> List[dict]:
         raw_text = chat_completion.choices[0].message.content.strip()
         print(f"Groq Response: {raw_text}")
 
-        # Groq will return something like {"songs": [{"song_name": "...", ...}]}
         data = json.loads(raw_text)
 
+        if isinstance(data, list):
+            return data
+
         # Extract the array from the JSON object
-        for key in data.keys():
-            if isinstance(data[key], list):
-                return data[key]
+        if isinstance(data, dict):
+            for key in data.keys():
+                if isinstance(data[key], list):
+                    return data[key]
 
         return []
     except Exception as e:
