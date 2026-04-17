@@ -21,12 +21,9 @@ router = APIRouter(prefix="/api/v1/ai", tags=["AI Assistant"])
 
 
 # --- Configurations ---
-groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY", ""))
-BLOMP_PASS = os.environ.get("BLOMP_PASS", "your_blomp_password")
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY", ""))
+BLOMP_PASS = os.getenv("BLOMP_PASS", "your_blomp_password")
 
-print(f"BLOMP_PASS: {BLOMP_PASS}")
-
-print(f"GROQ_API_KEY: {os.environ.get("GROQ_API_KEY", "")}")
 
 redis_client = r_async
 # Cache tokens and AI responses for 12 Hours
