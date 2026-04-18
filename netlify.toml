@@ -1,0 +1,9 @@
+[build]
+  base = "admin-ui"
+  publish = "dist" # Change to "." if not using a build step
+  command = "npm run build" # Remove if not using a build step
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
