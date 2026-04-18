@@ -6,6 +6,7 @@ import httpx
 import psycopg2
 from psycopg2.extras import execute_values
 import logging
+import time
 
 load_dotenv()
 
@@ -24,49 +25,19 @@ logger = logging.getLogger(__name__)
 
 
 def sync_radio_stations_task():
-    """Background task to fetch and upsert stations."""
-    logger.info("Starting Radio-Browser sync...")
+    """Background task to fetch and upsert stations using pagination."""
+    logger.info("Starting paginated Radio-Browser sync...")
+
+    limit = 10000  # Fetch 10,000 stations at a time
+    offset = 0
+    total_processed = 0
 
     try:
-        # 1. Fetch data from Radio-Browser
-        with httpx.Client(timeout=60.0) as client:
-            response = client.get(RADIO_API_URL)
-            response.raise_for_status()
-            stations_data = response.json()
-
-        logger.info(f"Fetched {len(stations_data)} stations. Preparing database upsert...")
-
-        # 2. Extract necessary fields
-        records_to_upsert = []
-        for s in stations_data:
-            if not s.get("stationuuid"):
-                continue
-
-            records_to_upsert.append((
-                s.get("stationuuid"),
-                s.get("name", "")[:255],
-                s.get("url"),
-                s.get("url_resolved"),
-                s.get("homepage"),
-                s.get("favicon"),
-                s.get("tags"),
-                s.get("country"),
-                s.get("countrycode"),
-                s.get("language"),
-                s.get("votes", 0) or 0,
-                s.get("codec"),
-                s.get("bitrate", 0) or 0,
-                s.get("lastchangetime_iso8601"),
-                # --- NEW FIELDS ---
-                s.get("geo_lat"),  # Psycopg2 will automatically convert None to SQL NULL
-                s.get("geo_long")
-            ))
-
-        # 3. Connect to Database
+        # 1. Connect to Database once before the loop
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
 
-        # 4. Create table if missing (Updated with geo_lat/geo_long)
+        # 2. Ensure table exists
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS radio_browser_stations (
                 stationuuid UUID PRIMARY KEY,
@@ -87,8 +58,9 @@ def sync_radio_stations_task():
                 geo_long DOUBLE PRECISION
             );
         """)
+        conn.commit()
 
-        # 5. The Upsert Query (Updated)
+        # 3. The Upsert Query
         upsert_query = """
             INSERT INTO radio_browser_stations (
                 stationuuid, name, url, url_resolved, homepage, favicon, tags,
@@ -113,17 +85,72 @@ def sync_radio_stations_task():
                 geo_long = EXCLUDED.geo_long;
         """
 
-        # 6. Execute bulk upsert
-        execute_values(cursor, upsert_query, records_to_upsert, page_size=1000)
+        # 4. Open HTTP client and start pagination loop
+        with httpx.Client(timeout=60.0) as client:
+            while True:
+                logger.info(f"Fetching stations with limit={limit} and offset={offset}...")
 
-        conn.commit()
+                # Append limit and offset to the API URL
+                paginated_url = f"{RADIO_API_URL}?limit={limit}&offset={offset}"
+                response = client.get(paginated_url)
+                response.raise_for_status()
+                stations_data = response.json()
+
+                # If the API returns an empty list, we have reached the end of the database
+                if not stations_data:
+                    logger.info("No more stations returned. Sync complete!")
+                    break
+
+                # 5. Extract fields
+                records_to_upsert = []
+                for s in stations_data:
+                    if not s.get("stationuuid"):
+                        continue
+
+                    records_to_upsert.append((
+                        s.get("stationuuid"),
+                        s.get("name", "")[:255],
+                        s.get("url"),
+                        s.get("url_resolved"),
+                        s.get("homepage"),
+                        s.get("favicon"),
+                        s.get("tags"),
+                        s.get("country"),
+                        s.get("countrycode"),
+                        s.get("language"),
+                        s.get("votes", 0) or 0,
+                        s.get("codec"),
+                        s.get("bitrate", 0) or 0,
+                        s.get("lastchangetime_iso8601"),
+                        s.get("geo_lat"),
+                        s.get("geo_long")
+                    ))
+
+                # 6. Execute bulk upsert for this chunk
+                if records_to_upsert:
+                    execute_values(cursor, upsert_query, records_to_upsert, page_size=1000)
+                    conn.commit()
+
+                    total_processed += len(records_to_upsert)
+                    logger.info(f"Successfully saved chunk. Total processed so far: {total_processed}")
+
+                # 7. Increment the offset for the next loop
+                offset += limit
+
+                # Polite delay to prevent rate-limiting by Radio-Browser
+                time.sleep(1)
+
         cursor.close()
         conn.close()
-        logger.info("Sync completed successfully!")
+        logger.info(f"Final Total: Synced {total_processed} stations into PostgreSQL.")
 
     except Exception as e:
         logger.error(f"Error during station sync: {str(e)}")
-
+        # If it fails, ensure connections are closed safely
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if 'conn' in locals() and conn:
+            conn.close()
 
 @router.post("/sync", tags=["Admin"])
 async def trigger_station_sync(background_tasks: BackgroundTasks):
