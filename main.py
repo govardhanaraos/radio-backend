@@ -40,6 +40,7 @@ from mail.automate_login_blomp import router as automate_login_blomp
 from mail.bulkmailcreation import router as bulkmailcreation
 from ai_assistant.ai_router import router as ai_router
 from ai_assistant.top10songs import router as top10_songs
+from radiobrowserinfo.parseradiostations import  router as radio_browser_stations
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -104,4 +105,5 @@ app.include_router(hindiflacs_song_details_crawl)
 app.include_router(hindiflacs_to_blomp)
 app.include_router(ai_router)
 app.include_router(top10_songs)
+app.include_router(radio_browser_stations)
 # ... include routers ...
