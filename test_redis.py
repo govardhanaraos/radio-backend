@@ -24,7 +24,7 @@ def check_redis_connection():
             host=REDIS_HOST,
             port=REDIS_PORT,
             password=REDIS_PASSWORD,
-            ssl=True,
+            ssl=False,
             decode_responses=True  # Ensures we get strings back instead of bytes
         )
 
