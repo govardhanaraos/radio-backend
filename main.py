@@ -41,6 +41,11 @@ from mail.bulkmailcreation import router as bulkmailcreation
 from ai_assistant.ai_router import router as ai_router
 from ai_assistant.top10songs import router as top10_songs
 from radiobrowserinfo.parseradiostations import  router as radio_browser_stations
+from stations.extract_lang_table import  router as extract_lang
+from stations.languages import  router as languages_router
+from stations.countries import  router as countries_router
+from stations.redis_clear_cache import  router as redis_clear_cache
+from stations.radio_browser_stations_api_cust import router as radio_browser_stations_api_cust
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -106,4 +111,10 @@ app.include_router(hindiflacs_to_blomp)
 app.include_router(ai_router)
 app.include_router(top10_songs)
 app.include_router(radio_browser_stations)
+app.include_router(extract_lang)
+app.include_router(languages_router)
+app.include_router(countries_router)
+app.include_router(redis_clear_cache)
+app.include_router(radio_browser_stations_api_cust)
+
 # ... include routers ...

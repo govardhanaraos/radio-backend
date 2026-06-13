@@ -29,7 +29,8 @@ class Station(BaseModel):
 
     # 6. Genre (Maps from genre in Mongo)
     genre: Optional[str] = None
-
+    
+    country: Optional[str] = None
     # 7. Page field (Maps from page in Mongo)
     page: Optional[str] = None
 

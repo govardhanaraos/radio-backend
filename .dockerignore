@@ -1,0 +1,19 @@
+# Virtual Environments (The biggest culprits)
+.venv1/
+.venv/
+venv/
+
+# Frontend/Admin UI (Likely contains node_modules)
+admin-ui/
+
+# Version Control & IDEs
+.git/
+.idea/
+.vscode/
+
+# Python Caches
+**/__pycache__/
+*.pyc
+
+# Local Configs
+.env

@@ -74,8 +74,8 @@ def run_bulk_login(limit: int = 50):
     try:
         cur.execute("""
             SELECT email, blomp_password FROM user_mail_accounts 
-            WHERE last_login_date < CURRENT_DATE OR last_login_date IS NULL 
-            LIMIT %s
+            WHERE last_login_date < CURRENT_DATE OR last_login_date IS NULL order by last_login_date
+            LIMIT %s 
         """, (limit,))
         accounts = cur.fetchall()
 
