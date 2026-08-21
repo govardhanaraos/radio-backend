@@ -66,12 +66,14 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
-origins = [
-    "https://gradio.online",
-]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://grradio.online",  # Exact domain from error message
+        "https://*.grradio.online",  # Any subdomains
+        "https://gradio.online",  # Standard Gradio URL
+    ],
     allow_origin_regex=r"https://.*\.gradio\.online",  # Allows any subdomains like https://abc123.gradio.online
     allow_credentials=True,
     allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, OPTIONS, etc.
