@@ -69,15 +69,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://grradio.online",  # Exact domain from error message
-        "https://*.grradio.online",  # Any subdomains
-        "https://gradio.online",  # Standard Gradio URL
-    ],
-    allow_origin_regex=r"https://.*\.gradio\.online",  # Allows any subdomains like https://abc123.gradio.online
+    allow_origins=["*"],  # Or restrict to ["https://your-frontend.onrender.com"]
     allow_credentials=True,
-    allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, OPTIONS, etc.
-    allow_headers=["*"],  # Allows Authorization, Content-Type, etc.
+    allow_methods=["*"],  # GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],  # Authorization, Content-Type, etc.
 )
 app.include_router(auth_router)
 app.include_router(automate_login_blomp)

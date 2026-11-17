@@ -90,9 +90,14 @@ async def search_stations(
     min_bitrate: Optional[int] = Query(None, description="Min bitrate in kbps"),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-    order_by: str = Query("votes", enum=["votes", "name", "bitrate", "lastchangetime"]),
+    order_by: str = Query("votes", description="Sort order: votes, name, bitrate, lastchangetime"),
     pool: asyncpg.Pool = Depends(_pool_dep),
 ):
+    # Validate order_by parameter to avoid SQL injection or invalid sorts
+    allowed_order_by = {"votes", "name", "bitrate", "lastchangetime"}
+    if order_by not in allowed_order_by:
+        order_by = "votes"
+
     conditions = ["url_resolved IS NOT NULL", "url_resolved != ''"]
     args: list = []
 

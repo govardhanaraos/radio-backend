@@ -8,3 +8,5 @@ __pycache__/
 .venv1/
 .venv/
 venv/
+*202611180221.csv
+*18112026.sql
